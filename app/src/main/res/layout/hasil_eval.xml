@@ -1,71 +1,233 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/background_pattern"
-    android:gravity="center"
-    android:padding="24dp">
+    android:background="@drawable/background">
 
-    <!-- Main Content Container -->
-    <LinearLayout
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/card_background"
-        android:padding="48dp"
-        android:gravity="center"
-        android:elevation="8dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- Progress Circle Container -->
-        <RelativeLayout
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:layout_marginBottom="40dp">
-
-            <!-- Background Circle -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/circle_progress_background" />
-
-            <!-- Progress Circle -->
-            <ProgressBar
-                android:id="@+id/progressCircle"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:progress="100"
-                android:max="100"
-                android:progressDrawable="@drawable/circle_progress_drawable"
-                android:indeterminate="false" />
-
-            <!-- Percentage Text -->
-            <TextView
-                android:id="@+id/percentageText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="100%"
-                android:textSize="24sp"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold"
-                android:layout_centerInParent="true" />
-
-        </RelativeLayout>
-
-        <!-- Continue Button -->
-        <Button
-            android:id="@+id/continueButton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/button_continue"
-            android:text="→"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:clickable="true"
-            android:focusable="true" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_input"
+                android:layout_width="314dp"
+                android:layout_height="509dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="50dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/white">
 
-</LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@color/kotakan"
+                    android:layout_gravity="center"
+                    android:padding="5dp">
+
+                    <!-- Input Field -->
+                    <TextView
+                        android:id="@+id/et_input_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_input"
+                        android:hint="Hasil Evaluasi"
+                        android:inputType="textMultiLine"
+                        android:maxLines="5"
+                        android:fontFamily="@font/inter"
+                        android:scrollbars="vertical"
+                        android:gravity="top|center"
+                        android:textAlignment="center"
+                        android:paddingTop="35dp"
+                        android:textColor="@color/dalam_kotak"
+                        android:textColorHint="@color/dalam_kotak"
+                        android:textSize="32sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="179dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="150dp"
+                    android:layout_marginStart="20dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Jawaban Benar"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Jawaban Salah"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Waktu Pengerjaan"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="150dp"
+                    android:layout_marginStart="240dp"
+                    android:layout_marginEnd="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="10"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="10"
+                            android:gravity="center"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="10"
+                            android:gravity="center"
+                            android:fontFamily="@font/inter"
+                            android:textSize="20sp"
+                            android:textColor="@color/dalam_kotak"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <!-- Circular Progress -->
+                <RelativeLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="170dp"
+                    android:layout_marginBottom="40dp">
+
+                    <!-- Background Circle -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/circle_background" />
+
+                    <!-- Progress Circle (to be implemented with custom drawable or ProgressBar) -->
+                    <ProgressBar
+                        android:id="@+id/progress_circle"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:progress="100"
+                        android:max="100"
+                        android:progressDrawable="@drawable/circle_progress"
+                        android:indeterminate="false" />
+
+                    <!-- Percentage Text -->
+                    <TextView
+                        android:id="@+id/tv_percentage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="100%"
+                        android:fontFamily="@font/inter"
+                        android:textSize="24sp"
+                        android:textColor="@color/dalam_kotak" />
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_send"
+                android:layout_width="315dp"
+                android:layout_height="65dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@color/kotakan"
+                    android:layout_gravity="center"
+                    android:padding="5dp">
+
+                    <!-- Input Field -->
+                    <ImageButton
+                        android:id="@+id/ic_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_shape"
+                        android:src="@drawable/ic_send"
+                        android:gravity="center" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
