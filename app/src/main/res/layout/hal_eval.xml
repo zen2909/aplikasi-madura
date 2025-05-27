@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <!-- Header Section -->
+
+    <!-- Language Selector Section -->
+
+    <!-- Translation Section -->
+
+    <LinearLayout
+        android:id="@+id/header_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_marginBottom="30dp"
+        android:orientation="vertical">
+
+        <!-- Back Button -->
+
+        <!-- Title -->
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_back"
+            android:contentDescription="Back"
+            android:elevation="4dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="121dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/bangers"
+            android:gravity="bottom|center_horizontal"
+            android:includeFontPadding="false"
+            android:paddingTop="10dp"
+            android:text="HARAP\nPILIH MENU EVALUASI"
+            android:letterSpacing="0.07"
+            android:textAlignment="center"
+            android:textColor="@color/teks"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            tools:ignore="RtlCompat" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/header_section"
+        android:layout_marginTop="-6dp"
+        android:gravity="top|center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/header_section2"
+            android:layout_width="315dp"
+            android:layout_height="65dp"
+            android:elevation="8dp"
+            android:orientation="horizontal">
+
+            <!-- Translate Button -->
+            <Button
+                android:id="@+id/btn_eval1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_eval"
+                android:fontFamily="@font/inter"
+                android:text="Terjemahan"
+                android:textAllCaps="false"
+                android:textColor="@color/dalam_kotak"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/header_section3"
+            android:layout_width="315dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="40dp"
+            android:elevation="8dp"
+            android:orientation="horizontal">
+
+            <!-- Translate Button -->
+            <Button
+                android:id="@+id/btn_eval2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_eval"
+                android:fontFamily="@font/inter"
+                android:text="Tingkat Bahasa"
+                android:textAllCaps="false"
+                android:textColor="@color/dalam_kotak"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/header_section4"
+            android:layout_width="315dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="40dp"
+            android:elevation="8dp"
+            android:orientation="horizontal">
+
+            <!-- Translate Button -->
+            <Button
+                android:id="@+id/btn_eval3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_eval"
+                android:fontFamily="@font/inter"
+                android:text="Pelafalan"
+                android:textAllCaps="false"
+                android:textColor="@color/dalam_kotak"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

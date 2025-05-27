@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <!-- Header Section -->
+
+    <!-- Language Selector Section -->
+
+    <!-- Translation Section -->
+
+    <LinearLayout
+        android:id="@+id/header_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical">
+
+        <!-- Back Button -->
+
+        <!-- Title -->
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/rounded_back"
+            android:contentDescription="Back"
+            android:elevation="4dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:fontFamily="@font/bangers"
+            android:text="TERJEMAHKAN\nSEKARANG"
+            android:letterSpacing="0.07"
+            android:textAlignment="center"
+            android:textColor="@color/teks"
+            android:textSize="58sp"
+            android:textStyle="bold"
+            android:gravity="top|center_horizontal"
+            android:includeFontPadding="false"
+            android:paddingTop="0dp"
+            tools:ignore="RtlCompat" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/language_selector"
+        android:layout_width="341dp"
+        android:layout_height="89dp"
+        android:layout_below="@id/header_section"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/rounded_shape"
+        android:elevation="8dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:padding="25dp">
+
+        <!-- Source Language -->
+        <TextView
+            android:id="@+id/tv_source_lang"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:text="MADURA"
+            android:textColor="@color/dalam_kotak"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Swap Button -->
+        <ImageButton
+            android:id="@+id/btn_swap_languages"
+            android:layout_width="28dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_switch"
+            android:contentDescription="Swap Languages" />
+
+        <!-- Target Language -->
+        <TextView
+            android:id="@+id/tv_target_lang"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="INDONESIA"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/dalam_kotak"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/translation_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/language_selector"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical">
+
+        <!-- Input Text Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_input"
+            android:layout_width="335dp"
+            android:layout_height="68dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/kotakan"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/et_input_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_input"
+                    android:hint="Ketik teks di sini..."
+                    android:gravity="center"
+                    android:inputType="textMultiLine"
+                    android:maxLines="5"
+                    android:fontFamily="@font/inter"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/dalam_kotak"
+                    android:textColorHint="@color/dalam_kotak"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Output Text Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_output"
+            android:layout_width="335dp"
+            android:layout_height="68dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/kotakan"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/tv_output_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_input"
+                    android:text=""
+                    android:hint="Output Terjemahan Disini.."
+                    android:gravity="center"
+                    android:fontFamily="@font/inter"
+                    android:textSize="20sp"
+                    android:textColor="@color/dalam_kotak"
+                    android:textColorHint="@color/dalam_kotak"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Translate Button -->
+        <Button
+            android:id="@+id/btn_translate"
+            android:layout_width="340dp"
+            android:layout_height="47dp"
+            android:layout_gravity="center"
+            android:background="@drawable/rounded_button"
+            android:elevation="4dp"
+            android:text="Terjemahkan"
+            android:textAllCaps="false"
+            android:fontFamily="@font/inter"
+            android:textColor="@color/dalam_kotak"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
