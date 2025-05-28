@@ -11,6 +11,6 @@ import com.zen.e_learning_bahasa_madura.ui.theme.ELearning_Bahasa_maduraTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_eval)
+        setContentView(R.layout.input_kosakata)
     }
 }
