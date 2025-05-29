@@ -27,7 +27,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
-                android:text="Tingkat\nBahasa"
+                android:text="Terjemahan"
                 android:textColor="@color/dalam_kotak"
                 android:textSize="20sp" />
         </androidx.cardview.widget.CardView>
@@ -105,7 +105,7 @@
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/sourceserif_regular"
                         android:gravity="center"
-                        android:text="Evaluasi Terjemahan"
+                        android:text="Evaluasi Tingkat Bahasa"
                         android:textColor="@color/dalam_kotak"
                         android:textSize="24sp" />
 
