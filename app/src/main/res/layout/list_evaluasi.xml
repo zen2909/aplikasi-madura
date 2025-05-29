@@ -102,7 +102,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -176,7 +176,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -250,7 +250,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -324,7 +324,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -398,7 +398,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -472,7 +472,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -546,7 +546,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -620,7 +620,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -694,7 +694,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
@@ -768,7 +768,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/inter"
-                                    android:text="Duduk"
+                                    android:text="Terjemahan"
                                     android:textColor="#757575"
                                     android:textSize="14sp" />
                             </LinearLayout>
