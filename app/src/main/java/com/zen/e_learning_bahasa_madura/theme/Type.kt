@@ -1,4 +1,4 @@
-package com.zen.e_learning_bahasa_madura.ui.theme
+package com.zen.e_learning_bahasa_madura.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

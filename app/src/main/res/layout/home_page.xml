@@ -47,6 +47,7 @@
                 android:layout_marginBottom="8dp">
 
                 <LinearLayout
+                    android:id="@+id/btnTerjemahan"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -88,6 +89,7 @@
                 android:layout_marginBottom="8dp">
 
                 <LinearLayout
+                    android:id="@+id/btnTb"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -139,6 +141,7 @@
                 android:layout_marginBottom="8dp">
 
                 <LinearLayout
+                    android:id="@+id/btnPelafalan"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -180,6 +183,7 @@
                 android:layout_marginBottom="8dp">
 
                 <LinearLayout
+                    android:id="@+id/btnEval"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"

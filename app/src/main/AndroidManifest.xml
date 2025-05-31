@@ -23,6 +23,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".view.Terjemahan"/>
+        <activity android:name=".view.TingkatBahasa"/>
+        <activity android:name=".view.Pelafalan"/>
+        <activity android:name=".view.Evaluasi"/>
+        <activity android:name=".view.evalTerjemahan"/>
+        <activity android:name=".view.evalTingkatBahasa"/>
+        <activity android:name=".view.evalPelafalan"/>
     </application>
 
 </manifest>
