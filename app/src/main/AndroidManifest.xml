@@ -27,8 +27,12 @@
         <activity android:name=".view.user.EvalTerjemahan" />
         <activity android:name=".view.user.EvalTingkatBahasa" />
         <activity android:name=".view.user.EvalPelafalan" />
+        <activity android:name=".auth.Login"/>
         <activity android:name=".auth.Register" />
         <activity android:name=".view.admin.InputKosakata"/>
-        <activity android:name=".auth.Login"/>
+        <activity android:name=".view.admin.InputEvalTb"/>
+        <activity android:name=".view.admin.InputEvalTerjemahan"/>
+        <activity android:name=".view.admin.InputEvalPelafalan"/>
+        <activity android:name=".view.admin.Kosakata"/>
     </application>
 </manifest>

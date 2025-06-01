@@ -151,7 +151,7 @@
                                         android:background="@drawable/rounded_input"
                                         android:textColor="@color/dalam_kotak"
                                         android:textSize="20sp"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textPassword"
                                         android:maxLines="5"
                                         android:scrollbars="vertical"
                                         android:hint="Masukkan Password Anda"
