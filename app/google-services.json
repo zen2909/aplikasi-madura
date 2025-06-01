@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194099087",
+    "project_id": "e-learningbahasamadura",
+    "storage_bucket": "e-learningbahasamadura.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194099087:android:10f5dbbe8c0af88ba3fdfa",
+        "android_client_info": {
+          "package_name": "com.zen.e_learning_bahasa_madura"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe8nF1ilwL194Wbs6MHMDl8zf9IWhonEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
