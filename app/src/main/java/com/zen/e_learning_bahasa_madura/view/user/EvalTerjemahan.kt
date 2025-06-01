@@ -1,13 +1,16 @@
-package com.zen.e_learning_bahasa_madura.view
+package com.zen.e_learning_bahasa_madura.view.user
 
 import android.app.Activity
 import android.os.Bundle
-import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.HalEvalTerjemahanBinding
 
-class evalTerjemahan : Activity(){
+class EvalTerjemahan : Activity(){
 
+    lateinit var binding : HalEvalTerjemahanBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        binding = HalEvalTerjemahanBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_eval_terjemahan)
+        setContentView(binding.root)
     }
 }

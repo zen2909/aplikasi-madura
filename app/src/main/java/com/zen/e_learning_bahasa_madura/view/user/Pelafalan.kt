@@ -1,18 +1,20 @@
-package com.zen.e_learning_bahasa_madura.view
+package com.zen.e_learning_bahasa_madura.view.user
 
 import android.app.Activity
 import android.os.Bundle
 import android.widget.ImageButton
 import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.HalPelafalanBinding
 
 class Pelafalan : Activity() {
+
+    lateinit var binding : HalPelafalanBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = HalPelafalanBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_pelafalan)
+        setContentView(binding.root)
 
-        val btnBack = findViewById<ImageButton>(R.id.btn_back)
-
-        btnBack.setOnClickListener {
+        binding.btnBack.setOnClickListener {
             finish()
         }
     }

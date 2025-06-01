@@ -1,13 +1,16 @@
-package com.zen.e_learning_bahasa_madura.view
+package com.zen.e_learning_bahasa_madura.view.user
 
 import android.app.Activity
 import android.os.Bundle
-import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.HalEvalTbBinding
 
-class evalTingkatBahasa : Activity() {
+class EvalTingkatBahasa : Activity() {
 
+    lateinit var binding : HalEvalTbBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        binding = HalEvalTbBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_eval_tb)
+        setContentView(binding.root)
     }
 }

@@ -81,7 +81,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:text="Username"
+                                android:text="Email"
                                 android:fontFamily="@font/inter"
                                 android:textSize="20sp"
                                 android:textColor="@color/dalam_kotak"
@@ -104,6 +104,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/emaillogin"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -112,7 +113,7 @@
                                         android:inputType="textMultiLine"
                                         android:maxLines="5"
                                         android:scrollbars="vertical"
-                                        android:hint="Masukkan Username Anda"
+                                        android:hint="Masukkan Email Anda"
                                         android:paddingStart="5dp">
                                     </EditText>
                                 </LinearLayout>
@@ -144,6 +145,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/passwordlogin"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -173,12 +175,36 @@
                                     android:textSize="15sp"/>
 
                                 <TextView
+                                    android:id="@+id/linkregister"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Register"
                                     android:clickable="true"
                                     android:focusable="true"
                                     android:paddingLeft="2dp"
+                                    android:textColor="#007AFF"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="15sp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="/"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:textColor="#007AFF"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:textSize="15sp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"/>
+
+                                <TextView
+                                    android:id="@+id/backhome"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Back To Home"
+                                    android:clickable="true"
+                                    android:focusable="true"
                                     android:textColor="#007AFF"
                                     android:fontFamily="@font/roboto_regular"
                                     android:textSize="15sp"/>
@@ -196,7 +222,7 @@
                             app:cardElevation="8dp">
 
                             <Button
-                                android:id="@+id/ic_send"
+                                android:id="@+id/btnlogin"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@color/kotakan"

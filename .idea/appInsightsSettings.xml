@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.zen.e_learning_bahasa_madura" />
+                  <option name="mobileSdkAppId" value="1:194099087:android:10f5dbbe8c0af88ba3fdfa" />
+                  <option name="projectId" value="e-learningbahasamadura" />
+                  <option name="projectNumber" value="194099087" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

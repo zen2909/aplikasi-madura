@@ -1,37 +1,35 @@
-package com.zen.e_learning_bahasa_madura.view
+package com.zen.e_learning_bahasa_madura.view.user
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.HalEvalBinding
 
 class Evaluasi : Activity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_eval)
 
-        val btnBack = findViewById<ImageButton>(R.id.btn_back)
-        btnBack.setOnClickListener {
+    lateinit var binding : HalEvalBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        binding = HalEvalBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        binding.btnBack.setOnClickListener {
             finish()
         }
 
-        val btnTerjemahan = findViewById<Button>(R.id.btn_eval1)
-        btnTerjemahan.setOnClickListener {
-            val intent = Intent(this, evalTerjemahan::class.java)
+        binding.btnEval1.setOnClickListener {
+            val intent = Intent(this, EvalTerjemahan::class.java)
             startActivity(intent)
         }
 
-        val btnTb = findViewById<Button>(R.id.btn_eval2)
-        btnTb.setOnClickListener {
-            val intent = Intent(this, evalTingkatBahasa::class.java)
+        binding.btnEval2.setOnClickListener {
+            val intent = Intent(this, EvalTingkatBahasa::class.java)
             startActivity(intent)
         }
 
-        val btnPelafalan = findViewById<Button>(R.id.btn_eval3)
-        btnPelafalan.setOnClickListener {
-            val intent = Intent(this, evalPelafalan::class.java)
+        binding.btnEval3.setOnClickListener {
+            val intent = Intent(this, EvalPelafalan::class.java)
             startActivity(intent)
         }
 

@@ -1,18 +1,20 @@
-package com.zen.e_learning_bahasa_madura.view
+package com.zen.e_learning_bahasa_madura.view.user
 
 import android.app.Activity
 import android.os.Bundle
 import android.widget.ImageButton
 import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.HalTerjemahanBinding
 
 class Terjemahan : Activity() {
+
+    lateinit var binding : HalTerjemahanBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = HalTerjemahanBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.hal_terjemahan)
+        setContentView(binding.root)
 
-        val btnBack = findViewById<ImageButton>(R.id.btn_back)
-
-        btnBack.setOnClickListener {
+        binding.btnBack.setOnClickListener {
             finish()
         }
     }

@@ -3,13 +3,14 @@ package com.zen.e_learning_bahasa_madura.view.admin
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.zen.e_learning_bahasa_madura.databinding.InputKosakataBinding
+import com.zen.e_learning_bahasa_madura.databinding.ListKosakataBinding
 
-class InputKosakata : Activity() {
+class Kosakata : Activity() {
 
-    lateinit var binding : InputKosakataBinding
+    lateinit var binding: ListKosakataBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = InputKosakataBinding.inflate(layoutInflater)
+        binding = ListKosakataBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
@@ -33,5 +34,4 @@ class InputKosakata : Activity() {
             startActivity(intent)
         }
     }
-
 }

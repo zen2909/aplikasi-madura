@@ -1,160 +1,120 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <TextView
+            android:id="@+id/nomorSoal"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="95dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/rounded_number"
+            android:elevation="4dp"
+            android:fontFamily="@font/inter"
+            android:gravity="center"
+            android:text="05"
+            android:textColor="@color/dalam_kotak"
+            android:textSize="32sp" />
 
-            <TextView
-                android:id="@+id/nomorSoal"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="50dp"
-                android:layout_marginTop="95dp"
-                android:text="05"
-                android:textSize="32sp"
-                android:fontFamily="@font/inter"
-                android:gravity="center"
-                android:layout_marginBottom="40dp"
-                android:textColor="@color/dalam_kotak"
-                android:background="@drawable/rounded_number"
-                android:elevation="4dp"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_input"
+            android:layout_width="314dp"
+            android:layout_height="142dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_input"
-                android:layout_width="314dp"
-                android:layout_height="142dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginBottom="50dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
+                android:background="@color/kotakan"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <!-- Input Field -->
+                <EditText
+                    android:id="@+id/et_input_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_input"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:hint="Soal"
+                    android:inputType="textMultiLine"
+                    android:maxLines="5"
+                    android:scrollbars="vertical"
+                    android:textAlignment="center"
+                    android:textColor="@color/dalam_kotak"
+                    android:textColorHint="@color/dalam_kotak"
+                    android:textSize="32sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_jawaban"
+            android:layout_width="314dp"
+            android:layout_height="357dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/kotakan"
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/rounded_input"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:background="@color/kotakan"
-                    android:layout_gravity="center"
-                    android:padding="5dp">
+                    android:padding="8dp">
 
-                    <!-- Input Field -->
-                    <EditText
-                        android:id="@+id/et_input_text"
+                    <!-- RadioGroup Container -->
+                    <RadioGroup
+                        android:id="@+id/pilihanjawaban"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/rounded_input"
-                        android:hint="Soal"
-                        android:inputType="textMultiLine"
-                        android:maxLines="5"
-                        android:fontFamily="@font/inter"
-                        android:scrollbars="vertical"
-                        android:gravity="center"
-                        android:textAlignment="center"
-                        android:textColor="@color/dalam_kotak"
-                        android:textColorHint="@color/dalam_kotak"
-                        android:textSize="32sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_jawaban"
-                android:layout_width="314dp"
-                android:layout_height="357dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="30dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/kotakan"
-                    android:orientation="vertical"
-                    android:padding="5dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/rounded_input"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <!-- RadioGroup Container -->
-                        <RadioGroup
-                            android:id="@+id/pilihanjawaban"
+                        <!-- Item 1 -->
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
-                            <!-- Item 1 -->
+                            <!-- RadioButton Card 1 -->
                             <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center"
-                                android:layout_marginBottom="20dp">
+                                android:layout_width="63dp"
+                                android:layout_height="63dp"
+                                android:layout_marginEnd="4dp"
+                                android:orientation="vertical">
 
-                                <!-- RadioButton Card 1 -->
-                                <LinearLayout
-                                    android:layout_width="63dp"
-                                    android:layout_height="63dp"
-                                    android:orientation="vertical"
-                                    android:layout_marginEnd="4dp">
-
-                                    <androidx.cardview.widget.CardView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        app:cardBackgroundColor="@android:color/white"
-                                        app:cardCornerRadius="10dp"
-                                        app:cardElevation="8dp">
-
-                                        <LinearLayout
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:background="@drawable/rounded_number"
-                                            android:orientation="horizontal"
-                                            android:padding="3dp">
-
-                                            <LinearLayout
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:orientation="vertical">
-
-                                                <RadioButton
-                                                    android:id="@+id/radiobutton1"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:scaleX="1.3"
-                                                    android:scaleY="1.3"
-                                                    android:button="@drawable/radio_button_answer"
-                                                    android:textColor="@color/dalam_kotak" />
-                                            </LinearLayout>
-                                        </LinearLayout>
-                                    </androidx.cardview.widget.CardView>
-                                </LinearLayout>
-
-                                <!-- Answer Card 1 -->
                                 <androidx.cardview.widget.CardView
-                                    android:layout_width="203dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
                                     app:cardBackgroundColor="@android:color/white"
                                     app:cardCornerRadius="10dp"
                                     app:cardElevation="8dp">
@@ -162,87 +122,87 @@
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@color/kotakan"
-                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_number"
+                                        android:orientation="horizontal"
                                         android:padding="3dp">
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:background="@drawable/rounded_input"
+                                            android:gravity="center"
                                             android:orientation="vertical">
 
-                                            <TextView
-                                                android:id="@+id/Jawaban1"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:layout_gravity="center"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:fontFamily="@font/inter"
-                                                android:text="Jawaban 1"
-                                                android:textAlignment="center"
-                                                android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                            <RadioButton
+                                                android:id="@+id/radiobutton1"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:button="@drawable/radio_button_answer"
+                                                android:scaleX="1.3"
+                                                android:scaleY="1.3"
+                                                android:textColor="@color/dalam_kotak" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
                             </LinearLayout>
 
-                            <!-- Item 2 -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center"
-                                android:layout_marginBottom="20dp">
+                            <!-- Answer Card 1 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="203dp"
+                                android:layout_height="63dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
 
-                                <!-- RadioButton Card 2 -->
                                 <LinearLayout
-                                    android:layout_width="63dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
                                     android:orientation="vertical"
-                                    android:layout_marginEnd="4dp">
+                                    android:padding="3dp">
 
-                                    <androidx.cardview.widget.CardView
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        app:cardBackgroundColor="@android:color/white"
-                                        app:cardCornerRadius="10dp"
-                                        app:cardElevation="8dp">
+                                        android:background="@drawable/rounded_input"
+                                        android:orientation="vertical">
 
-                                        <LinearLayout
+                                        <TextView
+                                            android:id="@+id/Jawaban1"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:background="@drawable/rounded_number"
-                                            android:orientation="horizontal"
-                                            android:padding="3dp">
-
-                                            <LinearLayout
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:orientation="vertical">
-
-                                                <RadioButton
-                                                    android:id="@+id/radiobutton2"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:scaleX="1.3"
-                                                    android:scaleY="1.3"
-                                                    android:button="@drawable/radio_button_answer"
-                                                    android:textColor="@color/dalam_kotak" />
-                                            </LinearLayout>
-                                        </LinearLayout>
-                                    </androidx.cardview.widget.CardView>
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/rounded_input"
+                                            android:fontFamily="@font/inter"
+                                            android:gravity="center"
+                                            android:text="Jawaban 1"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="32sp" />
+                                    </LinearLayout>
                                 </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
 
-                                <!-- Answer Card 2 -->
+                        <!-- Item 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <!-- RadioButton Card 2 -->
+                            <LinearLayout
+                                android:layout_width="63dp"
+                                android:layout_height="63dp"
+                                android:layout_marginEnd="4dp"
+                                android:orientation="vertical">
+
                                 <androidx.cardview.widget.CardView
-                                    android:layout_width="203dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
                                     app:cardBackgroundColor="@android:color/white"
                                     app:cardCornerRadius="10dp"
                                     app:cardElevation="8dp">
@@ -250,87 +210,87 @@
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@color/kotakan"
-                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_number"
+                                        android:orientation="horizontal"
                                         android:padding="3dp">
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:background="@drawable/rounded_input"
+                                            android:gravity="center"
                                             android:orientation="vertical">
 
-                                            <TextView
-                                                android:id="@+id/Jawaban2"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:layout_gravity="center"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:fontFamily="@font/inter"
-                                                android:text="Jawaban 2"
-                                                android:textAlignment="center"
-                                                android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                            <RadioButton
+                                                android:id="@+id/radiobutton2"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:button="@drawable/radio_button_answer"
+                                                android:scaleX="1.3"
+                                                android:scaleY="1.3"
+                                                android:textColor="@color/dalam_kotak" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
                             </LinearLayout>
 
-                            <!-- Item 3 -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center"
-                                android:layout_marginBottom="20dp">
+                            <!-- Answer Card 2 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="203dp"
+                                android:layout_height="63dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
 
-                                <!-- RadioButton Card 3 -->
                                 <LinearLayout
-                                    android:layout_width="63dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
                                     android:orientation="vertical"
-                                    android:layout_marginEnd="4dp">
+                                    android:padding="3dp">
 
-                                    <androidx.cardview.widget.CardView
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        app:cardBackgroundColor="@android:color/white"
-                                        app:cardCornerRadius="10dp"
-                                        app:cardElevation="8dp">
+                                        android:background="@drawable/rounded_input"
+                                        android:orientation="vertical">
 
-                                        <LinearLayout
+                                        <TextView
+                                            android:id="@+id/Jawaban2"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:background="@drawable/rounded_number"
-                                            android:orientation="horizontal"
-                                            android:padding="3dp">
-
-                                            <LinearLayout
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:orientation="vertical">
-
-                                                <RadioButton
-                                                    android:id="@+id/radiobutton3"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:scaleX="1.3"
-                                                    android:scaleY="1.3"
-                                                    android:button="@drawable/radio_button_answer"
-                                                    android:textColor="@color/dalam_kotak" />
-                                            </LinearLayout>
-                                        </LinearLayout>
-                                    </androidx.cardview.widget.CardView>
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/rounded_input"
+                                            android:fontFamily="@font/inter"
+                                            android:gravity="center"
+                                            android:text="Jawaban 2"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="32sp" />
+                                    </LinearLayout>
                                 </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
 
-                                <!-- Answer Card 3 -->
+                        <!-- Item 3 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <!-- RadioButton Card 3 -->
+                            <LinearLayout
+                                android:layout_width="63dp"
+                                android:layout_height="63dp"
+                                android:layout_marginEnd="4dp"
+                                android:orientation="vertical">
+
                                 <androidx.cardview.widget.CardView
-                                    android:layout_width="203dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
                                     app:cardBackgroundColor="@android:color/white"
                                     app:cardCornerRadius="10dp"
                                     app:cardElevation="8dp">
@@ -338,86 +298,86 @@
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@color/kotakan"
-                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_number"
+                                        android:orientation="horizontal"
                                         android:padding="3dp">
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:background="@drawable/rounded_input"
+                                            android:gravity="center"
                                             android:orientation="vertical">
 
-                                            <TextView
-                                                android:id="@+id/Jawaban3"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:layout_gravity="center"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:fontFamily="@font/inter"
-                                                android:text="Jawaban 3"
-                                                android:textAlignment="center"
-                                                android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                            <RadioButton
+                                                android:id="@+id/radiobutton3"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:button="@drawable/radio_button_answer"
+                                                android:scaleX="1.3"
+                                                android:scaleY="1.3"
+                                                android:textColor="@color/dalam_kotak" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
                             </LinearLayout>
 
-                            <!-- Item 4 -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:orientation="horizontal">
+                            <!-- Answer Card 3 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="203dp"
+                                android:layout_height="63dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
 
-                                <!-- RadioButton Card 4 -->
                                 <LinearLayout
-                                    android:layout_width="63dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
                                     android:orientation="vertical"
-                                    android:layout_marginEnd="4dp">
+                                    android:padding="3dp">
 
-                                    <androidx.cardview.widget.CardView
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_gravity="center"
-                                        app:cardBackgroundColor="@android:color/white"
-                                        app:cardCornerRadius="10dp"
-                                        app:cardElevation="8dp">
+                                        android:background="@drawable/rounded_input"
+                                        android:orientation="vertical">
 
-                                        <LinearLayout
+                                        <TextView
+                                            android:id="@+id/Jawaban3"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:background="@drawable/rounded_number"
-                                            android:orientation="horizontal"
-                                            android:padding="3dp">
-
-                                            <LinearLayout
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:orientation="vertical">
-
-                                                <RadioButton
-                                                    android:id="@+id/radiobutton4"
-                                                    android:layout_width="wrap_content"
-                                                    android:layout_height="wrap_content"
-                                                    android:scaleX="1.3"
-                                                    android:scaleY="1.3"
-                                                    android:button="@drawable/radio_button_answer"
-                                                    android:textColor="@color/dalam_kotak" />
-                                            </LinearLayout>
-                                        </LinearLayout>
-                                    </androidx.cardview.widget.CardView>
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/rounded_input"
+                                            android:fontFamily="@font/inter"
+                                            android:gravity="center"
+                                            android:text="Jawaban 3"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="32sp" />
+                                    </LinearLayout>
                                 </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
 
-                                <!-- Answer Card 4 -->
+                        <!-- Item 4 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <!-- RadioButton Card 4 -->
+                            <LinearLayout
+                                android:layout_width="63dp"
+                                android:layout_height="63dp"
+                                android:layout_marginEnd="4dp"
+                                android:orientation="vertical">
+
                                 <androidx.cardview.widget.CardView
-                                    android:layout_width="203dp"
-                                    android:layout_height="63dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
                                     app:cardBackgroundColor="@android:color/white"
                                     app:cardCornerRadius="10dp"
                                     app:cardElevation="8dp">
@@ -425,65 +385,99 @@
                                     <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@color/kotakan"
-                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_number"
+                                        android:orientation="horizontal"
                                         android:padding="3dp">
 
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:background="@drawable/rounded_input"
+                                            android:gravity="center"
                                             android:orientation="vertical">
 
-                                            <TextView
-                                                android:id="@+id/Jawaban4"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="match_parent"
-                                                android:layout_gravity="center"
-                                                android:background="@drawable/rounded_input"
-                                                android:gravity="center"
-                                                android:fontFamily="@font/inter"
-                                                android:text="Jawaban 4"
-                                                android:textAlignment="center"
-                                                android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                            <RadioButton
+                                                android:id="@+id/radiobutton4"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:button="@drawable/radio_button_answer"
+                                                android:scaleX="1.3"
+                                                android:scaleY="1.3"
+                                                android:textColor="@color/dalam_kotak" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
                             </LinearLayout>
 
-                        </RadioGroup>
-                    </LinearLayout>
+                            <!-- Answer Card 4 -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="203dp"
+                                android:layout_height="63dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
+                                    android:orientation="vertical"
+                                    android:padding="3dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/rounded_input"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/Jawaban4"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_gravity="center"
+                                            android:background="@drawable/rounded_input"
+                                            android:fontFamily="@font/inter"
+                                            android:gravity="center"
+                                            android:text="Jawaban 4"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="32sp" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                    </RadioGroup>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_send"
-                android:layout_width="166dp"
-                android:layout_height="55dp"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_send"
+            android:layout_width="166dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
+                android:background="@color/kotakan"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-                <LinearLayout
+                <!-- Input Field -->
+                <ImageButton
+                    android:id="@+id/ic_send"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:background="@color/kotakan"
-                    android:layout_gravity="center"
-                    android:padding="5dp">
-
-                    <!-- Input Field -->
-                    <ImageButton
-                        android:id="@+id/ic_send"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/rounded_input"
-                        android:src="@drawable/ic_send"
-                        android:gravity="center" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+                    android:background="@drawable/rounded_input"
+                    android:gravity="center"
+                    android:src="@drawable/ic_send" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

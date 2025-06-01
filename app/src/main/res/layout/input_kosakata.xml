@@ -390,6 +390,7 @@
             android:focusable="true">
 
             <ImageView
+                android:id="@+id/inputkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_madura"
@@ -409,6 +410,7 @@
             android:background="?android:attr/selectableItemBackground">
 
             <ImageView
+                android:id="@+id/inputeval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_eval"
@@ -427,6 +429,7 @@
             android:focusable="true">
 
             <ImageView
+                android:id="@+id/listkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_madura"
@@ -445,6 +448,7 @@
             android:focusable="true">
 
             <ImageView
+                android:id="@+id/listsoaleval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_eval"

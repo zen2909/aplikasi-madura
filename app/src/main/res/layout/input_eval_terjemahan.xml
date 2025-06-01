@@ -22,6 +22,7 @@
             app:cardElevation="8dp">
 
             <TextView
+                android:id="@+id/inputtb"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -41,6 +42,7 @@
             app:cardElevation="8dp">
 
             <TextView
+                android:id="@+id/inputpelafalan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -413,6 +415,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/inputkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_madura"
@@ -431,6 +434,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/inputeval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_eval"
@@ -448,6 +452,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/listkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_madura"
@@ -465,6 +470,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/listsoaleval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_eval"

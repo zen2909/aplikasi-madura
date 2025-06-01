@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">E-Learning_Bahasa_madura</string>
+    <string name="title_activity_auth">AuthActivity</string>
 </resources>
