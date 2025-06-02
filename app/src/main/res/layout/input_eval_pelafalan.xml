@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
+    <!-- Header Cards -->
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="379dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="100dp"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
@@ -57,7 +58,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_below="@id/headerLayout"
+        android:layout_above="@+id/bottomNavigation"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
