@@ -1,24 +1,20 @@
 package com.zen.e_learning_bahasa_madura.auth
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 import com.zen.e_learning_bahasa_madura.databinding.RegisterAdminBinding
-import com.zen.e_learning_bahasa_madura.model.Admin
+import java.security.MessageDigest
 
 class Register : Activity() {
 
-    lateinit var binding: RegisterAdminBinding
-    lateinit var auth: FirebaseAuth
-    lateinit var data: DatabaseReference
+    private lateinit var binding: RegisterAdminBinding
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = RegisterAdminBinding.inflate(layoutInflater)
@@ -26,94 +22,83 @@ class Register : Activity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        data = FirebaseDatabase.getInstance().getReference("Admin")
-
-
 
         binding.btnregister.setOnClickListener {
-            val email = binding.emailregister.text.toString()
-            val password = binding.passwordregister.text.toString()
+            val email = binding.emailregister.text.toString().trim()
+            val password = binding.passwordregister.text.toString().trim()
 
             if (email.isEmpty()) {
-                binding.emailregister.error = "Email Harus Diisi"
+                binding.emailregister.error = "Email harus diisi"
+                binding.emailregister.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                binding.emailregister.error = "Email tidak valid"
                 binding.emailregister.requestFocus()
                 return@setOnClickListener
             }
 
             if (password.isEmpty()) {
-                binding.passwordregister.error = "password Harus Diisi"
-                binding.emailregister.requestFocus()
+                binding.passwordregister.error = "Password harus diisi"
+                binding.passwordregister.requestFocus()
                 return@setOnClickListener
             }
 
             if (password.length < 8) {
-                binding.passwordregister.error = "password minimal 8 karakter"
-                binding.emailregister.requestFocus()
+                binding.passwordregister.error = "Password minimal 8 karakter"
+                binding.passwordregister.requestFocus()
                 return@setOnClickListener
             }
 
-            if (email.isEmpty() && password.isEmpty()) {
-                binding.emailregister.error = "Email Harus Diisi"
-                binding.passwordregister.error = "password Harus Diisi"
-            }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.emailregister.error = "Email Tidak Valid"
-                binding.emailregister.requestFocus()
-                return@setOnClickListener
-            }
-
-            RegisterFirebase(email, password)
+            registerAdmin(email, password)
         }
 
         binding.linkadmin.setOnClickListener {
-            val intent = Intent(this, Login::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Login::class.java))
         }
-
     }
 
-    private fun RegisterFirebase(email: String, password: String) {
-        val progressdialog = ProgressDialog(this)
-        progressdialog.setTitle("Registrasi Admin")
-        progressdialog.setMessage("Mohon Tunggu")
-        progressdialog.setCanceledOnTouchOutside(false)
-        progressdialog.show()
-
+    private fun registerAdmin(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) {
-                if (it.isSuccessful) {
-                    saveData(email, password, progressdialog)
-                    val intent = Intent(this, Login::class.java)
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(this, "${it.exception?.message}", Toast.LENGTH_SHORT).show()
+            .addOnSuccessListener {
+                val uid = auth.currentUser?.uid
+                if (uid == null) {
+                    Toast.makeText(this, "Gagal mendapatkan UID", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
                 }
+
+                val hashedPassword = hashPassword(password)
+                val admin = mapOf(
+                    "id" to uid,
+                    "email" to email,
+                    "password" to hashedPassword
+                )
+
+                FirebaseDatabase.getInstance().reference
+                    .child("Admin")
+                    .child(uid)
+                    .setValue(admin)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Admin berhasil terdaftar", Toast.LENGTH_SHORT).show()
+                        Log.d("REGISTER", "Admin data stored for uid: $uid")
+                        startActivity(Intent(this, Login::class.java))
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Gagal simpan ke database: ${e.message}", Toast.LENGTH_LONG).show()
+                        Log.e("REGISTER", "Database write failed: ${e.message}")
+                    }
+
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Gagal registrasi: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("REGISTER", "Auth failed: ${e.message}")
             }
     }
 
-    private fun saveData(email: String, password: String, progressdialog: ProgressDialog) {
-
-        val id = auth.currentUser?.uid.toString()
-        data = FirebaseDatabase.getInstance().reference.child("Admin")
-        val admin = HashMap<String, Any>()
-
-        admin["id"] = id
-        admin["email"] = email
-        admin["password"] = password
-
-        data.child(id).setValue(admin).addOnCompleteListener {
-            if (it.isSuccessful) {
-                progressdialog.dismiss()
-                Toast.makeText(this, "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, Login::class.java)
-                intent.addFlags(intent.flags or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            } else {
-                val message = it.exception!!.toString()
-                Toast.makeText(this, "Data gagal ditambahkan : $message", Toast.LENGTH_SHORT).show()
-                progressdialog.dismiss()
-            }
-        }
+    private fun hashPassword(password: String): String {
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(password.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
     }
 }

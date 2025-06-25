@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,14 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ELearning_Bahasa_madura"
         tools:targetApi="31" >
-        <activity android:name=".view.user.HomePage"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".view.user.HomePage"/>
         <activity android:name=".view.user.Terjemahan" />
         <activity android:name=".view.user.TingkatBahasa" />
         <activity android:name=".view.user.Pelafalan" />
@@ -29,7 +25,14 @@
         <activity android:name=".view.user.EvalPelafalan" />
         <activity android:name=".auth.Login"/>
         <activity android:name=".auth.Register" />
-        <activity android:name=".view.admin.InputKosakata"/>
+        <activity android:name=".view.admin.InputKosakata"
+            android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".view.admin.InputEvalTb"/>
         <activity android:name=".view.admin.InputEvalTerjemahan"/>
         <activity android:name=".view.admin.InputEvalPelafalan"/>

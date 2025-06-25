@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomNavigation"
         android:orientation="vertical"
-        android:paddingTop="150dp"
+        android:paddingTop="450dp"
         android:clipToPadding="false"
         android:fillViewport="true">
 
@@ -41,7 +41,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="694dp"
+                    android:layout_height="890dp"
                     android:background="@drawable/rounded_input"
                     android:orientation="vertical">
 
@@ -90,6 +90,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/ktdasar"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -117,6 +118,7 @@
                                     android:padding="2dp">
 
                                     <ImageButton
+                                        android:id="@+id/audiodasar"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -154,6 +156,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/ktmenengah"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -181,6 +184,7 @@
                                     android:padding="2dp">
 
                                     <ImageButton
+                                        android:id="@+id/audiomenengah"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -218,6 +222,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/kttinggi"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -245,6 +250,7 @@
                                     android:padding="2dp">
 
                                     <ImageButton
+                                        android:id="@+id/audiotinggi"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -282,6 +288,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/ktindonesia"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -302,7 +309,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/inter"
-                            android:text="Carakan Madura"
+                            android:text="Carakan Dasar"
                             android:textColor="@color/dalam_kotak"
                             android:textSize="20sp" />
 
@@ -324,6 +331,7 @@
                                     android:padding="2dp">
 
                                     <EditText
+                                        android:id="@+id/cardasar"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
@@ -337,6 +345,92 @@
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/inter"
+                            android:text="Carakan Menengah"
+                            android:textColor="@color/dalam_kotak"
+                            android:textSize="20sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
+                                    android:padding="2dp">
+
+                                    <EditText
+                                        android:id="@+id/carmenengah"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/rounded_input"
+                                        android:inputType="textMultiLine"
+                                        android:maxLines="5"
+                                        android:paddingLeft="6dp"
+                                        android:scrollbars="vertical"
+                                        android:textColor="@color/dalam_kotak"
+                                        android:textSize="20sp" />
+
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/inter"
+                            android:text="Carakan Tinggi"
+                            android:textColor="@color/dalam_kotak"
+                            android:textSize="20sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
+                                    android:padding="2dp">
+
+                                    <EditText
+                                        android:id="@+id/cartinggi"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/rounded_input"
+                                        android:inputType="textMultiLine"
+                                        android:maxLines="5"
+                                        android:paddingLeft="6dp"
+                                        android:scrollbars="vertical"
+                                        android:textColor="@color/dalam_kotak"
+                                        android:textSize="20sp" />
+
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -354,6 +448,7 @@
                     android:background="@color/kotakan">
 
                     <Button
+                        android:id="@+id/btnSimpan"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/kotakan"
