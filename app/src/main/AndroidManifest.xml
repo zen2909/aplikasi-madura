@@ -36,7 +36,7 @@
         <activity android:name=".view.admin.InputEvalTb"/>
         <activity android:name=".view.admin.InputEvalTerjemahan"/>
         <activity android:name=".view.admin.InputEvalPelafalan"/>
-        <activity android:name=".view.admin.Kosakata"/>
         <activity android:name=".view.admin.SoalEvaluasi"/>
+        <activity android:name=".view.admin.ListKosakata"/>
     </application>
 </manifest>

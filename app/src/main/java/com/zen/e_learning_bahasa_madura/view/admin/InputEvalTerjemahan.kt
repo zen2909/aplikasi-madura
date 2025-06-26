@@ -25,7 +25,7 @@ class InputEvalTerjemahan : Activity() {
         }
 
         binding.listkosakata.setOnClickListener {
-            val intent = Intent(this, Kosakata::class.java)
+            val intent = Intent(this, ListKosakata::class.java)
             startActivity(intent)
         }
 
