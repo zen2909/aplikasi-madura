@@ -2,10 +2,11 @@ package com.zen.e_learning_bahasa_madura.view.admin
 
 import android.app.Activity
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +17,13 @@ import com.zen.e_learning_bahasa_madura.model.BahasaMadura
 import com.zen.e_learning_bahasa_madura.model.MaduraDasar
 import com.zen.e_learning_bahasa_madura.model.MaduraMenengah
 import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
+import com.zen.e_learning_bahasa_madura.util.NavHelper
 
 class ListKosakata : Activity() {
 
     private lateinit var binding: ActivityListKosakataBinding
     private lateinit var database: DatabaseReference
+    private val fullListData = mutableListOf<KosakataFull>()
     private val listData = mutableListOf<KosakataFull>()
     private lateinit var adapter: KosakataAdapter
 
@@ -34,27 +37,43 @@ class ListKosakata : Activity() {
         adapter = KosakataAdapter(listData)
         binding.rvKosakata.adapter = adapter
 
-        binding.inputkosakata.setOnClickListener {
-            val intent = Intent(this, InputKosakata::class.java)
-            startActivity(intent)
-        }
+        NavHelper.setup(
+            activity = this,
+            menuInputKosakata = binding.menuInputKosakata,
+            menuEval = binding.menuEval,
+            menuList = binding.menuList,
+            menuSoal = binding.menuSoal,
+            currentClass = ListKosakata::class.java
+        )
 
-        binding.inputeval.setOnClickListener {
-            val intent = Intent(this, InputEvalTerjemahan::class.java)
-            startActivity(intent)
-        }
-
-        binding.listkosakata.setOnClickListener {
-            val intent = Intent(this, ListKosakata::class.java)
-            startActivity(intent)
-        }
-
-        binding.listsoaleval.setOnClickListener {
-            val intent = Intent(this, SoalEvaluasi::class.java)
-            startActivity(intent)
-        }
-
+        setupSearchView()
         fetchKosakata()
+    }
+
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText.orEmpty())
+                return true
+            }
+        })
+    }
+
+    private fun filterList(query: String) {
+        val filtered = if (query.isBlank()) {
+            fullListData
+        } else {
+            fullListData.filter {
+                it.dasar.kosakata.contains(query, ignoreCase = true) ||
+                        it.indo.kosakata_indonesia.contains(query, ignoreCase = true)
+            }
+        }
+
+        listData.clear()
+        listData.addAll(filtered)
+        adapter.notifyDataSetChanged()
     }
 
     private fun fetchKosakata() {
@@ -83,7 +102,9 @@ class ListKosakata : Activity() {
                                                     override fun onDataChange(snapshotTinggi: DataSnapshot) {
                                                         val tinggi = snapshotTinggi.getValue(MaduraTinggi::class.java)
                                                         if (tinggi != null) {
-                                                            listData.add(KosakataFull(index++, dasar, menengah, tinggi, bahasa))
+                                                            val item = KosakataFull(index++, dasar, menengah, tinggi, bahasa)
+                                                            fullListData.add(item)
+                                                            listData.add(item)
                                                             adapter.notifyItemInserted(listData.size - 1)
                                                         }
 
@@ -103,6 +124,9 @@ class ListKosakata : Activity() {
                         })
                     }
                 }
+
+                binding.loadingBar.visibility = View.GONE
+                filterList(binding.searchView.query.toString())
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -110,6 +134,10 @@ class ListKosakata : Activity() {
                 Toast.makeText(this@ListKosakata, "Gagal ambil data", Toast.LENGTH_SHORT).show()
             }
         })
+
+        listData.clear()
+        listData.addAll(fullListData)
+        adapter.notifyDataSetChanged()
     }
 
     data class KosakataFull(
@@ -141,6 +169,26 @@ class ListKosakata : Activity() {
 
             holder.binding.btnDelete.setOnClickListener {
                 Toast.makeText(holder.itemView.context, "Hapus: ${item.dasar.kosakata}", Toast.LENGTH_SHORT).show()
+            }
+
+            holder.binding.btnEdit.setOnClickListener {
+                val context = holder.itemView.context
+                val intent = Intent(context, EditKosakata::class.java)
+                intent.putExtra("id_dasar", item.dasar.id_dasar)
+                intent.putExtra("id_menengah", item.menengah.id_menengah)
+                intent.putExtra("id_tinggi", item.tinggi.id_tinggi)
+                intent.putExtra("kosakata_indo", item.indo.kosakata_indonesia)
+                context.startActivity(intent)
+            }
+
+            holder.binding.btnDelete.setOnClickListener {
+                val context = holder.itemView.context
+                val db = FirebaseDatabase.getInstance().reference
+                db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
+                db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
+                db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
+                db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
+                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
             }
         }
 

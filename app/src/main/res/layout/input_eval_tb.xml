@@ -405,7 +405,7 @@
         android:weightSum="4">
 
         <LinearLayout
-            android:id="@+id/menuShare"
+            android:id="@+id/menuInputKosakata"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -423,7 +423,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuEmail"
+            android:id="@+id/menuEval"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -442,7 +442,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuDatabase"
+            android:id="@+id/menuList"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -460,7 +460,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuCheck"
+            android:id="@+id/menuSoal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

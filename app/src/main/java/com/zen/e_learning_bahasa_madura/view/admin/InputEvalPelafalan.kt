@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.zen.e_learning_bahasa_madura.databinding.InputEvalPelafalanBinding
+import com.zen.e_learning_bahasa_madura.util.NavHelper
 
 class InputEvalPelafalan : Activity() {
 
@@ -14,25 +15,14 @@ class InputEvalPelafalan : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.inputkosakata.setOnClickListener {
-            val intent = Intent(this, InputKosakata::class.java)
-            startActivity(intent)
-        }
-
-        binding.inputeval.setOnClickListener {
-            val intent = Intent(this, InputEvalTerjemahan::class.java)
-            startActivity(intent)
-        }
-
-        binding.listkosakata.setOnClickListener {
-            val intent = Intent(this, ListKosakata::class.java)
-            startActivity(intent)
-        }
-
-        binding.listsoaleval.setOnClickListener {
-            val intent = Intent(this, SoalEvaluasi::class.java)
-            startActivity(intent)
-        }
+        NavHelper.setup(
+            activity = this,
+            menuInputKosakata = binding.menuInputKosakata,
+            menuEval = binding.menuEval,
+            menuList = binding.menuList,
+            menuSoal = binding.menuSoal,
+            currentClass = InputEvalPelafalan::class.java
+        )
 
         binding.inputterjemahan.setOnClickListener {
             val intent = Intent(this, InputEvalTerjemahan::class.java)

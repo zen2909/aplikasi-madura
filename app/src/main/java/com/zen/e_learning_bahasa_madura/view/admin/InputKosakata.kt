@@ -20,6 +20,7 @@ import java.util.UUID
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.zen.e_learning_bahasa_madura.util.NavHelper
 
 class InputKosakata : Activity() {
 
@@ -35,25 +36,14 @@ class InputKosakata : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.inputkosakata.setOnClickListener {
-            val intent = Intent(this, InputKosakata::class.java)
-            startActivity(intent)
-        }
-
-        binding.inputeval.setOnClickListener {
-            val intent = Intent(this, InputEvalTerjemahan::class.java)
-            startActivity(intent)
-        }
-
-        binding.listkosakata.setOnClickListener {
-            val intent = Intent(this, ListKosakata::class.java)
-            startActivity(intent)
-        }
-
-        binding.listsoaleval.setOnClickListener {
-            val intent = Intent(this, SoalEvaluasi::class.java)
-            startActivity(intent)
-        }
+        NavHelper.setup(
+            activity = this,
+            menuInputKosakata = binding.menuInputKosakata,
+            menuEval = binding.menuEval,
+            menuList = binding.menuList,
+            menuSoal = binding.menuSoal,
+            currentClass = InputKosakata::class.java
+        )
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             val permissions = arrayOf(
@@ -87,6 +77,7 @@ class InputKosakata : Activity() {
 
         btnSimpan.setOnClickListener {
             insertKosakata()
+
         }
     }
 
@@ -203,5 +194,4 @@ class InputKosakata : Activity() {
         binding.carmenengah.text.clear()
         binding.cartinggi.text.clear()
     }
-
 }

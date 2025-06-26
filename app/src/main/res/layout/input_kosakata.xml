@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomNavigation"
         android:orientation="vertical"
-        android:paddingTop="450dp"
-        android:clipToPadding="false"
-        android:fillViewport="true">
+        android:paddingTop="90dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="379dp"
-                android:layout_height="wrap_content"
+                android:layout_height="600dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="3dp"
                 app:cardBackgroundColor="@color/kotakan"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="8dp"
-                app:contentPadding="5dp">
+                app:contentPadding="5dp"
+                android:maxHeight="600dp">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -47,7 +52,8 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="20dp"
                         android:layout_gravity="center"
                         android:orientation="vertical">
 
@@ -433,12 +439,13 @@
 
                     </LinearLayout>
                 </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="379dp"
                 android:layout_height="76dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="10dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="8dp">
 
@@ -462,7 +469,7 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
     </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomNavigation"
@@ -475,14 +482,15 @@
         android:weightSum="4">
 
         <LinearLayout
-            android:id="@+id/menuShare"
+            android:id="@+id/menuInputKosakata"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/inputkosakata"
@@ -494,7 +502,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuEmail"
+            android:id="@+id/menuEval"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -514,14 +522,15 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuDatabase"
+            android:id="@+id/menuList"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/listkosakata"
@@ -533,14 +542,15 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuCheck"
+            android:id="@+id/menuSoal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/listsoaleval"

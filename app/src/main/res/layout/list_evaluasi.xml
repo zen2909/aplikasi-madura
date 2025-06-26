@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/MenuEval"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -820,14 +822,15 @@
         android:weightSum="4">
 
         <LinearLayout
-            android:id="@+id/menuShare"
+            android:id="@+id/menuInputKosakata"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/inputkosakata"
@@ -835,18 +838,19 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_madura"
                 android:tint="@color/dalam_kotak" />
+
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuEmail"
+            android:id="@+id/menuEval"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/inputeval"
@@ -854,17 +858,19 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_input_eval"
                 android:tint="@color/dalam_kotak" />
+
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuDatabase"
+            android:id="@+id/menuList"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/listkosakata"
@@ -872,17 +878,19 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_madura"
                 android:tint="@color/dalam_kotak" />
+
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menuCheck"
+            android:id="@+id/menuSoal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:id="@+id/listsoaleval"
@@ -890,6 +898,8 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_list_eval"
                 android:tint="@color/dalam_kotak" />
+
         </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>
