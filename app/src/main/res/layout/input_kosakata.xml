@@ -54,6 +54,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:paddingBottom="20dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginEnd="3dp"
                         android:layout_gravity="center"
                         android:orientation="vertical">
 
@@ -84,8 +86,9 @@
                             android:orientation="horizontal">
 
                             <androidx.cardview.widget.CardView
-                                android:layout_width="279dp"
+                                android:layout_width="285dp"
                                 android:layout_height="61dp"
+                                android:layout_marginEnd="3dp"
                                 app:cardCornerRadius="10dp"
                                 app:cardElevation="8dp">
 
@@ -100,7 +103,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -150,8 +153,9 @@
                             android:orientation="horizontal">
 
                             <androidx.cardview.widget.CardView
-                                android:layout_width="279dp"
+                                android:layout_width="285dp"
                                 android:layout_height="61dp"
+                                android:layout_marginEnd="3dp"
                                 app:cardCornerRadius="10dp"
                                 app:cardElevation="8dp">
 
@@ -166,7 +170,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -216,8 +220,9 @@
                             android:orientation="horizontal">
 
                             <androidx.cardview.widget.CardView
-                                android:layout_width="279dp"
+                                android:layout_width="285dp"
                                 android:layout_height="61dp"
+                                android:layout_marginEnd="3dp"
                                 app:cardCornerRadius="10dp"
                                 app:cardElevation="8dp">
 
@@ -232,7 +237,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -241,6 +246,7 @@
 
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
+
 
                             <androidx.cardview.widget.CardView
                                 android:layout_width="67dp"
@@ -261,6 +267,87 @@
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
                                         android:src="@drawable/ic_mic_input" />
+
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/inter"
+                            android:gravity="center_horizontal"
+                            android:text="Huruf Khusus Bahasa Madura"
+                            android:textColor="@color/dalam_kotak"
+                            android:textSize="20sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="61dp"
+                                android:layout_height="61dp"
+                                android:layout_marginEnd="50dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
+                                    android:padding="2dp">
+
+                                    <Button
+                                        android:id="@+id/hurufamdr"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/rounded_input"
+                                        android:inputType="textCapSentences"
+                                        android:maxLines="5"
+                                        android:text="â "
+                                        android:layout_gravity="center_horizontal"
+                                        android:textAllCaps="false"
+                                        android:paddingLeft="6dp"
+                                        android:scrollbars="vertical"
+                                        android:fontFamily="@font/inter"
+                                        android:textColor="@color/dalam_kotak"
+                                        android:textSize="20sp" />
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="61dp"
+                                android:layout_height="61dp"
+                                app:cardCornerRadius="10dp"
+                                android:layout_marginStart="50dp"
+                                app:cardElevation="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/kotakan"
+                                    android:padding="2dp">
+
+                                    <Button
+                                        android:id="@+id/hurufemdr"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/rounded_input"
+                                        android:inputType="textCapSentences"
+                                        android:maxLines="5"
+                                        android:text="è "
+                                        android:layout_gravity="center_horizontal"
+                                        android:textAllCaps="false"
+                                        android:paddingLeft="6dp"
+                                        android:scrollbars="vertical"
+                                        android:fontFamily="@font/inter"
+                                        android:textColor="@color/dalam_kotak"
+                                        android:textSize="20sp" />
 
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
@@ -298,7 +385,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -341,7 +428,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -383,7 +470,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -426,7 +513,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textMultiLine"
+                                        android:inputType="textCapSentences"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"

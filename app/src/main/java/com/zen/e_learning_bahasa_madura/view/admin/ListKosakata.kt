@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
@@ -45,10 +46,17 @@ class ListKosakata : Activity() {
             menuSoal = binding.menuSoal,
             currentClass = ListKosakata::class.java
         )
-
         setupSearchView()
         fetchKosakata()
+
+        binding.btnRefresh.setOnClickListener {
+            listData.clear()
+            adapter.notifyDataSetChanged()
+            fetchKosakata()
+            Toast.makeText(this, "Data diperbarui", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -77,68 +85,73 @@ class ListKosakata : Activity() {
     }
 
     private fun fetchKosakata() {
-        binding.loadingBar.visibility = android.view.View.VISIBLE
+        binding.loadingBar.visibility = View.VISIBLE
 
         database.child("Bahasa_madura").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                fullListData.clear()
                 listData.clear()
                 var index = 1
                 for (data in snapshot.children) {
-                    val bahasa = data.getValue(BahasaMadura::class.java)
-                    if (bahasa != null) {
-                        val idDasar = bahasa.id_dasar
-                        val idMenengah = bahasa.id_menengah
-                        val idTinggi = bahasa.id_tinggi
+                    val bahasa = data.getValue(BahasaMadura::class.java) ?: continue
 
-                        database.child("Madura_dasar").child(idDasar).addListenerForSingleValueEvent(object : ValueEventListener {
+                    val idDasar = bahasa.id_dasar
+                    val idMenengah = bahasa.id_menengah
+                    val idTinggi = bahasa.id_tinggi
+
+                    database.child("Madura_dasar").child(idDasar)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshotDasar: DataSnapshot) {
-                                val dasar = snapshotDasar.getValue(MaduraDasar::class.java)
-                                if (dasar != null) {
-                                    database.child("Madura_menengah").child(idMenengah).addListenerForSingleValueEvent(object : ValueEventListener {
+                                val dasar = snapshotDasar.getValue(MaduraDasar::class.java) ?: return
+
+                                database.child("Madura_menengah").child(idMenengah)
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(snapshotMenengah: DataSnapshot) {
-                                            val menengah = snapshotMenengah.getValue(MaduraMenengah::class.java)
-                                            if (menengah != null) {
-                                                database.child("Madura_tinggi").child(idTinggi).addListenerForSingleValueEvent(object : ValueEventListener {
+                                            val menengah = snapshotMenengah.getValue(MaduraMenengah::class.java) ?: return
+
+                                            database.child("Madura_tinggi").child(idTinggi)
+                                                .addListenerForSingleValueEvent(object : ValueEventListener {
                                                     override fun onDataChange(snapshotTinggi: DataSnapshot) {
-                                                        val tinggi = snapshotTinggi.getValue(MaduraTinggi::class.java)
-                                                        if (tinggi != null) {
-                                                            val item = KosakataFull(index++, dasar, menengah, tinggi, bahasa)
-                                                            fullListData.add(item)
-                                                            listData.add(item)
-                                                            adapter.notifyItemInserted(listData.size - 1)
-                                                        }
+                                                        val tinggi = snapshotTinggi.getValue(MaduraTinggi::class.java) ?: return
+
+                                                        val kosakata = KosakataFull(index++, dasar, menengah, tinggi, bahasa)
+                                                        listData.add(kosakata)
+                                                        fullListData.add(kosakata)
 
                                                         if (index > snapshot.childrenCount) {
-                                                            binding.loadingBar.visibility = android.view.View.GONE
+                                                            fullListData.sortBy { it.dasar.kosakata.lowercase() }
+
+                                                            fullListData.forEachIndexed { i, item ->
+                                                                fullListData[i] = item.copy(nomor = i + 1)
+                                                            }
+
+                                                            listData.clear()
+                                                            listData.addAll(fullListData)
+                                                            adapter.notifyDataSetChanged()
+                                                            binding.loadingBar.visibility = View.GONE
                                                         }
                                                     }
+
                                                     override fun onCancelled(error: DatabaseError) {}
                                                 })
-                                            }
                                         }
+
                                         override fun onCancelled(error: DatabaseError) {}
                                     })
-                                }
                             }
+
                             override fun onCancelled(error: DatabaseError) {}
                         })
-                    }
                 }
-
-                binding.loadingBar.visibility = View.GONE
-                filterList(binding.searchView.query.toString())
             }
 
             override fun onCancelled(error: DatabaseError) {
-                binding.loadingBar.visibility = android.view.View.GONE
+                binding.loadingBar.visibility = View.GONE
                 Toast.makeText(this@ListKosakata, "Gagal ambil data", Toast.LENGTH_SHORT).show()
             }
         })
-
-        listData.clear()
-        listData.addAll(fullListData)
-        adapter.notifyDataSetChanged()
     }
+
 
     data class KosakataFull(
         val nomor: Int,
@@ -177,8 +190,10 @@ class ListKosakata : Activity() {
                 intent.putExtra("id_dasar", item.dasar.id_dasar)
                 intent.putExtra("id_menengah", item.menengah.id_menengah)
                 intent.putExtra("id_tinggi", item.tinggi.id_tinggi)
-                intent.putExtra("kosakata_indo", item.indo.kosakata_indonesia)
-                context.startActivity(intent)
+                intent.putExtra("id_indo", item.indo.id)
+                if (context is Activity) {
+                    context.startActivityForResult(intent, 1001)
+                }
             }
 
             holder.binding.btnDelete.setOnClickListener {
@@ -191,7 +206,14 @@ class ListKosakata : Activity() {
                 Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
             }
         }
-
         override fun getItemCount() = data.size
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            fetchKosakata()
+        }
+    }
+
 }

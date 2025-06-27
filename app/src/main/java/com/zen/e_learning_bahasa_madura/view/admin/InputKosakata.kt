@@ -1,14 +1,17 @@
 package com.zen.e_learning_bahasa_madura.view.admin
 
 import android.app.Activity
-import android.content.Intent
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import com.zen.e_learning_bahasa_madura.databinding.InputKosakataBinding
 import android.media.MediaRecorder
 import android.net.Uri
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
+import android.widget.EditText
+import android.text.TextWatcher
+import android.text.Editable
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.zen.e_learning_bahasa_madura.model.BahasaMadura
@@ -18,18 +21,22 @@ import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
 import java.io.File
 import java.util.UUID
 import android.content.pm.PackageManager
+import android.text.InputType
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.util.NavHelper
+import com.google.android.gms.tasks.Tasks
 
 class InputKosakata : Activity() {
 
-    lateinit var binding : InputKosakataBinding
+    private lateinit var binding : InputKosakataBinding
     private var audioDasarPath: String = ""
     private var audioMenengahPath: String = ""
     private var audioTinggiPath: String = ""
     private var recorder: MediaRecorder? = null
     private var currentRecordingType: String = ""
+    private var posisiInputan: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = InputKosakataBinding.inflate(layoutInflater)
@@ -44,6 +51,17 @@ class InputKosakata : Activity() {
             menuSoal = binding.menuSoal,
             currentClass = InputKosakata::class.java
         )
+
+
+        binding.ktdasar.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+
+        binding.ktmenengah.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+
+        binding.kttinggi.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+
+        binding.ktindonesia.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+
+        hurufkhusus()
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             val permissions = arrayOf(
@@ -81,6 +99,27 @@ class InputKosakata : Activity() {
         }
     }
 
+    private fun hurufkhusus() {
+        binding.hurufemdr.setOnClickListener { inserthuruf("è") }
+        binding.hurufamdr.setOnClickListener { inserthuruf("â") }
+    }
+
+    private fun inserthuruf(char: String) {
+        val view = currentFocus
+        if (view is EditText) {
+            val editText = view
+            val start = editText.selectionStart
+            val end = editText.selectionEnd
+
+            val isAwal = start == 0
+
+            val insertChar = if (isAwal) char.uppercase() else char.lowercase()
+
+            editText.text.replace(start, end, insertChar)
+            editText.setSelection(start + insertChar.length)
+        }
+    }
+
     private fun handleRecording(type: String) {
         if (recorder == null) {
             startRecording(type)
@@ -92,22 +131,27 @@ class InputKosakata : Activity() {
     }
 
     private fun startRecording(type: String) {
-        val outputFile = File(cacheDir, "audio_${type}_${UUID.randomUUID()}.3gp")
+        val file = File(cacheDir, "audio_${type}_${UUID.randomUUID()}.3gp")
         currentRecordingType = type
 
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setOutputFile(outputFile.absolutePath)
+            setOutputFile(file.absolutePath)
             prepare()
             start()
         }
 
         when (type) {
-            "dasar" -> audioDasarPath = outputFile.absolutePath
-            "menengah" -> audioMenengahPath = outputFile.absolutePath
-            "tinggi" -> audioTinggiPath = outputFile.absolutePath
+            "dasar" -> audioDasarPath = file.absolutePath
+            "menengah" -> audioMenengahPath = file.absolutePath
+            "tinggi" -> audioTinggiPath = file.absolutePath
+        }
+
+        showRecordingDialog {
+            stopRecording()
+            Toast.makeText(this, "Rekaman $type selesai", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -118,6 +162,24 @@ class InputKosakata : Activity() {
         }
         recorder = null
         currentRecordingType = ""
+    }
+
+    private fun showRecordingDialog(onStop: () -> Unit) {
+        val view = layoutInflater.inflate(R.layout.dialog_record, null)
+        val btnStop = view.findViewById<Button>(R.id.btnStopRecording)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Merekam audio...")
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        btnStop.setOnClickListener {
+            onStop()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun insertKosakata() {
@@ -134,40 +196,60 @@ class InputKosakata : Activity() {
             return
         }
 
+        val dialog = ProgressDialog(this).apply {
+            setTitle("Menyimpan Kosakata")
+            setMessage("Mohon tunggu, sedang mengunggah audio dan menyimpan data...")
+            setCancelable(false)
+            show()
+        }
+
         val db = FirebaseDatabase.getInstance().reference
         val idDasar = db.child("Madura_dasar").push().key!!
         val idMenengah = db.child("Madura_menengah").push().key!!
         val idTinggi = db.child("Madura_tinggi").push().key!!
-        val bahasaId = UUID.randomUUID().toString()
+        val idIndo = db.child("Bahasa_madura").push().key!!
 
-        val uriDasar = Uri.fromFile(File(audioDasarPath))
-        val uriMenengah = Uri.fromFile(File(audioMenengahPath))
-        val uriTinggi = Uri.fromFile(File(audioTinggiPath))
+        val storage = FirebaseStorage.getInstance().reference
+        val taskDasar = storage.child("audio/audio_dasar_${System.currentTimeMillis()}.3gp")
+            .putFile(Uri.fromFile(File(audioDasarPath))).continueWithTask { it.result?.storage?.downloadUrl }
 
-        uploadAudio(uriDasar, "audio_dasar") { urlDasar ->
-            uploadAudio(uriMenengah, "audio_menengah") { urlMenengah ->
-                uploadAudio(uriTinggi, "audio_tinggi") { urlTinggi ->
+        val taskMenengah = storage.child("audio/audio_menengah_${System.currentTimeMillis()}.3gp")
+            .putFile(Uri.fromFile(File(audioMenengahPath))).continueWithTask { it.result?.storage?.downloadUrl }
 
-                    val dasarMap = MaduraDasar(idDasar, dasar, cardasar, urlDasar)
-                    val menengahMap = MaduraMenengah(idMenengah, menengah, carmenengah, urlMenengah)
-                    val tinggiMap = MaduraTinggi(idTinggi, tinggi, cartinggi, urlTinggi)
-                    val bahasaMap = BahasaMadura(idDasar, idMenengah, idTinggi, indo)
+        val taskTinggi = storage.child("audio/audio_tinggi_${System.currentTimeMillis()}.3gp")
+            .putFile(Uri.fromFile(File(audioTinggiPath))).continueWithTask { it.result?.storage?.downloadUrl }
 
-                    db.child("Madura_dasar").child(idDasar).setValue(dasarMap)
-                    db.child("Madura_menengah").child(idMenengah).setValue(menengahMap)
-                    db.child("Madura_tinggi").child(idTinggi).setValue(tinggiMap)
-                    db.child("Bahasa_madura").child(bahasaId).setValue(bahasaMap)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Kosakata berhasil disimpan", Toast.LENGTH_SHORT).show()
-                            clearForm()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Gagal simpan: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
-                }
+        Tasks.whenAllSuccess<Uri>(taskDasar, taskMenengah, taskTinggi)
+            .addOnSuccessListener { urls ->
+                val urlDasar = urls[0].toString()
+                val urlMenengah = urls[1].toString()
+                val urlTinggi = urls[2].toString()
+
+                val dasarMap = MaduraDasar(idDasar, dasar, cardasar, urlDasar)
+                val menengahMap = MaduraMenengah(idMenengah, menengah, carmenengah, urlMenengah)
+                val tinggiMap = MaduraTinggi(idTinggi, tinggi, cartinggi, urlTinggi)
+                val bahasaMap = BahasaMadura(idIndo, idDasar, idMenengah, idTinggi, indo)
+
+                db.child("Madura_dasar").child(idDasar).setValue(dasarMap)
+                db.child("Madura_menengah").child(idMenengah).setValue(menengahMap)
+                db.child("Madura_tinggi").child(idTinggi).setValue(tinggiMap)
+                db.child("Bahasa_madura").child(idIndo).setValue(bahasaMap)
+                    .addOnSuccessListener {
+                        dialog.dismiss()
+                        Toast.makeText(this, "Kosakata berhasil disimpan", Toast.LENGTH_SHORT).show()
+                        clearForm()
+                    }
+                    .addOnFailureListener {
+                        dialog.dismiss()
+                        Toast.makeText(this, "Gagal simpan: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
-        }
+            .addOnFailureListener {
+                dialog.dismiss()
+                Toast.makeText(this, "Gagal upload audio: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
     private fun uploadAudio(filePath: Uri, folder: String, onUploaded: (String) -> Unit) {
         val storageRef = FirebaseStorage.getInstance().reference

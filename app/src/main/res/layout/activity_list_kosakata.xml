@@ -56,13 +56,31 @@
                         android:layout_marginBottom="20dp"
                         android:background="@color/kotakan" />
 
-                    <SearchView
-                        android:id="@+id/searchView"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:queryHint="Cari kosakata..."
-                        android:iconifiedByDefault="false"
-                        android:layout_marginBottom="12dp"/>
+                        android:layout_height="50dp"
+                        android:orientation="horizontal">
+
+                        <SearchView
+                            android:id="@+id/searchView"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:queryHint="Cari kosakata..."
+                            android:iconifiedByDefault="false"
+                            android:layout_marginBottom="12dp"/>
+
+                        <ImageButton
+                            android:id="@+id/btnRefresh"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:gravity="center_vertical"
+                            android:text="Refresh"
+                            android:layout_marginBottom="5dp"
+                            android:layout_gravity="center"
+                            android:backgroundTint="@color/white"
+                            android:src="@drawable/refresh"
+                            android:fontFamily="@font/inter_bold" />
+                    </LinearLayout>
 
                     <ProgressBar
                         android:id="@+id/loadingBar"
