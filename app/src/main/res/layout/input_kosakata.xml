@@ -423,12 +423,12 @@
                                     android:background="@color/kotakan"
                                     android:padding="2dp">
 
-                                    <EditText
+                                    <TextView
                                         android:id="@+id/cardasar"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
-                                        android:inputType="textCapSentences"
+                                        android:fontFamily="@font/carakan_madura"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -471,6 +471,7 @@
                                         android:layout_height="match_parent"
                                         android:background="@drawable/rounded_input"
                                         android:inputType="textCapSentences"
+                                        android:fontFamily="@font/carakan"
                                         android:maxLines="5"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
@@ -515,6 +516,7 @@
                                         android:background="@drawable/rounded_input"
                                         android:inputType="textCapSentences"
                                         android:maxLines="5"
+                                        android:fontFamily="@font/carakan"
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
                                         android:textColor="@color/dalam_kotak"
