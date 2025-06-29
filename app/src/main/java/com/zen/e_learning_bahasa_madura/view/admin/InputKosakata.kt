@@ -22,6 +22,7 @@ import java.io.File
 import java.util.UUID
 import android.content.pm.PackageManager
 import android.text.InputType
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.zen.e_learning_bahasa_madura.R
@@ -36,8 +37,11 @@ class InputKosakata : Activity() {
     private var audioTinggiPath: String = ""
     private var recorder: MediaRecorder? = null
     private var currentRecordingType: String = ""
-    private var posisiInputan: EditText? = null
-    private var isConverting = false
+
+    private var audioUrlDasar: String? = null
+    private var audioUrlMenengah: String? = null
+    private var audioUrlTinggi: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = InputKosakataBinding.inflate(layoutInflater)
@@ -54,17 +58,27 @@ class InputKosakata : Activity() {
         )
 
 
-        binding.ktdasar.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        binding.ktdasar.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        binding.ktmenengah.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        binding.ktmenengah.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        binding.kttinggi.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        binding.kttinggi.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        binding.ktindonesia.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        binding.ktindonesia.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
 
         binding.ktdasar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val converted = convertToCarakan(s.toString())
@@ -74,55 +88,39 @@ class InputKosakata : Activity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        binding.ktmenengah.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
 
-//        binding.ktdasar.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                if (isConverting) return
-//                isConverting = true
-//
-//                val input = s?.toString() ?: ""
-//                val carakan = carakan(input)
-//                binding.cardasar.setText(carakan)
-//
-//                isConverting = false
-//            }
-//        })
-//
-//
-//        binding.carmenengah.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                if (isConverting) return
-//                isConverting = true
-//
-//                val input = s?.toString() ?: ""
-//                val carakan = carakan(input)
-//                binding.cardasar.setText(carakan)
-//
-//                isConverting = false
-//            }
-//        })
-//
-//        binding.cartinggi.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                if (isConverting) return
-//                isConverting = true
-//
-//                val input = s?.toString() ?: ""
-//                val carakan = carakan(input)
-//                binding.cardasar.setText(carakan)
-//
-//                isConverting = false
-//            }
-//        })
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val converted = convertToCarakan(s.toString())
+                binding.carmenengah.text = converted
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.kttinggi.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val converted = convertToCarakan(s.toString())
+                binding.cartinggi.text = converted
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
 
         hurufkhusus()
@@ -164,23 +162,25 @@ class InputKosakata : Activity() {
     }
 
     private fun hurufkhusus() {
-        binding.hurufemdr.setOnClickListener { inserthuruf("é") }
-        binding.hurufamdr.setOnClickListener { inserthuruf("â") }
+
+        inserthuruf(binding.hurufedasar, binding.ktdasar, "è")
+        inserthuruf(binding.hurufadasar, binding.ktdasar, "â")
+
+        inserthuruf(binding.hurufemenengah, binding.ktmenengah, "è")
+        inserthuruf(binding.hurufamenengah, binding.ktmenengah, "â")
+
+        inserthuruf(binding.hurufetinggi, binding.kttinggi, "è")
+        inserthuruf(binding.hurufatinggi, binding.kttinggi, "â")
     }
 
-    private fun inserthuruf(char: String) {
-        val view = currentFocus
-        if (view is EditText) {
-            val editText = view
-            val start = editText.selectionStart
-            val end = editText.selectionEnd
-
-            val isAwal = start == 0
-
-            val insertChar = if (isAwal) char.uppercase() else char.lowercase()
-
-            editText.text.replace(start, end, insertChar)
-            editText.setSelection(start + insertChar.length)
+    private fun inserthuruf(button: View, target: EditText, huruf: String) {
+        button.setOnClickListener {
+            val start = target.selectionStart
+            val end = target.selectionEnd
+            val insertChar = if (start == 0) huruf.uppercase() else huruf.lowercase()
+            target.text.replace(start, end, insertChar)
+            target.setSelection(start + insertChar.length)
+            target.requestFocus()
         }
     }
 
@@ -190,7 +190,6 @@ class InputKosakata : Activity() {
             Toast.makeText(this, "Rekam $type dimulai", Toast.LENGTH_SHORT).show()
         } else {
             stopRecording()
-            Toast.makeText(this, "Rekam $currentRecordingType disimpan", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -215,7 +214,6 @@ class InputKosakata : Activity() {
 
         showRecordingDialog {
             stopRecording()
-            Toast.makeText(this, "Rekaman $type selesai", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -225,8 +223,51 @@ class InputKosakata : Activity() {
             release()
         }
         recorder = null
+
+        val path = when (currentRecordingType) {
+            "dasar" -> audioDasarPath
+            "menengah" -> audioMenengahPath
+            "tinggi" -> audioTinggiPath
+            else -> ""
+        }
+
+        val type = currentRecordingType
         currentRecordingType = ""
+
+        if (path.isEmpty()) {
+            Toast.makeText(this, "Path audio tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = ProgressDialog(this).apply {
+            setTitle("Mengunggah Audio")
+            setMessage("Sedang mengunggah audio $type...")
+            setCancelable(false)
+            show()
+        }
+
+        val fileUri = Uri.fromFile(File(path))
+        val storageRef = FirebaseStorage.getInstance().reference
+        val audioRef = storageRef.child("audio/audio_${type}_${System.currentTimeMillis()}.3gp")
+
+        audioRef.putFile(fileUri)
+            .addOnSuccessListener {
+                audioRef.downloadUrl.addOnSuccessListener { uri ->
+                    when (type) {
+                        "dasar" -> audioUrlDasar = uri.toString()
+                        "menengah" -> audioUrlMenengah = uri.toString()
+                        "tinggi" -> audioUrlTinggi = uri.toString()
+                    }
+                    dialog.dismiss()
+                    Toast.makeText(this, "Rekaman $type berhasil diunggah", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                dialog.dismiss()
+                Toast.makeText(this, "Gagal mengunggah rekaman $type: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
     private fun showRecordingDialog(onStop: () -> Unit) {
         val view = layoutInflater.inflate(R.layout.dialog_record, null)
@@ -260,9 +301,14 @@ class InputKosakata : Activity() {
             return
         }
 
+        if (audioUrlDasar.isNullOrEmpty() || audioUrlMenengah.isNullOrEmpty() || audioUrlTinggi.isNullOrEmpty()) {
+            Toast.makeText(this, "Mohon lengkapi semua rekaman audio", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val dialog = ProgressDialog(this).apply {
             setTitle("Menyimpan Kosakata")
-            setMessage("Mohon tunggu, sedang mengunggah audio dan menyimpan data...")
+            setMessage("Sedang menyimpan data ke database...")
             setCancelable(false)
             show()
         }
@@ -273,71 +319,32 @@ class InputKosakata : Activity() {
         val idTinggi = db.child("Madura_tinggi").push().key!!
         val idIndo = db.child("Bahasa_madura").push().key!!
 
-        val storage = FirebaseStorage.getInstance().reference
-        val taskDasar = storage.child("audio/audio_dasar_${System.currentTimeMillis()}.3gp")
-            .putFile(Uri.fromFile(File(audioDasarPath))).continueWithTask { it.result?.storage?.downloadUrl }
+        val dasarMap = MaduraDasar(idDasar, dasar, cardasar, audioUrlDasar!!)
+        val menengahMap = MaduraMenengah(idMenengah, menengah, carmenengah, audioUrlMenengah!!)
+        val tinggiMap = MaduraTinggi(idTinggi, tinggi, cartinggi, audioUrlTinggi!!)
+        val bahasaMap = BahasaMadura(idIndo, idDasar, idMenengah, idTinggi, indo)
 
-        val taskMenengah = storage.child("audio/audio_menengah_${System.currentTimeMillis()}.3gp")
-            .putFile(Uri.fromFile(File(audioMenengahPath))).continueWithTask { it.result?.storage?.downloadUrl }
-
-        val taskTinggi = storage.child("audio/audio_tinggi_${System.currentTimeMillis()}.3gp")
-            .putFile(Uri.fromFile(File(audioTinggiPath))).continueWithTask { it.result?.storage?.downloadUrl }
-
-        Tasks.whenAllSuccess<Uri>(taskDasar, taskMenengah, taskTinggi)
-            .addOnSuccessListener { urls ->
-                val urlDasar = urls[0].toString()
-                val urlMenengah = urls[1].toString()
-                val urlTinggi = urls[2].toString()
-
-                val dasarMap = MaduraDasar(idDasar, dasar, cardasar, urlDasar)
-                val menengahMap = MaduraMenengah(idMenengah, menengah, carmenengah, urlMenengah)
-                val tinggiMap = MaduraTinggi(idTinggi, tinggi, cartinggi, urlTinggi)
-                val bahasaMap = BahasaMadura(idIndo, idDasar, idMenengah, idTinggi, indo)
-
-                db.child("Madura_dasar").child(idDasar).setValue(dasarMap)
-                db.child("Madura_menengah").child(idMenengah).setValue(menengahMap)
-                db.child("Madura_tinggi").child(idTinggi).setValue(tinggiMap)
-                db.child("Bahasa_madura").child(idIndo).setValue(bahasaMap)
-                    .addOnSuccessListener {
-                        dialog.dismiss()
-                        Toast.makeText(this, "Kosakata berhasil disimpan", Toast.LENGTH_SHORT).show()
-                        clearForm()
-                    }
-                    .addOnFailureListener {
-                        dialog.dismiss()
-                        Toast.makeText(this, "Gagal simpan: ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
+        db.child("Madura_dasar").child(idDasar).setValue(dasarMap)
+        db.child("Madura_menengah").child(idMenengah).setValue(menengahMap)
+        db.child("Madura_tinggi").child(idTinggi).setValue(tinggiMap)
+        db.child("Bahasa_madura").child(idIndo).setValue(bahasaMap)
+            .addOnSuccessListener {
+                dialog.dismiss()
+                Toast.makeText(this, "Kosakata berhasil disimpan", Toast.LENGTH_SHORT).show()
+                clearForm()
             }
             .addOnFailureListener {
                 dialog.dismiss()
-                Toast.makeText(this, "Gagal upload audio: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Gagal menyimpan: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-
-    private fun uploadAudio(filePath: Uri, folder: String, onUploaded: (String) -> Unit) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val fileName = "${UUID.randomUUID()}.3gp"
-        val audioRef = storageRef.child("$folder/$fileName")
-
-        audioRef.putFile(filePath)
-            .addOnSuccessListener {
-                audioRef.downloadUrl.addOnSuccessListener { uri ->
-                    onUploaded(uri.toString())
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Upload $folder gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
 
     private fun clearForm() {
         binding.ktdasar.text.clear()
         binding.ktmenengah.text.clear()
         binding.kttinggi.text.clear()
         binding.ktindonesia.text.clear()
-        binding.carmenengah.text.clear()
-        binding.cartinggi.text.clear()
     }
 
     fun convertToCarakan(input: String): String {

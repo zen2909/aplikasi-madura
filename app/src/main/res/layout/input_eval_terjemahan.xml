@@ -13,7 +13,7 @@
         android:layout_width="379dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="100dp"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <!-- Main ScrollView Content -->
-    <ScrollView
+    <LinearLayout
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,13 +76,18 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="379dp"
-                android:layout_height="wrap_content"
+                android:layout_height="530dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/kotakan"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="8dp"
                 app:contentPadding="5dp">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -119,7 +124,6 @@
                         android:layout_gravity="center"
                         android:layout_marginBottom="20dp"
                         android:background="@color/kotakan" />
-
                     <!-- Question Field -->
                     <TextView
                         android:layout_width="match_parent"
@@ -130,31 +134,95 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <EditText
+                                    android:id="@+id/soal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textMultiLine"
+                                    android:maxLines="5"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="5dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufasoal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="â"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufesoal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="è"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
 
                     <!-- Answer 1 -->
                     <TextView
@@ -166,31 +234,95 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <EditText
+                                    android:id="@+id/jawaban1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textMultiLine"
+                                    android:maxLines="5"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="5dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufajwb1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="â"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufejwb1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="è"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
 
                     <!-- Answer 2 -->
                     <TextView
@@ -202,31 +334,95 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <EditText
+                                    android:id="@+id/jawaban2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textMultiLine"
+                                    android:maxLines="5"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="5dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufajwb2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="â"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufejwb2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="è"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
 
                     <!-- Answer 3 -->
                     <TextView
@@ -238,31 +434,94 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <EditText
+                                    android:id="@+id/jawaban3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textMultiLine"
+                                    android:maxLines="5"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="5dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufajwb3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="â"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufejwb3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="è"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
                     <!-- Answer 4 -->
                     <TextView
@@ -274,33 +533,95 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
 
-                    <!-- Correct Answer -->
+                                <EditText
+                                    android:id="@+id/jawaban4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textMultiLine"
+                                    android:maxLines="5"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="5dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufajwb4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="â"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Button
+                                    android:id="@+id/hurufejwb4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:inputType="textCapSentences"
+                                    android:maxLines="1"
+                                    android:text="è"
+                                    android:textAllCaps="false"
+                                    android:fontFamily="@font/inter"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -310,31 +631,37 @@
                         android:textColor="@color/dalam_kotak"
                         android:textSize="20sp" />
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="61dp"
-                        android:layout_marginBottom="15dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="15dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:padding="2dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="200dp"
+                            android:layout_height="61dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="8dp">
 
-                            <EditText
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:inputType="textMultiLine"
-                                android:maxLines="5"
-                                android:paddingLeft="6dp"
-                                android:scrollbars="vertical"
-                                android:textColor="@color/dalam_kotak"
-                                android:textSize="20sp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                android:background="@color/kotakan"
+                                android:padding="2dp">
+
+                                <Spinner
+                                    android:id="@+id/jawaban_benar"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/rounded_input"
+                                    android:paddingLeft="6dp"
+                                    android:scrollbars="vertical"
+                                    android:textColor="@color/dalam_kotak"
+                                    android:textSize="20sp"
+                                    android:prompt="@string/pilih_jawaban_benar" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
                     <!-- Question Weight -->
                     <TextView
@@ -349,7 +676,6 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="61dp"
-                        android:layout_marginBottom="25dp"
                         app:cardCornerRadius="10dp"
                         app:cardElevation="8dp">
 
@@ -360,6 +686,7 @@
                             android:padding="2dp">
 
                             <EditText
+                                android:id="@+id/bobot"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@drawable/rounded_input"
@@ -371,29 +698,30 @@
                                 android:textSize="20sp" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
-                    <!-- Save Button -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="165dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="center"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="8dp">
-
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@color/kotakan"
-                            android:fontFamily="@font/mergeone_reguler"
-                            android:text="Simpan"
-                            android:textAllCaps="false"
-                            android:textColor="@color/dalam_kotak"
-                            android:textSize="32sp" />
-                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="379dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp">
+
+                <Button
+                    android:id="@+id/btnSimpan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/kotakan"
+                    android:fontFamily="@font/mergeone_reguler"
+                    android:text="Simpan"
+                    android:textAllCaps="false"
+                    android:textColor="@color/dalam_kotak"
+                    android:textSize="32sp" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
     <!-- Bottom Navigation -->
     <LinearLayout
@@ -485,6 +813,5 @@
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
-
     </LinearLayout>
 </RelativeLayout>

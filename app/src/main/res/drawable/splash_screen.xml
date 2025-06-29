@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background splash -->
+    <item android:drawable="@android:color/white" />
+
+    <!-- Logo dengan padding aman supaya tidak besar -->
+    <item>
+            <bitmap
+                android:gravity="center"
+                android:src="@drawable/logo_madura" />
+    </item>
+</layer-list>

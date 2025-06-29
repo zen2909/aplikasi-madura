@@ -1,41 +1,45 @@
 package com.zen.e_learning_bahasa_madura.view.admin
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
-import com.zen.e_learning_bahasa_madura.databinding.ActivityListKosakataBinding
+import com.zen.e_learning_bahasa_madura.R
+import com.zen.e_learning_bahasa_madura.databinding.ListKosakataBinding
 import com.zen.e_learning_bahasa_madura.databinding.ItemKosakataBinding
 import com.zen.e_learning_bahasa_madura.model.BahasaMadura
 import com.zen.e_learning_bahasa_madura.model.MaduraDasar
 import com.zen.e_learning_bahasa_madura.model.MaduraMenengah
 import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
 import com.zen.e_learning_bahasa_madura.util.NavHelper
+import com.zen.e_learning_bahasa_madura.view.admin.EditKosakata
 
 class ListKosakata : Activity() {
 
-    private lateinit var binding: ActivityListKosakataBinding
+    private lateinit var binding: ListKosakataBinding
     private lateinit var database: DatabaseReference
     private val fullListData = mutableListOf<KosakataFull>()
     private val listData = mutableListOf<KosakataFull>()
     private lateinit var adapter: KosakataAdapter
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityListKosakataBinding.inflate(layoutInflater)
+        binding = ListKosakataBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         database = FirebaseDatabase.getInstance().reference
         binding.rvKosakata.layoutManager = LinearLayoutManager(this)
-        adapter = KosakataAdapter(listData)
+        adapter = KosakataAdapter(listData, ::playAudio, this)
         binding.rvKosakata.adapter = adapter
 
         NavHelper.setup(
@@ -91,7 +95,17 @@ class ListKosakata : Activity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 fullListData.clear()
                 listData.clear()
+
+                val totalItems = snapshot.childrenCount
+                var loadedItems = 0
                 var index = 1
+
+                if (totalItems == 0L) {
+                    adapter.notifyDataSetChanged()
+                    binding.loadingBar.visibility = View.GONE
+                    return
+                }
+
                 for (data in snapshot.children) {
                     val bahasa = data.getValue(BahasaMadura::class.java) ?: continue
 
@@ -102,7 +116,13 @@ class ListKosakata : Activity() {
                     database.child("Madura_dasar").child(idDasar)
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshotDasar: DataSnapshot) {
-                                val dasar = snapshotDasar.getValue(MaduraDasar::class.java) ?: return
+                                val dasar = snapshotDasar.getValue(MaduraDasar::class.java)
+
+                                if (dasar == null) {
+                                    loadedItems++
+                                    if (loadedItems == totalItems.toInt()) updateKosakataList()
+                                    return
+                                }
 
                                 database.child("Madura_menengah").child(idMenengah)
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -115,24 +135,18 @@ class ListKosakata : Activity() {
                                                         val tinggi = snapshotTinggi.getValue(MaduraTinggi::class.java) ?: return
 
                                                         val kosakata = KosakataFull(index++, dasar, menengah, tinggi, bahasa)
-                                                        listData.add(kosakata)
                                                         fullListData.add(kosakata)
 
-                                                        if (index > snapshot.childrenCount) {
-                                                            fullListData.sortBy { it.dasar.kosakata.lowercase() }
-
-                                                            fullListData.forEachIndexed { i, item ->
-                                                                fullListData[i] = item.copy(nomor = i + 1)
-                                                            }
-
-                                                            listData.clear()
-                                                            listData.addAll(fullListData)
-                                                            adapter.notifyDataSetChanged()
-                                                            binding.loadingBar.visibility = View.GONE
+                                                        loadedItems++
+                                                        if (loadedItems == totalItems.toInt()) {
+                                                            updateKosakataList()
                                                         }
                                                     }
 
-                                                    override fun onCancelled(error: DatabaseError) {}
+                                                    override fun onCancelled(error: DatabaseError) {
+                                                        loadedItems++
+                                                        if (loadedItems == totalItems.toInt()) updateKosakataList()
+                                                    }
                                                 })
                                         }
 
@@ -152,6 +166,21 @@ class ListKosakata : Activity() {
         })
     }
 
+    private fun updateKosakataList() {
+        fullListData.sortBy { it.dasar.kosakata.lowercase() }
+
+        fullListData.forEachIndexed { i, item ->
+            fullListData[i] = item.copy(nomor = i + 1)
+        }
+
+        listData.clear()
+        listData.addAll(fullListData)
+        adapter.notifyDataSetChanged()
+        binding.loadingBar.visibility = View.GONE
+    }
+
+
+
 
     data class KosakataFull(
         val nomor: Int,
@@ -161,7 +190,7 @@ class ListKosakata : Activity() {
         val indo: BahasaMadura
     )
 
-    class KosakataAdapter(private val data: List<KosakataFull>) : RecyclerView.Adapter<KosakataAdapter.ViewHolder>() {
+    class KosakataAdapter(private val data: List<KosakataFull>, private val onPlayClicked : (String?) -> Unit, private val activity: Activity) : RecyclerView.Adapter<KosakataAdapter.ViewHolder>() {
 
         class ViewHolder(val binding: ItemKosakataBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -184,6 +213,10 @@ class ListKosakata : Activity() {
                 Toast.makeText(holder.itemView.context, "Hapus: ${item.dasar.kosakata}", Toast.LENGTH_SHORT).show()
             }
 
+            holder.binding.btnPlay1.setOnClickListener { onPlayClicked(item.dasar.audio_pelafalan) }
+            holder.binding.btnPlay2.setOnClickListener { onPlayClicked(item.menengah.audio_pelafalan) }
+            holder.binding.btnPlay3.setOnClickListener { onPlayClicked(item.tinggi.audio_pelafalan) }
+
             holder.binding.btnEdit.setOnClickListener {
                 val context = holder.itemView.context
                 val intent = Intent(context, EditKosakata::class.java)
@@ -203,10 +236,49 @@ class ListKosakata : Activity() {
                 db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
                 db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
                 db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
-                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+
+                        if (activity is ListKosakata) {
+                            activity.fetchKosakata()
+                        }
+                    }
             }
         }
         override fun getItemCount() = data.size
+    }
+
+    private fun playAudio(url: String?) {
+        if (url.isNullOrBlank()) {
+            Toast.makeText(this, "Audio tidak tersedia", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val view = layoutInflater.inflate(R.layout.dialog_audio, null)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Memuat Audio")
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        dialog.show()
+
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(url)
+            setOnPreparedListener { start() }
+            setOnCompletionListener {
+                dialog.dismiss()
+                release()
+            }
+            setOnErrorListener { _, _, _ ->
+                dialog.dismiss()
+                Toast.makeText(this@ListKosakata, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
+                true
+            }
+            prepareAsync()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

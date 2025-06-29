@@ -25,7 +25,7 @@
         android:textSize="20sp" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="25dp"
@@ -33,29 +33,56 @@
 
         <TextView
             android:id="@+id/tvKosakata"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:fontFamily="@font/inter"
             android:text="Tojuk"
             android:textColor="@color/dalam_kotak"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/tvIndo"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:text="Duduk"
             android:textColor="#757575"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
     </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnPlay1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3.5dp"
+            android:background="@color/white"
+            android:src="@drawable/play1" />
+        <ImageButton
+            android:id="@+id/btnPlay2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:background="@color/white"
+            android:src="@drawable/play2" />
+
+        <ImageButton
+            android:id="@+id/btnPlay3"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_marginEnd="13dp"
+            android:background="@color/white"
+            android:src="@drawable/play3" />
 
     <ImageButton
         android:id="@+id/btnEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="10dp"
         android:background="@color/white"
         android:src="@drawable/ic_edit" />
 

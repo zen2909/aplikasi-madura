@@ -19,6 +19,7 @@ object NavHelper {
                 activity.startActivity(Intent(activity, InputKosakata::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 })
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
 
@@ -27,6 +28,7 @@ object NavHelper {
                 activity.startActivity(Intent(activity, InputEvalTerjemahan::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 })
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
 
@@ -35,6 +37,7 @@ object NavHelper {
                 activity.startActivity(Intent(activity, ListKosakata::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 })
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
 
@@ -43,6 +46,7 @@ object NavHelper {
                 activity.startActivity(Intent(activity, SoalEvaluasi::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 })
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
     }

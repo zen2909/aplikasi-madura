@@ -7,7 +7,9 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -16,13 +18,13 @@ import com.google.firebase.storage.FirebaseStorage
 import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.EditKosakataBinding
 import com.zen.e_learning_bahasa_madura.model.*
+import com.zen.e_learning_bahasa_madura.util.NavHelper
 import java.io.File
 
 class EditKosakata : Activity() {
 
     private lateinit var binding: EditKosakataBinding
     private val db = FirebaseDatabase.getInstance().reference
-    private val storage = FirebaseStorage.getInstance().reference
 
     private var idDasar = ""
     private var idMenengah = ""
@@ -58,15 +60,44 @@ class EditKosakata : Activity() {
 
         binding.ktindonesia.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
+        binding.ktdasar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val converted = convertToCarakan(s.toString())
+                binding.cardasar.text = converted
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.ktmenengah.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val converted = convertToCarakan(s.toString())
+                binding.carmenengah.text = converted
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.kttinggi.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val converted = convertToCarakan(s.toString())
+                binding.cartinggi.text = converted
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         hurufkhusus()
 
         binding.btnDasar.setOnClickListener { startRecording("dasar") }
         binding.btnMenengah.setOnClickListener { startRecording("menengah") }
         binding.btnTinggi.setOnClickListener { startRecording("tinggi") }
-
-        binding.btnPlayDasar.setOnClickListener { playAudio(audioUrlDasar) }
-        binding.btnPlayMenengah.setOnClickListener { playAudio(audioUrlMenengah) }
-        binding.btnPlayTinggi.setOnClickListener { playAudio(audioUrlTinggi) }
 
         binding.btnSimpan.setOnClickListener {
             updateData()
@@ -74,8 +105,14 @@ class EditKosakata : Activity() {
     }
 
     private fun hurufkhusus() {
-        binding.hurufemdr.setOnClickListener { inserthuruf("è") }
-        binding.hurufamdr.setOnClickListener { inserthuruf("â") }
+        binding.hurufedasar.setOnClickListener { inserthuruf("è") }
+        binding.hurufadasar.setOnClickListener { inserthuruf("â") }
+
+        binding.hurufemenengah.setOnClickListener { inserthuruf("è") }
+        binding.hurufamenengah.setOnClickListener { inserthuruf("â") }
+
+        binding.hurufetinggi.setOnClickListener { inserthuruf("è") }
+        binding.hurufatinggi.setOnClickListener { inserthuruf("â") }
     }
 
     private fun inserthuruf(char: String) {
@@ -129,40 +166,6 @@ class EditKosakata : Activity() {
             binding.kttinggi.setText(data?.kosakata)
             binding.cartinggi.setText(data?.carakan_madura)
             audioUrlTinggi = data?.audio_pelafalan
-        }
-    }
-
-
-    private fun playAudio(url: String?) {
-        if (url.isNullOrBlank()) {
-            Toast.makeText(this, "Audio tidak tersedia", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val view = layoutInflater.inflate(R.layout.dialog_audio, null)
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Memuat Audio")
-            .setView(view)
-            .setCancelable(false)
-            .create()
-
-        dialog.show()
-
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(url)
-            setOnPreparedListener { start() }
-            setOnCompletionListener {
-                dialog.dismiss()
-                release()
-            }
-            setOnErrorListener { _, _, _ ->
-                dialog.dismiss()
-                Toast.makeText(this@EditKosakata, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
-                true
-            }
-            prepareAsync()
         }
     }
 
@@ -294,5 +297,97 @@ class EditKosakata : Activity() {
         super.onDestroy()
         recorder?.release()
         mediaPlayer?.release()
+    }
+
+    fun convertToCarakan(input: String): String {
+        val baseMap = listOf(
+            "ng" to "ꦁ", "nga" to "ꦔ",
+            "ny" to "ꦚ", "nya" to "ꦚ",
+            "th" to "ꦛ", "tha" to "ꦛ",
+            "dh" to "ꦝ", "dha" to "ꦝ",
+            "jh" to "ꦗ", "jha" to "ꦗ",
+            "bh" to "ꦧ", "bha" to "ꦧ",
+
+            "a" to "ꦲ", "â" to "ꦲ",
+            "b" to "ꦧ", "ba" to "ꦧ",
+            "c" to "ꦕ", "ca" to "ꦕ",
+            "d" to "ꦢ", "da" to "ꦢ",
+            "g" to "ꦒ", "ga" to "ꦒ",
+            "h" to "ꦲ", "ha" to "ꦲ",
+            "j" to "ꦗ", "ja" to "ꦗ",
+            "k" to "ꦏ", "ka" to "ꦏ",
+            "l" to "ꦭ", "la" to "ꦭ",
+            "m" to "ꦩ", "ma" to "ꦩ",
+            "n" to "ꦤ", "na" to "ꦤ",
+            "p" to "ꦥ", "pa" to "ꦥ",
+            "r" to "ꦫ", "ra" to "ꦫ",
+            "s" to "ꦱ", "sa" to "ꦱ",
+            "t" to "ꦠ", "ta" to "ꦠ",
+            "w" to "ꦮ", "wa" to "ꦮ",
+            "y" to "ꦪ", "ya" to "ꦪ"
+        ).sortedByDescending { it.first.length }
+
+        val sandhanganMap = mapOf(
+            "i" to "ꦶ", "u" to "ꦸ", "é" to "ꦺ", "e" to "ꦼ", "o" to "ꦺꦴ", "eu" to "ꦼꦴ"
+        )
+
+        val pasangan = mapOf(
+            "ꦏ" to "꧀ꦏ", "ꦒ" to "꧀ꦒ", "ꦔ" to "꧀ꦔ", "ꦕ" to "꧀ꦕ", "ꦗ" to "꧀ꦗ", "ꦚ" to "꧀ꦚ",
+            "ꦛ" to "꧀ꦛ", "ꦝ" to "꧀ꦝ", "ꦠ" to "꧀ꦠ", "ꦡ" to "꧀ꦡ", "ꦢ" to "꧀ꦢ", "ꦣ" to "꧀ꦣ",
+            "ꦤ" to "꧀ꦤ", "ꦥ" to "꧀ꦥ", "ꦧ" to "꧀ꦧ", "ꦨ" to "꧀ꦨ", "ꦩ" to "꧀ꦩ", "ꦪ" to "꧀ꦪ",
+            "ꦫ" to "꧀ꦫ", "ꦭ" to "꧀ꦭ", "ꦮ" to "꧀ꦮ", "ꦯ" to "꧀ꦯ", "ꦱ" to "꧀ꦱ", "ꦲ" to "꧀ꦲ"
+        )
+
+        val result = StringBuilder()
+        val words = input.lowercase().split(" ")
+
+        for (word in words) {
+            val converted = StringBuilder()
+            var i = 0
+            while (i < word.length) {
+                var matched = false
+
+                // 1. Cek sandhangan dulu
+                sandhanganMap.entries.firstOrNull { word.startsWith(it.key, i) }?.let {
+                    converted.append(it.value)
+                    i += it.key.length
+                    matched = true
+                }
+
+                // 2. Cek konsonan majemuk dan dasar
+                if (!matched) {
+                    baseMap.firstOrNull { word.startsWith(it.first, i) }?.let {
+                        converted.append(it.second)
+                        i += it.first.length
+                        matched = true
+                    }
+                }
+
+                // 3. Cek pasangan konsonan mati di tengah
+                if (!matched && i > 0 && i < word.length - 1) {
+                    val currChar = word[i].toString()
+                    baseMap.firstOrNull { it.first == currChar }?.let {
+                        converted.append("꧀").append(it.second)
+                        i++
+                        matched = true
+                    }
+                }
+
+                if (!matched) {
+                    converted.append(word[i])
+                    i++
+                }
+            }
+
+            // Tambahkan pangkon jika huruf akhir konsonan tanpa pasangan
+            val lastChar = converted.lastOrNull()?.toString() ?: ""
+            if (lastChar in pasangan.keys) {
+                converted.append("꧀")
+            }
+
+            result.append(converted).append(" ")
+        }
+
+        return result.toString().trim()
     }
 }
