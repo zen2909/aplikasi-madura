@@ -11,15 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
 import com.zen.e_learning_bahasa_madura.databinding.EditEvalTbBinding
-import com.zen.e_learning_bahasa_madura.model.BahasaMadura
-import com.zen.e_learning_bahasa_madura.model.MaduraDasar
 import com.google.firebase.database.FirebaseDatabase
 import com.zen.e_learning_bahasa_madura.model.EvalPilgan
-
-import com.zen.e_learning_bahasa_madura.model.MaduraMenengah
-import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
 
 class EditEvalTb: Activity() {
 

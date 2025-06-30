@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.zen.e_learning_bahasa_madura.databinding.InputEvalTbBinding
 import com.zen.e_learning_bahasa_madura.databinding.InputEvalTerjemahanBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPilgan
+import com.zen.e_learning_bahasa_madura.model.Evaluasi
 import com.zen.e_learning_bahasa_madura.util.NavHelper
 
 class InputEvalTb : Activity() {
@@ -37,11 +38,13 @@ class InputEvalTb : Activity() {
         binding.inputterjemahan.setOnClickListener {
             val intent = Intent(this, InputEvalTerjemahan::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         binding.inputpelafalan.setOnClickListener {
             val intent = Intent(this, InputEvalPelafalan::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         hurufkhusus()
@@ -105,14 +108,14 @@ class InputEvalTb : Activity() {
         val bobot = binding.bobot.text.toString().trim()
 
         if (soal.isEmpty() || opsi1.isEmpty() || opsi2.isEmpty() || opsi3.isEmpty() ||
-            opsi4.isEmpty() || jawabanBenar.isEmpty() || bobot.isEmpty()) {
+            opsi4.isEmpty() || jawabanBenar.isEmpty() || bobot.isEmpty()
+        ) {
             Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show()
             return
         }
 
         insertSoal(kategori, soal, opsi1, opsi2, opsi3, opsi4, jawabanBenar, bobot)
     }
-
 
     private fun insertSoal(
         kategori: String,
@@ -124,11 +127,15 @@ class InputEvalTb : Activity() {
         jawabanBenar: String,
         bobot: String
     ) {
-        val dbRef = FirebaseDatabase.getInstance().getReference("evaluasi_pilgan")
-        val soalId = dbRef.push().key ?: return
+        val db = FirebaseDatabase.getInstance().reference
+        val pilganRef = db.child("evaluasi_pilgan")
+        val evaluasiRef = db.child("evaluasi")
+
+        val idEvalPilgan = pilganRef.push().key ?: return
+        val idEvaluasi = evaluasiRef.push().key ?: return
 
         val soalData = EvalPilgan(
-            id_evalpilgan = soalId,
+            id_evalpilgan = idEvalPilgan,
             kategori = kategori,
             soal = soal,
             jwb_1 = opsi1,
@@ -139,15 +146,28 @@ class InputEvalTb : Activity() {
             bobot = bobot
         )
 
-        dbRef.child(soalId).setValue(soalData)
+        val evaluasiData = Evaluasi(
+            id_evaluasi = idEvaluasi,
+            id_pilgan = idEvalPilgan,
+            id_pelafalan = null
+        )
+
+        pilganRef.child(idEvalPilgan).setValue(soalData)
             .addOnSuccessListener {
-                Toast.makeText(this, "Soal berhasil disimpan", Toast.LENGTH_SHORT).show()
-                clearForm()
+                evaluasiRef.child(idEvaluasi).setValue(evaluasiData)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Soal berhasil disimpan", Toast.LENGTH_SHORT).show()
+                        clearForm()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Gagal menyimpan ke evaluasi", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal menyimpan soal", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun spinnerjawaban() {
         val opsi = mutableListOf("Pilih Jawaban Benar")

@@ -10,6 +10,8 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.ItemEvalBinding
 import com.zen.e_learning_bahasa_madura.databinding.ListEvaluasiBinding
@@ -20,8 +22,8 @@ class SoalEvaluasi : Activity() {
     private lateinit var binding: ListEvaluasiBinding
     private lateinit var database: DatabaseReference
     private lateinit var adapter: EvalAdapter
-    private val fullListData = mutableListOf<EvalPilgan>()
-    private val soalList = mutableListOf<EvalPilgan>()
+    private val fullListData = mutableListOf<SoalEvaluasiItem>()
+    private val soalList = mutableListOf<SoalEvaluasiItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,61 +75,99 @@ class SoalEvaluasi : Activity() {
                         it.kategori.contains(query, ignoreCase = true)
             }
         }
-
         soalList.clear()
         soalList.addAll(filtered)
         adapter.notifyDataSetChanged()
     }
 
-
     private fun fetchSoal() {
         binding.loadingBar.visibility = View.VISIBLE
-        database.child("evaluasi_pilgan")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    soalList.clear()
-                    fullListData.clear()
+        soalList.clear()
+        fullListData.clear()
 
-                    val tempList = snapshot.children.mapNotNull {
-                        it.getValue(EvalPilgan::class.java)
-                    }
+        val db = FirebaseDatabase.getInstance().reference
 
-                    val sortedList = tempList.sortedBy { it.soal.lowercase() }
-
-                    val numberedList = sortedList.mapIndexed { index, soal ->
-                        soal.copy(nomor = index + 1)
-                    }
-
-                    fullListData.addAll(numberedList)
-                    soalList.addAll(numberedList)
-
-                    binding.rvSoal.postDelayed({
-                        adapter.notifyDataSetChanged()
-                        binding.loadingBar.visibility = View.GONE
-                    }, 300)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
+        db.child("evaluasi").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()) {
                     binding.loadingBar.visibility = View.GONE
-                    Toast.makeText(this@SoalEvaluasi, "Gagal ambil soal", Toast.LENGTH_SHORT).show()
+                    return
                 }
-            })
+
+                val tasks = mutableListOf<Task<DataSnapshot>>()
+                val metaData = mutableListOf<Pair<String, String>>() // kategori to idEval
+
+                snapshot.children.forEach { eval ->
+                    val idPilgan = eval.child("id_pilgan").getValue(String::class.java)
+                    val idPelafalan = eval.child("id_pelafalan").getValue(String::class.java)
+
+                    if (!idPilgan.isNullOrEmpty()) {
+                        tasks.add(db.child("evaluasi_pilgan").child(idPilgan).get())
+                        metaData.add("Pilgan" to idPilgan)
+                    }
+
+                    if (!idPelafalan.isNullOrEmpty()) {
+                        tasks.add(db.child("evaluasi_pelafalan").child(idPelafalan).get())
+                        metaData.add("Pelafalan" to idPelafalan)
+                    }
+                }
+
+                Tasks.whenAllSuccess<DataSnapshot>(tasks)
+                    .addOnSuccessListener { results ->
+                        val resultSoal = mutableListOf<SoalEvaluasiItem>()
+
+                        results.forEachIndexed { index, dataSnap ->
+                            val (fallbackKategori, idEval) = metaData[index]
+                            val soal = dataSnap.child("soal").getValue(String::class.java) ?: ""
+                            val kategori = dataSnap.child("kategori").getValue(String::class.java) ?: fallbackKategori
+
+                            resultSoal.add(
+                                SoalEvaluasiItem(
+                                    nomor = index + 1,
+                                    kategori = kategori,
+                                    soal = soal,
+                                    idEval = idEval
+                                )
+                            )
+                        }
+
+                        val finalList = resultSoal.sortedBy { it.soal.lowercase() }
+                            .mapIndexed { i, item -> item.copy(nomor = i + 1) }
+
+                        soalList.addAll(finalList)
+                        fullListData.addAll(finalList)
+
+                        binding.rvSoal.postDelayed({
+                            adapter.notifyDataSetChanged()
+                            binding.loadingBar.visibility = View.GONE
+                        }, 300)
+                    }
+                    .addOnFailureListener {
+                        binding.loadingBar.visibility = View.GONE
+                        Toast.makeText(this@SoalEvaluasi, "Gagal memuat soal", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                binding.loadingBar.visibility = View.GONE
+                Toast.makeText(this@SoalEvaluasi, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
-    data class EvalPilgan(
-        val id_evalpilgan: String = "",
+
+
+    data class SoalEvaluasiItem(
         val nomor: Int = 0,
-        val soal: String = "",
         val kategori: String = "",
-        val jwb_1: String = "",
-        val jwb_2: String = "",
-        val jwb_3: String = "",
-        val jwb_4: String = "",
-        val jwb_benar: String = "",
-        val bobot: String = ""
+        val soal: String = "",
+        val idEval: String = ""
     )
 
-    class EvalAdapter(private val data: List<EvalPilgan> , private val activity: Activity) : RecyclerView.Adapter<EvalAdapter.ViewHolder>() {
+    class EvalAdapter(
+        private val data: List<SoalEvaluasiItem>,
+        private val activity: Activity
+    ) : RecyclerView.Adapter<EvalAdapter.ViewHolder>() {
 
         inner class ViewHolder(val binding: ItemEvalBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -136,62 +176,49 @@ class SoalEvaluasi : Activity() {
             return ViewHolder(binding)
         }
 
+        override fun getItemCount(): Int = data.size
+
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = data[position]
+
             holder.binding.tvNomor.text = item.nomor.toString()
             holder.binding.tvsoal.text = item.soal
             holder.binding.tvkategori.text = item.kategori
 
             holder.binding.btnEdit.setOnClickListener {
-                Toast.makeText(holder.itemView.context, "Edit: ${item.soal}", Toast.LENGTH_SHORT).show()
-            }
-
-            holder.binding.btnDelete.setOnClickListener {
-                Toast.makeText(holder.itemView.context, "Hapus: ${item.soal}", Toast.LENGTH_SHORT).show()
-            }
-
-            holder.binding.btnEdit.setOnClickListener {
                 val context = holder.itemView.context
-
-                val targetClass = when (item.kategori) {
-                    "Terjemahan" -> EditEvalTerjemahan::class.java
-                    "Tingkat Bahasa" -> EditEvalTb::class.java
-                    "Pelafalan" -> EditEvalPelafalan::class.java
-                    else -> EditEvalTerjemahan::class.java
+                val intent = when (item.kategori) {
+                    "Pelafalan" -> Intent(context, EditEvalPelafalan::class.java)
+                    "Tingkat Bahasa" -> Intent(context, EditEvalTb::class.java)
+                    else -> Intent(context, EditEvalTerjemahan::class.java)
                 }
-
-                val intent = Intent(context, targetClass).apply {
-                    putExtra("id_evalpilgan", item.id_evalpilgan)
-                    putExtra("soal", item.soal)
-                    putExtra("jwb_1", item.jwb_1)
-                    putExtra("jwb_2", item.jwb_2)
-                    putExtra("jwb_3", item.jwb_3)
-                    putExtra("jwb_4", item.jwb_4)
-                    putExtra("jwb_benar", item.jwb_benar)
-                    putExtra("bobot", item.bobot)
-                }
-
+                intent.putExtra("id_evalpilgan", item.idEval)
                 if (context is Activity) {
                     context.startActivityForResult(intent, 1001)
                 }
             }
 
-
             holder.binding.btnDelete.setOnClickListener {
-                val context = holder.itemView.context
                 val db = FirebaseDatabase.getInstance().reference
-                db.child("evaluasi_pilgan").child(item.id_evalpilgan).removeValue()
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+                val context = holder.itemView.context
 
+                val path = when (item.kategori) {
+                    "Pelafalan" -> "evaluasi_pelafalan"
+                    else -> "evaluasi_pilgan"
+                }
+
+                db.child(path).child(item.idEval).removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Soal berhasil dihapus", Toast.LENGTH_SHORT).show()
                         if (activity is SoalEvaluasi) {
                             activity.fetchSoal()
                         }
                     }
+                    .addOnFailureListener {
+                        Toast.makeText(context, "Gagal menghapus soal", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
-
-        override fun getItemCount(): Int = data.size
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

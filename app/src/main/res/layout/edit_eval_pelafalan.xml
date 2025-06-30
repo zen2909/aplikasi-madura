@@ -1,268 +1,334 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/menuEvalTerjemahan"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fitsSystemWindows="true">
 
+        <!-- Main ScrollView Content -->
         <LinearLayout
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="false"
+            android:paddingTop="100dp"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_input"
-                android:layout_width="379dp"
-                android:layout_height="501dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="50dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:background="@color/kotakan"
-                    android:padding="5dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="379dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/kotakan"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="8dp"
+                    app:contentPadding="5dp">
 
-                    <LinearLayout
+                    <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:background="@drawable/rounded_input">
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:background="@drawable/rounded_input"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Form Header -->
                             <TextView
-                                android:id="@+id/login_title"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:text="FORM EDIT SOAL\nEVALUASI"
-                                android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp"
                                 android:fontFamily="@font/inter_bold"
+                                android:gravity="center"
+                                android:text="FORM EDIT\nSOAL EVALUASI"
+                                android:textAlignment="center"
                                 android:textColor="@color/dalam_kotak"
-                                android:textSize="32sp"/>
+                                android:textSize="32sp" />
 
                             <TextView
-                                android:id="@+id/login_title2"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:text="Evaluasi Pelafalan"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:fontFamily="@font/sourceserif_regular"
                                 android:gravity="center"
-                                android:fontFamily="@font/sourceserif_semibold"
+                                android:text="Evaluasi Pelafalan"
                                 android:textColor="@color/dalam_kotak"
-                                android:textSize="24sp"/>
+                                android:textSize="24sp" />
 
                             <View
                                 android:layout_width="302dp"
                                 android:layout_height="2dp"
                                 android:layout_gravity="center"
-                                android:background="@color/kotakan"
-                                android:layout_marginBottom="32dp"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="351dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:text="Soal"
-                                android:fontFamily="@font/inter"
-                                android:textSize="20sp"
-                                android:textColor="@color/dalam_kotak"
-                                android:layout_marginBottom="12dp"/>
-
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="351dp"
-                                android:layout_height="61.32dp"
-                                app:cardBackgroundColor="@color/white"
-                                app:cardCornerRadius="10dp"
                                 android:layout_marginBottom="20dp"
-                                app:cardElevation="8dp">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@color/kotakan"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
-                                    android:padding="2dp">
-
-                                    <EditText
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@drawable/rounded_input"
-                                        android:textColor="@color/dalam_kotak"
-                                        android:textSize="20sp"
-                                        android:inputType="textMultiLine"
-                                        android:maxLines="5"
-                                        android:scrollbars="vertical"
-                                        android:paddingStart="5dp">
-                                    </EditText>
-                                </LinearLayout>
-                            </androidx.cardview.widget.CardView>
-
+                                android:background="@color/kotakan" />
+                            <!-- Question Field -->
                             <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:text="Jawaban"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/inter"
-                                android:textSize="20sp"
+                                android:text="Soal"
                                 android:textColor="@color/dalam_kotak"
-                                android:layout_marginBottom="12dp"/>
+                                android:textSize="20sp" />
 
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="351dp"
-                                android:layout_height="61.32dp"
-                                app:cardBackgroundColor="@color/white"
-                                app:cardCornerRadius="10dp"
-                                app:cardElevation="8dp"
-                                android:layout_marginBottom="10dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="15dp">
 
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@color/kotakan"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
-                                    android:padding="2dp">
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="200dp"
+                                    android:layout_height="61dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
 
-                                    <EditText
+                                    <LinearLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:background="@drawable/rounded_input"
-                                        android:textColor="@color/dalam_kotak"
-                                        android:textSize="20sp"
-                                        android:inputType="textMultiLine"
-                                        android:maxLines="5"
-                                        android:scrollbars="vertical"
-                                        android:paddingStart="5dp">
-                                    </EditText>
-                                </LinearLayout>
-                            </androidx.cardview.widget.CardView>
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
 
-                        </LinearLayout>
+                                        <EditText
+                                            android:id="@+id/soal"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textMultiLine"
+                                            android:maxLines="5"
+                                            android:paddingLeft="6dp"
+                                            android:scrollbars="vertical"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
 
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="165dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="20dp"
-                            app:cardBackgroundColor="@color/kotakan"
-                            app:cardCornerRadius="10dp"
-                            app:cardElevation="8dp">
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="61dp"
+                                    android:layout_height="61dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginStart="5dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
 
-                            <Button
-                                android:id="@+id/ic_send"
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <Button
+                                            android:id="@+id/hurufasoal"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textCapSentences"
+                                            android:maxLines="1"
+                                            android:text="â"
+                                            android:textAllCaps="false"
+                                            android:fontFamily="@font/inter"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="61dp"
+                                    android:layout_height="61dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <Button
+                                            android:id="@+id/hurufesoal"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textCapSentences"
+                                            android:maxLines="1"
+                                            android:text="è"
+                                            android:textAllCaps="false"
+                                            android:fontFamily="@font/inter"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </LinearLayout>
+
+
+                            <!-- Answer 1 -->
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@color/kotakan"
-                                android:text="Simpan"
-                                android:textAllCaps="false"
-                                android:fontFamily="@font/roboto_regular"
-                                android:textSize="32sp"
-                                android:gravity="center" />
-                        </androidx.cardview.widget.CardView>
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:fontFamily="@font/inter"
+                                android:text="Jawaban"
+                                android:textColor="@color/dalam_kotak"
+                                android:textSize="20sp" />
 
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="15dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="200dp"
+                                    android:layout_height="61dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/jawaban"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textMultiLine"
+                                            android:maxLines="5"
+                                            android:paddingLeft="6dp"
+                                            android:scrollbars="vertical"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="61dp"
+                                    android:layout_height="61dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginStart="5dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <Button
+                                            android:id="@+id/hurufajwb1"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textCapSentences"
+                                            android:maxLines="1"
+                                            android:text="â"
+                                            android:textAllCaps="false"
+                                            android:fontFamily="@font/inter"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="61dp"
+                                    android:layout_height="61dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <Button
+                                            android:id="@+id/hurufejwb1"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:background="@drawable/rounded_input"
+                                            android:inputType="textCapSentences"
+                                            android:maxLines="1"
+                                            android:text="è"
+                                            android:textAllCaps="false"
+                                            android:fontFamily="@font/inter"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="20sp" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="61dp"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="15dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="61dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="8dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/kotakan"
+                                        android:padding="2dp">
+
+                                        <ImageButton
+                                            android:id="@+id/btnAudio"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:text="Putar Audio"
+                                            android:src="@drawable/btn_play"
+                                            android:background="@drawable/rounded_input"/>
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="379dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="8dp">
+
+                    <Button
+                        android:id="@+id/btnSimpan"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/kotakan"
+                        android:fontFamily="@font/mergeone_reguler"
+                        android:text="Simpan"
+                        android:textAllCaps="false"
+                        android:textColor="@color/dalam_kotak"
+                        android:textSize="32sp" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <LinearLayout
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/kotakan"
-        android:elevation="8dp"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <LinearLayout
-            android:id="@+id/menuShare"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_madura"
-                android:tint="@color/dalam_kotak" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/menuEmail"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_eval"
-                android:tint="@color/dalam_kotak" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/menuDatabase"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_list_madura"
-                android:tint="@color/dalam_kotak" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/menuCheck"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_list_eval"
-                android:tint="@color/dalam_kotak" />
-        </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>
