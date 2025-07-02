@@ -27,21 +27,25 @@ class HomePage : Activity() {
         binding.btnTerjemahan.setOnClickListener {
             val intent = Intent(this, Terjemahan::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         binding.btnTb.setOnClickListener {
             val intent = Intent(this, TingkatBahasa::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         binding.btnPelafalan.setOnClickListener {
             val intent = Intent(this, Pelafalan::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         binding.btnEval.setOnClickListener {
             val intent = Intent(this, Evaluasi::class.java)
             startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         binding.triggeradmin.setOnClickListener {

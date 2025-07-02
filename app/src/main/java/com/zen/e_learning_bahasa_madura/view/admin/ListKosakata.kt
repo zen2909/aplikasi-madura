@@ -226,24 +226,54 @@ class ListKosakata : Activity() {
                 intent.putExtra("id_indo", item.indo.id)
                 if (context is Activity) {
                     context.startActivityForResult(intent, 1001)
+                    context.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 }
             }
 
             holder.binding.btnDelete.setOnClickListener {
                 val context = holder.itemView.context
-                val db = FirebaseDatabase.getInstance().reference
-                db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
-                db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
-                db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
-                db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
 
-                        if (activity is ListKosakata) {
-                            activity.fetchKosakata()
-                        }
+                AlertDialog.Builder(context)
+                    .setTitle("Konfirmasi Hapus")
+                    .setMessage("Apakah Anda yakin ingin menghapus kosakata ini?")
+                    .setPositiveButton("Hapus") { _, _ ->
+                        val db = FirebaseDatabase.getInstance().reference
+                        db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
+                        db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
+                        db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
+                        db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+                                if (activity is ListKosakata) {
+                                    activity.fetchKosakata()
+                                }
+                            }
                     }
+                    .setNegativeButton("Batal", null)
+                    .show()
             }
+            holder.binding.btnDelete.setOnClickListener {
+                val context = holder.itemView.context
+                AlertDialog.Builder(context)
+                    .setTitle("Konfirmasi Hapus")
+                    .setMessage("Apakah Anda yakin ingin menghapus kosakata ini?")
+                    .setPositiveButton("Hapus") { _, _ ->
+                        val db = FirebaseDatabase.getInstance().reference
+                        db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
+                        db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
+                        db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
+                        db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+                                if (activity is ListKosakata) {
+                                    activity.fetchKosakata()
+                                }
+                            }
+                    }
+                    .setNegativeButton("Batal", null)
+                    .show()
+            }
+
         }
         override fun getItemCount() = data.size
     }

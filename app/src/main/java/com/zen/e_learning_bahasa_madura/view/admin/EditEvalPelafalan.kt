@@ -6,140 +6,48 @@ import android.content.Context
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputType
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextWatcher
+import android.text.*
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.EditEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPelafalan
-import com.google.firebase.database.DataSnapshot
 
 class EditEvalPelafalan : Activity() {
 
     private lateinit var binding: EditEvalPelafalanBinding
     private val db = FirebaseDatabase.getInstance().reference
-    private var id: String = ""
+    private var idKoleksi: String = ""
+    private var dataList = listOf<DataSnapshot>()
+    private var currentIndex = 0
     private var mediaPlayer: MediaPlayer? = null
-    private var audioUrl: String? = null
-    private var selectedAudioUrl: String? = null
+    private var allKosakata = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = EditEvalPelafalanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        id = intent.getStringExtra("id_evalpilgan") ?: return
+        idKoleksi = intent.getStringExtra("id_koleksi") ?: return
 
-        loadData()
         hurufkhusus()
         setupAutoComplete()
-
+        setupNavigation()
         binding.soal.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         binding.jawaban.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
         binding.btnSimpan.setOnClickListener { updateData() }
         binding.btnAudio.setOnClickListener { previewAudio() }
-    }
-
-    private fun loadData() {
-        db.child("evaluasi_pelafalan").child(id).get()
-            .addOnSuccessListener {
-                val data = it.getValue(EvalPelafalan::class.java)
-                if (data != null) {
-                    binding.soal.setText(data.soal)
-                    audioUrl = data.jawaban
-                    fetchTextJawaban(audioUrl ?: "")
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal memuat data", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun fetchTextJawaban(audio: String) {
-        val tasks = listOf(
-            db.child("Madura_dasar").get(),
-            db.child("Madura_menengah").get(),
-            db.child("Madura_tinggi").get()
-        )
-
-        Tasks.whenAllSuccess<DataSnapshot>(tasks)
-            .addOnSuccessListener { results ->
-                results.forEach { snap ->
-                    snap.children.forEach {
-                        val kata = it.child("kosakata").getValue(String::class.java)
-                        val audioKata = it.child("audio_pelafalan").getValue(String::class.java)
-                        if (audioKata == audio) {
-                            binding.jawaban.setText(kata)
-                            return@addOnSuccessListener
-                        }
-                    }
-                }
-            }
-    }
-
-    private fun previewAudio() {
-        val jawaban = binding.jawaban.text.toString().trim()
-        if (jawaban.isEmpty()) {
-            Toast.makeText(this, "Masukkan jawaban dulu", Toast.LENGTH_SHORT).show()
-            return
+        binding.btnBack.setOnClickListener {
+            finish()
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
-        fetchAudioUrl(jawaban) { audioUrl ->
-            if (audioUrl != null) {
-                mediaPlayer?.release()
-                mediaPlayer = MediaPlayer().apply {
-                    setDataSource(audioUrl)
-                    setOnPreparedListener { start() }
-                    setOnCompletionListener { release() }
-                    setOnErrorListener { _, _, _ ->
-                        Toast.makeText(this@EditEvalPelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                    prepareAsync()
-                }
-            } else {
-                Toast.makeText(this, "Audio tidak ditemukan untuk: $jawaban", Toast.LENGTH_SHORT).show()
-            }
-        }
+        loadSoalFromKoleksi()
     }
-
-    private fun fetchAudioUrl(kosakata: String, callback: (String?) -> Unit) {
-        val db = FirebaseDatabase.getInstance().reference
-        val paths = listOf("Madura_dasar", "Madura_menengah", "Madura_tinggi")
-        val audioList = mutableListOf<String>()
-
-        val tasks = paths.map { path ->
-            db.child(path).get()
-        }
-
-        Tasks.whenAllSuccess<DataSnapshot>(tasks)
-            .addOnSuccessListener { snapshots ->
-                snapshots.forEach { snapshot ->
-                    for (child in snapshot.children) {
-                        val kata = child.child("kosakata").getValue(String::class.java)?.lowercase()?.trim()
-                        val audio = child.child("audio_pelafalan").getValue(String::class.java)
-                        if (kata == kosakata.lowercase().trim() && !audio.isNullOrBlank()) {
-                            audioList.add(audio)
-                        }
-                    }
-                }
-                callback(audioList.firstOrNull())
-            }
-            .addOnFailureListener {
-                callback(null)
-            }
-    }
-
-
-
 
     private fun hurufkhusus() {
         inserthuruf(binding.hurufasoal, binding.soal, "â")
@@ -151,79 +59,176 @@ class EditEvalPelafalan : Activity() {
     private fun inserthuruf(button: View, target: EditText, huruf: String) {
         button.setOnClickListener {
             val start = target.selectionStart
-            val end = target.selectionEnd
             val insertChar = if (start == 0) huruf.uppercase() else huruf.lowercase()
-            target.text.replace(start, end, insertChar)
+            target.text.replace(start, target.selectionEnd, insertChar)
             target.setSelection(start + insertChar.length)
-            target.requestFocus()
         }
+    }
+
+    private fun setupNavigation() {
+        binding.btnNext.setOnClickListener {
+            if (currentIndex < dataList.lastIndex) {
+                currentIndex++
+                loadCurrentData()
+            }
+        }
+
+        binding.btnPrev.setOnClickListener {
+            if (currentIndex > 0) {
+                currentIndex--
+                loadCurrentData()
+            }
+        }
+    }
+
+    private fun loadSoalFromKoleksi() {
+        db.child("evaluasi_pelafalan")
+            .orderByChild("id_koleksi")
+            .equalTo(idKoleksi)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        dataList = snapshot.children.toList()
+                        currentIndex = 0
+                        loadCurrentData()
+                    } else {
+                        Toast.makeText(this@EditEvalPelafalan, "Soal tidak ditemukan", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun loadCurrentData() {
+        val snap = dataList[currentIndex]
+        val data = snap.getValue(EvalPelafalan::class.java) ?: return
+
+        binding.soal.setText(data.soal)
+        fetchTextJawaban(data.jawaban.orEmpty())
+
+        binding.NomorSoal.text = "Soal ke-${currentIndex + 1} dari ${dataList.size}"
+    }
+
+    private fun fetchTextJawaban(audioUrl: String) {
+        val paths = listOf("Madura_dasar", "Madura_menengah", "Madura_tinggi")
+        val tasks = paths.map { db.child(it).get() }
+
+        Tasks.whenAllSuccess<DataSnapshot>(tasks)
+            .addOnSuccessListener { results ->
+                for (snap in results) {
+                    for (child in snap.children) {
+                        val kosakata = child.child("kosakata").getValue(String::class.java)
+                        val audio = child.child("audio_pelafalan").getValue(String::class.java)
+                        if (audio == audioUrl) {
+                            binding.jawaban.setText(kosakata)
+                            return@addOnSuccessListener
+                        }
+                    }
+                }
+            }
     }
 
     private fun updateData() {
         val soal = binding.soal.text.toString().trim()
-        val input = binding.jawaban.text.toString().trim()
+        val jawabanText = binding.jawaban.text.toString().trim()
 
-        if (soal.isEmpty() || input.isEmpty()) {
+        if (soal.isEmpty() || jawabanText.isEmpty()) {
             Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show()
             return
         }
 
+        fetchAudioUrl(jawabanText) { audio ->
+            if (audio == null) {
+                Toast.makeText(this, "Audio tidak ditemukan untuk $jawabanText", Toast.LENGTH_SHORT).show()
+                return@fetchAudioUrl
+            }
+
+            val id = dataList[currentIndex].key ?: return@fetchAudioUrl
+            val updated = EvalPelafalan(
+                id_evalpelafalan = id,
+                soal = soal,
+                jawaban = audio,
+                id_koleksi = idKoleksi
+            )
+
+            db.child("evaluasi_pelafalan").child(id).setValue(updated)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Data berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun fetchAudioUrl(kosakata: String, callback: (String?) -> Unit) {
+        val tasks = listOf("Madura_dasar", "Madura_menengah", "Madura_tinggi")
+            .map { db.child(it).get() }
+
+        Tasks.whenAllSuccess<DataSnapshot>(tasks)
+            .addOnSuccessListener { snapshots ->
+                for (snapshot in snapshots) {
+                    for (child in snapshot.children) {
+                        val kosa = child.child("kosakata").getValue(String::class.java)?.lowercase()?.trim()
+                        val audio = child.child("audio_pelafalan").getValue(String::class.java)
+                        if (kosa == kosakata.lowercase().trim() && !audio.isNullOrBlank()) {
+                            callback(audio)
+                            return@addOnSuccessListener
+                        }
+                    }
+                }
+                callback(null)
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
+
+    private fun previewAudio() {
+        val text = binding.jawaban.text.toString().trim()
+        fetchAudioUrl(text) { audioUrl ->
+            if (audioUrl != null) {
+                val dialog = AlertDialog.Builder(this)
+                    .setTitle("Memutar Audio")
+                    .setMessage("Sedang memutar audio untuk \"$text\".\nHarap tunggu hingga selesai...")
+                    .setCancelable(false)
+                    .create()
+
+                dialog.show()
+
+                mediaPlayer?.release()
+                mediaPlayer = MediaPlayer().apply {
+                    setDataSource(audioUrl)
+                    setOnPreparedListener {
+                        start()
+                    }
+                    setOnCompletionListener {
+                        dialog.dismiss()
+                        release()
+                    }
+                    setOnErrorListener { _, _, _ ->
+                        Toast.makeText(this@EditEvalPelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                        true
+                    }
+                    prepareAsync()
+                }
+            } else {
+                Toast.makeText(this, "Audio tidak ditemukan", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setupAutoComplete() {
         val db = FirebaseDatabase.getInstance().reference
         val paths = listOf("Madura_dasar", "Madura_menengah", "Madura_tinggi")
         val tasks = paths.map { db.child(it).get() }
 
         Tasks.whenAllSuccess<DataSnapshot>(tasks)
-            .addOnSuccessListener { snapshots ->
-                val lowerInput = input.lowercase()
-                val audio = snapshots
-                    .flatMap { it.children }
-                    .firstOrNull { snap ->
-                        val kosa = snap.child("kosakata").getValue(String::class.java)?.lowercase()
-                        val audioVal = snap.child("audio_pelafalan").getValue(String::class.java)
-                        kosa == lowerInput && !audioVal.isNullOrBlank()
-                    }?.child("audio_pelafalan")?.getValue(String::class.java)
-
-                if (audio.isNullOrBlank()) {
-                    Toast.makeText(this, "Audio tidak ditemukan untuk $input", Toast.LENGTH_SHORT).show()
-                    return@addOnSuccessListener
-                }
-
-                val updatedData = EvalPelafalan(
-                    id_evalpilgan = id,
-                    soal = soal,
-                    kategori = "Pelafalan",
-                    jawaban = audio
-                )
-
-                db.child("evaluasi_pelafalan").child(id).setValue(updatedData)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Data berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Gagal memperbarui data", Toast.LENGTH_SHORT).show()
-                    }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal mengakses Firebase", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-    private fun setupAutoComplete() {
-        val allKosakata = mutableSetOf<String>()
-        val db = FirebaseDatabase.getInstance().reference
-
-        val dasarTask = db.child("Madura_dasar").get()
-        val menengahTask = db.child("Madura_menengah").get()
-        val tinggiTask = db.child("Madura_tinggi").get()
-
-        Tasks.whenAllSuccess<DataSnapshot>(dasarTask, menengahTask, tinggiTask)
             .addOnSuccessListener { results ->
-                results.forEach { snapshot ->
-                    snapshot.children.mapNotNullTo(allKosakata) {
-                        it.child("kosakata").getValue(String::class.java)
+                allKosakata.clear()
+                for (snap in results) {
+                    for (child in snap.children) {
+                        val kata = child.child("kosakata").getValue(String::class.java)
+                        if (!kata.isNullOrBlank()) allKosakata.add(kata)
                     }
                 }
 
@@ -234,22 +239,16 @@ class EditEvalPelafalan : Activity() {
                 binding.jawaban.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
                         adapter.currentKeyword = s?.toString() ?: ""
-                        selectedAudioUrl = null
                     }
+
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
             }
     }
 
-
-
-
-
-    class HighlightAdapter(
-        context: Context,
-        private val originalList: List<String>
-    ) : ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, ArrayList(originalList)) {
+    class HighlightAdapter(context: Context, private val originalList: List<String>) :
+        ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, ArrayList(originalList)) {
 
         var currentKeyword: String = ""
 
@@ -278,12 +277,11 @@ class EditEvalPelafalan : Activity() {
             return object : Filter() {
                 override fun performFiltering(constraint: CharSequence?): FilterResults {
                     val keyword = constraint?.toString()?.lowercase()?.trim() ?: ""
-                    val filtered = if (keyword.isEmpty()) {
+                    val filtered = if (keyword.isBlank()) {
                         originalList
                     } else {
                         originalList.filter { it.lowercase().contains(keyword) }
                     }
-
                     return FilterResults().apply {
                         values = filtered
                         count = filtered.size

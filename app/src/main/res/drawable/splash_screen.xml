@@ -6,6 +6,6 @@
     <item>
             <bitmap
                 android:gravity="center"
-                android:src="@drawable/logo_madura" />
+                android:src="@drawable/logoapp" />
     </item>
 </layer-list>

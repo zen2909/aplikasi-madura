@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_app"
         android:supportsRtl="true"
         android:theme="@style/Theme.ELearning_Bahasa_madura"
         tools:targetApi="31" >
@@ -36,7 +36,8 @@
         <activity android:name=".auth.Login"/>
         <activity android:name=".auth.Register" />
         <activity android:name=".view.admin.InputKosakata"/>
-        <activity android:name=".view.admin.InputEvalTb"/>
+        <activity android:name=".view.admin.InputEvalTb"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.admin.InputEvalTerjemahan"/>
         <activity android:name=".view.admin.InputEvalPelafalan"
             android:windowSoftInputMode="adjustResize"/>

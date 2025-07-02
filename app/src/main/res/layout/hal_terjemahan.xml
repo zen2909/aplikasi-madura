@@ -6,12 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <!-- Header Section -->
-
-    <!-- Language Selector Section -->
-
-    <!-- Translation Section -->
-
     <LinearLayout
         android:id="@+id/header_section"
         android:layout_width="match_parent"
@@ -21,9 +15,6 @@
         android:layout_marginEnd="24dp"
         android:orientation="vertical">
 
-        <!-- Back Button -->
-
-        <!-- Title -->
         <ImageButton
             android:id="@+id/btn_back"
             android:layout_width="48dp"
@@ -115,41 +106,108 @@
         android:orientation="vertical">
 
         <!-- Input Text Card -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_input"
+
+        <LinearLayout
             android:layout_width="335dp"
-            android:layout_height="68dp"
-            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@android:color/white">
+            android:layout_gravity="center">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@color/kotakan"
-                android:padding="5dp">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_input"
+                android:layout_width="200dp"
+                android:layout_height="68dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/white">
 
-                <EditText
-                    android:id="@+id/et_input_text"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/rounded_input"
-                    android:hint="Ketik teks di sini..."
-                    android:gravity="center"
-                    android:inputType="textMultiLine"
-                    android:maxLines="5"
-                    android:fontFamily="@font/inter"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/dalam_kotak"
-                    android:textColorHint="@color/dalam_kotak"
-                    android:textSize="20sp" />
+                    android:orientation="vertical"
+                    android:background="@color/kotakan"
+                    android:padding="5dp">
 
-            </LinearLayout>
+                    <AutoCompleteTextView
+                        android:id="@+id/et_input_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_input"
+                        android:hint="Ketik teks di sini..."
+                        android:gravity="center"
+                        android:inputType="textMultiLine"
+                        android:maxLines="5"
+                        android:fontFamily="@font/inter"
+                        android:scrollbars="vertical"
+                        android:textColor="@color/dalam_kotak"
+                        android:textColorHint="@color/dalam_kotak"
+                        android:textSize="20sp" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="61dp"
+                android:layout_height="68dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/kotakan"
+                    android:padding="5dp">
+
+                    <Button
+                        android:id="@+id/hurufainput"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_input"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:text="â"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/inter"
+                        android:textColor="@color/dalam_kotak"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="61dp"
+                android:layout_height="68dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/kotakan"
+                    android:padding="5dp">
+
+                    <Button
+                        android:id="@+id/hurufeinput"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_input"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:text="è"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/inter"
+                        android:textColor="@color/dalam_kotak"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
         <!-- Output Text Card -->
         <androidx.cardview.widget.CardView

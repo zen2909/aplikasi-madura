@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
@@ -13,54 +12,60 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="120dp"
-            android:layout_marginEnd="24dp"
-            android:orientation="vertical">
+            android:layout_marginEnd="10dp">
 
+            <!-- Back Button -->
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/rounded_back"
-                android:contentDescription="Back"
+                android:src="@drawable/ic_back"
                 android:elevation="4dp"
-                android:src="@drawable/ic_back" />
+                android:contentDescription="Back" />
 
-            <!-- Header Text -->
+            <!-- Header -->
             <TextView
                 android:id="@+id/tvHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="MASUKKAN\nTEKS BAHASA MADURA"
-                android:letterSpacing="0.07"
-                android:fontFamily="@font/bangers"
-                android:textColor="@color/teks"
-                android:textSize="40sp"
-                android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/bangers"
+                android:textSize="40sp"
+                android:textColor="@color/teks"
+                android:textStyle="bold"
+                android:letterSpacing="0.07" />
+
+            <!-- Input Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="32dp"
+                android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_input"
-                android:layout_width="335dp"
+                android:layout_width="0dp"
                 android:layout_height="68dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="32dp"
+                android:layout_weight="1"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="@android:color/white">
 
                 <LinearLayout
-                    android:layout_width="335dp"
+                    android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:orientation="vertical"
+                    android:padding="5dp"
                     android:background="@color/kotakan"
-                    android:layout_gravity="center"
-                    android:padding="5dp">
+                    android:layout_gravity="center">
 
-                    <!-- Input Field -->
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/et_input_text"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -69,21 +74,78 @@
                         android:inputType="textMultiLine"
                         android:maxLines="5"
                         android:fontFamily="@font/inter"
-                        android:scrollbars="vertical"
-                        android:gravity="center"
                         android:textAlignment="center"
-                        android:textColor="@color/dalam_kotak"
-                        android:textColorHint="@color/dalam_kotak"
-                        android:textSize="20sp" />
+                        android:gravity="center"
+                        android:scrollbars="vertical"
+                        android:textSize="20sp"
+                        android:textColor="@color/dalam_kotak" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Card containing radio buttons and everything below -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="61dp"
+                    android:layout_height="68dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/kotakan"
+                        android:padding="5dp">
+
+                        <Button
+                            android:id="@+id/hurufainput"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/rounded_input"
+                            android:inputType="textCapSentences"
+                            android:maxLines="1"
+                            android:text="â"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/inter"
+                            android:textColor="@color/dalam_kotak"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="61dp"
+                    android:layout_height="68dp"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/kotakan"
+                        android:padding="5dp">
+
+                        <Button
+                            android:id="@+id/hurufeinput"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/rounded_input"
+                            android:inputType="textCapSentences"
+                            android:maxLines="1"
+                            android:text="è"
+                            android:textAllCaps="false"
+                            android:fontFamily="@font/inter"
+                            android:textColor="@color/dalam_kotak"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Card with Button + Results -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="@android:color/white">
@@ -91,233 +153,188 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/kotakan"
                     android:orientation="vertical"
+                    android:background="@color/kotakan"
                     android:padding="5dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_input"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <!-- Radio Button Group -->
-                    <RadioGroup
-                        android:id="@+id/rgLanguageLevel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:layout_marginBottom="16dp">
-
-                        <RadioButton
-                            android:id="@+id/rbEnjhekIyye"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Enjhek-Iyye"
-                            android:textSize="12sp"
-                            android:button="@drawable/radio_button"
-                            android:paddingStart="5dp"
-                            android:paddingEnd="10dp"/>
-
-                        <RadioButton
-                            android:id="@+id/rbEngghiEnten"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Engghi-Enten"
-                            android:textSize="12sp"
-                            android:button="@drawable/radio_button"
-                            android:paddingStart="5dp"
-                            android:paddingEnd="10dp"/>
-
-                        <RadioButton
-                            android:id="@+id/rbEngghiBhunten"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Engghi-Bhunten"
-                            android:textSize="12sp"
-                            android:button="@drawable/radio_button"
-                            android:paddingStart="5dp"/>
-                    </RadioGroup>
-
-                    <!-- Search Button -->
-                    <Button
-                        android:id="@+id/btnTemukan"
-                        android:layout_width="match_parent"
-                        android:layout_height="47dp"
-                        android:text="Temukan"
-                        android:textSize="20sp"
-                        android:gravity="center"
-                        android:background="@drawable/rounded_button"
-                        android:textColor="@color/dalam_kotak"
-                        android:fontFamily="@font/inter"
-                        android:textAlignment="center"
-                        android:textAllCaps="false"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Results Container -->
+                    <!-- Button -->
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="8dp">
+                        android:layout_height="200dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/rounded_input"
+                        android:paddingTop="16dp"
+                        android:paddingStart="3dp"
+                        android:paddingRight="3dp">
 
-                        <!-- Left Column - Language Levels -->
+                        <Button
+                            android:id="@+id/btnTemukan"
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp"
+                            android:text="Temukan"
+                            android:textSize="20sp"
+                            android:gravity="center"
+                            android:textAlignment="center"
+                            android:layout_marginBottom="12dp"
+                            android:background="@drawable/rounded_button"
+                            android:textAllCaps="false"
+                            android:textColor="@color/dalam_kotak"
+                            android:fontFamily="@font/inter" />
+
+                        <!-- Result Grid -->
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="8dp">
+                            android:layout_width="match_parent"
+                            android:layout_height="105dp"
+                            android:orientation="horizontal">
 
+                            <!-- Kosa Level Column -->
                             <androidx.cardview.widget.CardView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
-                                app:cardCornerRadius="10dp"
-                                app:cardElevation="8dp"
-                                app:cardBackgroundColor="@android:color/white">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/kotakan"
-                                android:orientation="vertical"
-                                android:padding="3dp">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/rounded_input"
-                                    android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/tvLevel1"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="tingkat bahasa"
-                                    android:textAlignment="center"
-                                    android:gravity="center"
-                                    android:layout_gravity="center"
-                                    android:textColor="@color/dalam_kotak"
-                                    android:padding="8dp" />
-                                </LinearLayout>
-                            </LinearLayout>
-                            </androidx.cardview.widget.CardView>
-
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
-                                app:cardCornerRadius="10dp"
-                                app:cardElevation="8dp"
-                                app:cardBackgroundColor="@android:color/white">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@color/kotakan"
-                                    android:orientation="vertical"
-
-                                    android:padding="3dp">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:background="@drawable/rounded_input"
-                                        android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvLevel2"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="tingkat bahasa"
-                                android:textAlignment="center"
-                                android:gravity="center"
-                                android:layout_gravity="center"
-                                android:textColor="@color/dalam_kotak"
-                                android:padding="8dp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
-                                app:cardCornerRadius="10dp"
-                                app:cardElevation="8dp"
-                                app:cardBackgroundColor="@android:color/white">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@color/kotakan"
-                                    android:orientation="vertical"
-
-                                    android:padding="3dp">
-
-                                    <LinearLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:background="@drawable/rounded_input"
-                                        android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvLevel3"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="tingkat bahasa"
-                                android:textAlignment="center"
-                                android:gravity="center"
-                                android:layout_gravity="center"
-                                android:textColor="@color/dalam_kotak"
-                                android:padding="8dp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-                        </LinearLayout>
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="150dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginBottom="3dp"
-                            app:cardBackgroundColor="@android:color/white"
-                            app:cardCornerRadius="10dp"
-                            app:cardElevation="8dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
+                                android:layout_width="150dp"
                                 android:layout_height="match_parent"
-                                android:background="@color/kotakan"
-                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="2dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp"
+                                app:cardBackgroundColor="@android:color/white">
 
-                                android:padding="3dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/rounded_input"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/tvCarakan"
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:background="@drawable/rounded_input"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:textAlignment="center"
-                                    android:text="Carakan"
-                                    android:textSize="16sp"
-                                    android:textColor="@color/dalam_kotak" />
-                            </LinearLayout>
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
+                                    android:orientation="vertical"
+                                    android:padding="3dp"
+                                    android:background="@color/kotakan">
 
-                    </LinearLayout>
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_input">
+
+                                        <TextView
+                                            android:id="@+id/katadasar"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:background="@drawable/rounded_input"
+                                            android:gravity="center"
+                                            android:hint="Bhâsa enjâ'-iyâ"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp" />
+
+                                        <View
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="1dp"
+                                            android:layout_marginBottom="2dp"
+                                            android:background="@color/kotakan" />
+
+                                        <TextView
+                                            android:id="@+id/katamenengah"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:hint="Bhâsa engghi-enten"
+                                            android:gravity="center"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp"
+                                            android:background="@drawable/rounded_input" />
+
+                                        <View
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="1dp"
+                                            android:layout_marginBottom="2dp"
+                                            android:background="@color/kotakan" />
+
+                                        <TextView
+                                            android:id="@+id/katatinggi"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:hint="Bhâsa èngghi-bhunten"
+                                            android:gravity="center"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp"
+                                            android:background="@drawable/rounded_input" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <!-- Carakan Column -->
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="150dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="2dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="8dp"
+                                app:cardBackgroundColor="@android:color/white">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:padding="3dp"
+                                    android:background="@color/kotakan">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical"
+                                        android:background="@drawable/rounded_input">
+
+                                        <TextView
+                                            android:id="@+id/cardasar"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:hint="Carakan enjâ'-iyâ"
+                                            android:gravity="center"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp"
+                                            android:background="@drawable/rounded_input" />
+
+                                        <View
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="1dp"
+                                            android:layout_marginBottom="2dp"
+                                            android:background="@color/kotakan" />
+
+                                        <TextView
+                                            android:id="@+id/carmenengah"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:hint="Carakan engghi-enten"
+                                            android:gravity="center"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp"
+                                            android:background="@drawable/rounded_input" />
+
+                                        <View
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="1dp"
+                                            android:layout_marginBottom="2dp"
+                                            android:background="@color/kotakan" />
+
+                                        <TextView
+                                            android:id="@+id/cartinggi"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:hint="Carakan èngghi-bhunten"
+                                            android:gravity="center"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/dalam_kotak"
+                                            android:textSize="15sp"
+                                            android:background="@drawable/rounded_input" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
