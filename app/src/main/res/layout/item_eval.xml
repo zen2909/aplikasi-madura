@@ -39,8 +39,8 @@
                 android:fontFamily="@font/inter"
                 android:text="Soal"
                 android:textColor="@color/dalam_kotak"
-                android:textSize="16sp"
-                android:maxLines="1"
+                android:textSize="14sp"
+                android:maxLines="2"
                 android:ellipsize="end"/>
 
             <TextView
@@ -50,16 +50,22 @@
                 android:fontFamily="@font/inter"
                 android:text="Kategori"
                 android:textColor="#757575"
-                android:textSize="14sp"
-                android:maxLines="1"
+                android:textSize="12sp"
+                android:maxLines="2"
                 android:ellipsize="end"/>
         </LinearLayout>
+
+        <Switch
+            android:id="@+id/switchAktif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
 
         <ImageButton
             android:id="@+id/btnEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="15dp"
             android:background="@color/white"
             android:src="@drawable/ic_edit" />
 

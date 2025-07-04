@@ -1,18 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+    android:background="@android:color/transparent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -54,7 +48,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="179dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="150dp"
@@ -97,7 +91,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Waktu Pengerjaan"
+                            android:text="Waktu Jawab"
                             android:fontFamily="@font/inter"
                             android:textSize="20sp"
                             android:textColor="@color/dalam_kotak"/>
@@ -105,26 +99,27 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="52dp"
+                    android:layout_width="135dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="150dp"
-                    android:layout_marginStart="240dp"
-                    android:layout_marginEnd="20dp">
+                    android:layout_marginStart="175dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
-                        android:paddingBottom="10dp">
+                        android:layout_marginTop="5dp">
 
                         <TextView
+                            android:id="@+id/jawabanBenar"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
+                            android:textAlignment="center"
                             android:text="10"
                             android:fontFamily="@font/inter"
-                            android:textSize="20sp"
+                            android:textSize="16sp"
                             android:textColor="@color/dalam_kotak"/>
                     </LinearLayout>
 
@@ -132,30 +127,35 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
-                        android:paddingBottom="10dp">
+                        android:layout_marginTop="15dp">
 
                         <TextView
+                            android:id="@+id/jawabanSalah"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="10"
+                            android:textAlignment="center"
                             android:gravity="center"
                             android:fontFamily="@font/inter"
-                            android:textSize="20sp"
+                            android:textSize="16sp"
                             android:textColor="@color/dalam_kotak"/>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="15dp">
 
                         <TextView
+                            android:id="@+id/waktuPengerjaan"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="10"
+                            android:text="10 Menit 20 Detik"
+                            android:textAlignment="center"
                             android:gravity="center"
                             android:fontFamily="@font/inter"
-                            android:textSize="20sp"
+                            android:textSize="16sp"
                             android:textColor="@color/dalam_kotak"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -188,17 +188,16 @@
 
                     <!-- Percentage Text -->
                     <TextView
-                        android:id="@+id/tv_percentage"
+                        android:id="@+id/tv_nilai"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:text="100%"
+                        android:text="100"
                         android:fontFamily="@font/inter"
-                        android:textSize="24sp"
+                        android:textSize="32sp"
                         android:textColor="@color/dalam_kotak" />
 
                 </RelativeLayout>
-
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -218,9 +217,8 @@
                     android:layout_gravity="center"
                     android:padding="5dp">
 
-                    <!-- Input Field -->
                     <ImageButton
-                        android:id="@+id/ic_send"
+                        android:id="@+id/btnSelesai"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rounded_shape"
@@ -228,6 +226,6 @@
                         android:gravity="center" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
-    </ScrollView>
 </RelativeLayout>

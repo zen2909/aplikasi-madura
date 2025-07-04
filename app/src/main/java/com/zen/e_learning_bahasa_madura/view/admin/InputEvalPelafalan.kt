@@ -28,17 +28,18 @@ class InputEvalPelafalan : Activity() {
     private lateinit var db: DatabaseReference
     private var selectedAudioUrl: String? = null
     private var mediaPlayer: MediaPlayer? = null
-    private var selectedIdKoleksi: String? = null
+    @Volatile private var selectedIdKoleksi: String? = null
     private val listKoleksi: MutableList<KoleksiSoal> = mutableListOf()
     private lateinit var spinnerAdapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = InputEvalPelafalanBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        binding = InputEvalPelafalanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         db = FirebaseDatabase.getInstance().reference
 
+        // Setup Navigasi Menu
         NavHelper.setup(
             activity = this,
             menuInputKosakata = binding.menuInputKosakata,
@@ -48,6 +49,7 @@ class InputEvalPelafalan : Activity() {
             currentClass = InputEvalPelafalan::class.java
         )
 
+        // Navigasi antar jenis input
         binding.inputtb.setOnClickListener {
             startActivity(Intent(this, InputEvalTb::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -58,6 +60,7 @@ class InputEvalPelafalan : Activity() {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
+        // Setup Fitur Input
         hurufkhusus()
         setupAutoComplete()
         setupListeners()
@@ -66,6 +69,7 @@ class InputEvalPelafalan : Activity() {
         binding.soal.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         binding.jawaban.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
+        // Tombol
         binding.btnAudio.setOnClickListener { previewAudio() }
         binding.btnTambahKoleksi.setOnClickListener { showDialogTambahKoleksi() }
         binding.btnSimpan.setOnClickListener { insertSoalPelafalan() }
@@ -101,14 +105,13 @@ class InputEvalPelafalan : Activity() {
                     spinnerAdapter.clear()
 
                     if (!snapshot.exists()) {
-                        // Kalau belum ada koleksi soal, tampilkan pesan dummy
                         spinnerAdapter.add("Belum ada koleksi soal")
                         selectedIdKoleksi = null
                         spinnerAdapter.notifyDataSetChanged()
                         return
                     }
 
-                    spinnerAdapter.add("Pilih Koleksi Soal") // dummy item
+                    spinnerAdapter.add("Pilih Koleksi Soal")
                     for (data in snapshot.children) {
                         val item = data.getValue(KoleksiSoal::class.java)
                         item?.let {
@@ -123,10 +126,8 @@ class InputEvalPelafalan : Activity() {
             })
 
         binding.spinnerkoleksi.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedIdKoleksi = if (position > 0) {
-                    listKoleksi.getOrNull(position - 1)?.id_koleksi
-                } else null
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedIdKoleksi = if (position > 0) listKoleksi.getOrNull(position - 1)?.id_koleksi else null
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -134,9 +135,10 @@ class InputEvalPelafalan : Activity() {
     }
 
     private fun showDialogTambahKoleksi() {
-        val input = EditText(this)
-        input.hint = "Nama Koleksi Soal"
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        val input = EditText(this).apply {
+            hint = "Nama Koleksi Soal"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Tambah Koleksi Soal")
@@ -157,30 +159,28 @@ class InputEvalPelafalan : Activity() {
 
     private fun setupAutoComplete() {
         val allKosakata = mutableListOf<String>()
-        val dasarTask = db.child("Madura_dasar").get()
-        val menengahTask = db.child("Madura_menengah").get()
-        val tinggiTask = db.child("Madura_tinggi").get()
+        val dasar = db.child("Madura_dasar").get()
+        val menengah = db.child("Madura_menengah").get()
+        val tinggi = db.child("Madura_tinggi").get()
 
-        Tasks.whenAllSuccess<DataSnapshot>(dasarTask, menengahTask, tinggiTask)
-            .addOnSuccessListener { results ->
-                results.forEach { snapshot ->
-                    snapshot.children.mapNotNullTo(allKosakata) {
-                        it.child("kosakata").getValue(String::class.java)
-                    }
+        Tasks.whenAllSuccess<DataSnapshot>(dasar, menengah, tinggi).addOnSuccessListener { snapshots ->
+            snapshots.forEach { snapshot ->
+                snapshot.children.mapNotNullTo(allKosakata) {
+                    it.child("kosakata").getValue(String::class.java)
                 }
-
-                val adapter = HighlightAdapter(this, allKosakata.distinct())
-                binding.jawaban.addTextChangedListener(object : TextWatcher {
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        adapter.currentKeyword = s?.toString() ?: ""
-                    }
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                    override fun afterTextChanged(s: Editable?) {}
-                })
-
-                binding.jawaban.setAdapter(adapter)
-                binding.jawaban.threshold = 1
             }
+
+            val adapter = HighlightAdapter(this, allKosakata.distinct())
+            binding.jawaban.addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    adapter.currentKeyword = s?.toString() ?: ""
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun afterTextChanged(s: Editable?) {}
+            })
+            binding.jawaban.setAdapter(adapter)
+            binding.jawaban.threshold = 1
+        }
     }
 
     class HighlightAdapter(context: Context, private val originalList: List<String>) :
@@ -225,7 +225,9 @@ class InputEvalPelafalan : Activity() {
 
     private fun setupListeners() {
         binding.jawaban.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) { selectedAudioUrl = null }
+            override fun afterTextChanged(s: Editable?) {
+                selectedAudioUrl = null
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -274,18 +276,14 @@ class InputEvalPelafalan : Activity() {
         val paths = listOf("Madura_dasar", "Madura_menengah", "Madura_tinggi")
         val tasks = paths.map { db.child(it).get() }
 
-        Tasks.whenAllSuccess<DataSnapshot>(tasks)
-            .addOnSuccessListener { snapshots ->
-                val audio = snapshots.flatMap { snapshot ->
-                    snapshot.children.mapNotNull { data ->
-                        val kosakata = data.child("kosakata").getValue(String::class.java)?.lowercase()
-                        val audio = data.child("audio_pelafalan").getValue(String::class.java)
-                        if (kosakata == keyword) audio else null
-                    }
-                }.firstOrNull()
-                callback(audio)
+        Tasks.whenAllSuccess<DataSnapshot>(tasks).addOnSuccessListener { snapshots ->
+            val audio = snapshots.flatMap { it.children }.firstNotNullOfOrNull { data ->
+                val kosakata = data.child("kosakata").getValue(String::class.java)?.lowercase()
+                val audioUrl = data.child("audio_pelafalan").getValue(String::class.java)
+                if (kosakata == keyword) audioUrl else null
             }
-            .addOnFailureListener { callback(null) }
+            callback(audio)
+        }.addOnFailureListener { callback(null) }
     }
 
     private fun insertSoalPelafalan() {
@@ -293,7 +291,7 @@ class InputEvalPelafalan : Activity() {
         val inputJawaban = binding.jawaban.text.toString().trim()
         val idKoleksi = selectedIdKoleksi
 
-        if (idKoleksi.isNullOrEmpty() || binding.spinnerkoleksi.selectedItemPosition == 0) {
+        if (idKoleksi.isNullOrBlank() || binding.spinnerkoleksi.selectedItemPosition == 0) {
             Toast.makeText(this, "Silakan pilih koleksi soal terlebih dahulu", Toast.LENGTH_SHORT).show()
             return
         }
@@ -315,61 +313,20 @@ class InputEvalPelafalan : Activity() {
             val idPelafalan = pelafalanRef.push().key ?: return@fetchAudioUrl
             val idEvaluasi = evaluasiRef.push().key ?: return@fetchAudioUrl
 
-            val soalData = EvalPelafalan(
-                id_evalpelafalan = idPelafalan,
-                id_koleksi = idKoleksi,
-                soal = soal,
-                jawaban = audio
-            )
+            val soalData = EvalPelafalan(idPelafalan, soal, audio)
+            val evaluasiData = Evaluasi(idEvaluasi, idKoleksi, null, idPelafalan)
 
-            val evaluasiData = Evaluasi(
-                id_evaluasi = idEvaluasi,
-                id_pilgan = null,
-                id_pelafalan = idPelafalan
-            )
-
-            pelafalanRef.child(idPelafalan).setValue(soalData)
-                .addOnSuccessListener {
-                    evaluasiRef.child(idEvaluasi).setValue(evaluasiData)
-                        .addOnSuccessListener {
-                            // Tambahkan +1 ke jumlah soal di koleksi
-                            val koleksiRef = db.child("koleksi_soal").child(idKoleksi)
-                            koleksiRef.child("jumlah_soal").get().addOnSuccessListener { snapshot ->
-                                val jumlahSaatIni = snapshot.getValue(Int::class.java) ?: 0
-                                koleksiRef.child("jumlah_soal").setValue(jumlahSaatIni + 1)
-                            }
-                            Toast.makeText(this, "Soal pelafalan berhasil disimpan", Toast.LENGTH_SHORT).show()
-                            clearForm()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Gagal menyimpan ke evaluasi", Toast.LENGTH_SHORT).show()
-                        }
+            pelafalanRef.child(idPelafalan).setValue(soalData).addOnSuccessListener {
+                evaluasiRef.child(idEvaluasi).setValue(evaluasiData).addOnSuccessListener {
+                    db.child("koleksi_soal").child(idKoleksi).child("jumlah_soal").get().addOnSuccessListener {
+                        val jumlahSaatIni = it.getValue(Int::class.java) ?: 0
+                        db.child("koleksi_soal").child(idKoleksi).child("jumlah_soal").setValue(jumlahSaatIni + 1)
+                    }
+                    Toast.makeText(this, "Soal pelafalan berhasil disimpan", Toast.LENGTH_SHORT).show()
+                    clearForm()
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Gagal menyimpan soal pelafalan", Toast.LENGTH_SHORT).show()
-                }
+            }
         }
-    }
-
-
-    private fun insertToEvaluasi(idPelafalan: String) {
-        val evalRef = db.child("evaluasi")
-        val idEvaluasi = evalRef.push().key ?: return
-
-        val model = Evaluasi(
-            id_evaluasi = idEvaluasi,
-            id_pelafalan = idPelafalan,
-            id_pilgan = null
-        )
-
-        evalRef.child(idEvaluasi).setValue(model)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Soal pelafalan berhasil disimpan", Toast.LENGTH_SHORT).show()
-                clearForm()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal simpan ke evaluasi", Toast.LENGTH_SHORT).show()
-            }
     }
 
     private fun clearForm() {

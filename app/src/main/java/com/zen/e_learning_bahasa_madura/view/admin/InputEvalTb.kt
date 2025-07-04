@@ -25,8 +25,8 @@ class InputEvalTb : Activity() {
     private var selectedIdKoleksi: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = InputEvalTbBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        binding = InputEvalTbBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         db = FirebaseDatabase.getInstance().reference
@@ -46,6 +46,13 @@ class InputEvalTb : Activity() {
         binding.jawaban3.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         binding.jawaban4.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
+        hurufkhusus()
+        JawabanListeners()
+        setupSpinnerKoleksi()
+
+        binding.btnTambahKoleksi.setOnClickListener { showDialogTambahKoleksi() }
+        binding.btnSimpan.setOnClickListener { simpanSoal() }
+
         binding.inputterjemahan.setOnClickListener {
             startActivity(Intent(this, InputEvalTerjemahan::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -55,12 +62,6 @@ class InputEvalTb : Activity() {
             startActivity(Intent(this, InputEvalPelafalan::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
-
-        hurufkhusus()
-        JawabanListeners()
-        setupSpinnerKoleksi()
-        binding.btnTambahKoleksi.setOnClickListener { showDialogTambahKoleksi() }
-        binding.btnSimpan.setOnClickListener { simpanSoal() }
     }
 
     private fun setupSpinnerKoleksi() {
@@ -75,17 +76,16 @@ class InputEvalTb : Activity() {
                     spinnerAdapter.clear()
 
                     if (!snapshot.exists()) {
-                        // Kalau belum ada koleksi soal, tampilkan pesan dummy
                         spinnerAdapter.add("Belum ada koleksi soal")
                         selectedIdKoleksi = null
                         spinnerAdapter.notifyDataSetChanged()
                         return
                     }
 
-                    spinnerAdapter.add("Pilih Koleksi Soal") // dummy item
+                    spinnerAdapter.add("Pilih Koleksi Soal")
                     for (data in snapshot.children) {
-                        val item = data.getValue(KoleksiSoal::class.java)
-                        item?.let {
+                        val koleksi = data.getValue(KoleksiSoal::class.java)
+                        koleksi?.let {
                             listKoleksi.add(it)
                             spinnerAdapter.add(it.nama ?: "Tanpa Nama")
                         }
@@ -98,15 +98,12 @@ class InputEvalTb : Activity() {
 
         binding.spinnerkoleksi.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedIdKoleksi = if (position > 0) {
-                    listKoleksi.getOrNull(position - 1)?.id_koleksi
-                } else null
+                selectedIdKoleksi = if (position > 0) listKoleksi.getOrNull(position - 1)?.id_koleksi else null
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
-
 
     private fun showDialogTambahKoleksi() {
         val input = EditText(this)
@@ -120,8 +117,20 @@ class InputEvalTb : Activity() {
                 val nama = input.text.toString().trim()
                 if (nama.isNotEmpty()) {
                     val id = db.child("koleksi_soal").push().key ?: return@setPositiveButton
-                    val koleksi = KoleksiSoal(id_koleksi = id, nama = nama, kategori = "Tingkat Bahasa", jumlah_soal = 0)
+                    val koleksi = KoleksiSoal(
+                        id_koleksi = id,
+                        nama = nama,
+                        kategori = "Tingkat Bahasa",
+                        jumlah_soal = 0,
+                        aktif = false // Tambahan field aktif
+                    )
                     db.child("koleksi_soal").child(id).setValue(koleksi)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Koleksi berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Gagal menambahkan koleksi", Toast.LENGTH_SHORT).show()
+                        }
                 } else {
                     Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
                 }
@@ -138,8 +147,8 @@ class InputEvalTb : Activity() {
         val opsi4 = binding.jawaban4.text.toString().trim()
         val jawabanBenar = binding.jawabanBenar.selectedItem?.toString()?.trim() ?: ""
         val bobot = binding.bobot.text.toString().trim()
-        val idKoleksi = selectedIdKoleksi
 
+        val idKoleksi = selectedIdKoleksi
         if (idKoleksi.isNullOrEmpty()) {
             Toast.makeText(this, "Pilih koleksi soal terlebih dahulu", Toast.LENGTH_SHORT).show()
             return
@@ -166,14 +175,14 @@ class InputEvalTb : Activity() {
             jwb_3 = opsi3,
             jwb_4 = opsi4,
             jwb_benar = jawabanBenar,
-            bobot = bobot,
-            id_koleksi = idKoleksi
+            bobot = bobot
         )
 
         val evaluasiData = Evaluasi(
             id_evaluasi = idEvaluasi,
             id_pilgan = idEvalPilgan,
-            id_pelafalan = null
+            id_pelafalan = null,
+            id_koleksi = idKoleksi
         )
 
         pilganRef.child(idEvalPilgan).setValue(soalData)
@@ -197,31 +206,42 @@ class InputEvalTb : Activity() {
             }
     }
 
+    private fun updateJumlahSoal(idKoleksi: String) {
+        db.child("koleksi_soal").child(idKoleksi).child("jumlah_soal")
+            .runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val jumlah = currentData.getValue(Int::class.java) ?: 0
+                    currentData.value = jumlah + 1
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {}
+            })
+    }
+
     private fun spinnerjawaban() {
         val opsi = mutableListOf("Pilih Jawaban Benar")
-
-        val j1 = binding.jawaban1.text.toString()
-        val j2 = binding.jawaban2.text.toString()
-        val j3 = binding.jawaban3.text.toString()
-        val j4 = binding.jawaban4.text.toString()
-
-        if (j1.isNotBlank()) opsi.add(j1)
-        if (j2.isNotBlank()) opsi.add(j2)
-        if (j3.isNotBlank()) opsi.add(j3)
-        if (j4.isNotBlank()) opsi.add(j4)
+        listOf(
+            binding.jawaban1.text.toString(),
+            binding.jawaban2.text.toString(),
+            binding.jawaban3.text.toString(),
+            binding.jawaban4.text.toString()
+        ).filter { it.isNotBlank() }.forEach { opsi.add(it) }
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opsi)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.jawabanBenar.adapter = adapter
     }
 
-
     private fun JawabanListeners() {
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { spinnerjawaban() }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                spinnerjawaban()
+            }
             override fun afterTextChanged(s: Editable?) {}
         }
+
         binding.jawaban1.addTextChangedListener(watcher)
         binding.jawaban2.addTextChangedListener(watcher)
         binding.jawaban3.addTextChangedListener(watcher)
@@ -259,5 +279,6 @@ class InputEvalTb : Activity() {
         binding.jawaban3.text.clear()
         binding.jawaban4.text.clear()
         binding.bobot.text.clear()
+        binding.jawabanBenar.setSelection(0)
     }
 }

@@ -6,11 +6,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.EditEvalTbBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPilgan
@@ -32,8 +28,14 @@ class EditEvalTb : Activity() {
 
         idKoleksi = intent.getStringExtra("id_koleksi") ?: ""
 
-        loadData()
+        if (idKoleksi.isEmpty()) {
+            Toast.makeText(this, "ID koleksi tidak ditemukan", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         hurufkhusus()
+        loadData()
 
         binding.soal.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         binding.jawaban1.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
@@ -41,9 +43,7 @@ class EditEvalTb : Activity() {
         binding.jawaban3.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         binding.jawaban4.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        binding.btnSimpan.setOnClickListener {
-            updateData()
-        }
+        binding.btnSimpan.setOnClickListener { updateData() }
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -90,48 +90,69 @@ class EditEvalTb : Activity() {
     }
 
     private fun loadData() {
-        if (idKoleksi.isEmpty()) return
+        val evalRef = db.child("evaluasi")
+        val pilganRef = db.child("evaluasi_pilgan")
 
-        db.child("evaluasi_pilgan").orderByChild("id_koleksi").equalTo(idKoleksi)
+        evalRef.orderByChild("id_koleksi").equalTo(idKoleksi)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    daftarSoal = snapshot.children.mapNotNull { it.getValue(EvalPilgan::class.java) }
-                    if (daftarSoal.isNotEmpty()) {
-                        currentIndex = 0
-                        tampilkanSoal(currentIndex)
-                    } else {
+                    val idPilganList = snapshot.children.mapNotNull {
+                        it.child("id_pilgan").getValue(String::class.java)
+                    }
+
+                    if (idPilganList.isEmpty()) {
                         Toast.makeText(this@EditEvalTb, "Tidak ada soal dalam koleksi ini", Toast.LENGTH_SHORT).show()
                         finish()
+                        return
                     }
+
+                    pilganRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(pilganSnapshot: DataSnapshot) {
+                            val soalList = mutableListOf<EvalPilgan>()
+                            for (id in idPilganList) {
+                                val data = pilganSnapshot.child(id).getValue(EvalPilgan::class.java)
+                                if (data != null) soalList.add(data)
+                            }
+
+                            daftarSoal = soalList
+                            if (daftarSoal.isNotEmpty()) {
+                                currentIndex = 0
+                                tampilkanSoal(currentIndex)
+                            } else {
+                                Toast.makeText(this@EditEvalTb, "Data soal tidak ditemukan", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(this@EditEvalTb, "Gagal memuat soal", Toast.LENGTH_SHORT).show()
+                        }
+                    })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@EditEvalTb, "Gagal memuat data", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditEvalTb, "Gagal memuat data evaluasi", Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
     private fun tampilkanSoal(index: Int) {
-        if (index in daftarSoal.indices) {
-            val data = daftarSoal[index]
-            id = data.id_evalpilgan ?: ""
+        if (index !in daftarSoal.indices) return
 
-            // Tampilkan nomor soal ke-x
-            binding.NomorSoal.text = "Soal ke-${index + 1} dari ${daftarSoal.size}"
+        val data = daftarSoal[index]
+        id = data.id_evalpilgan ?: return
 
-            // Tampilkan data
-            binding.soal.setText(data.soal)
-            binding.jawaban1.setText(data.jwb_1)
-            binding.jawaban2.setText(data.jwb_2)
-            binding.jawaban3.setText(data.jwb_3)
-            binding.jawaban4.setText(data.jwb_4)
-            binding.bobot.setText(data.bobot)
+        binding.NomorSoal.text = "Soal ke-${index + 1} dari ${daftarSoal.size}"
+        binding.soal.setText(data.soal)
+        binding.jawaban1.setText(data.jwb_1)
+        binding.jawaban2.setText(data.jwb_2)
+        binding.jawaban3.setText(data.jwb_3)
+        binding.jawaban4.setText(data.jwb_4)
+        binding.bobot.setText(data.bobot)
 
-            spinnerJawaban(data.jwb_benar)
-            spinnerwatcher(data.jwb_benar)
-
-            updateNavigasiButton()
-        }
+        spinnerJawaban(data.jwb_benar)
+        spinnerWatcher(data.jwb_benar)
+        updateNavigasiButton()
     }
 
     private fun updateNavigasiButton() {
@@ -142,26 +163,37 @@ class EditEvalTb : Activity() {
     private fun updateData() {
         if (id.isEmpty()) return
 
-        val selectedPos = binding.jawabanBenar.selectedItemPosition
-        if (selectedPos == 0) {
-            Toast.makeText(this, "Pilih jawaban benar terlebih dahulu", Toast.LENGTH_SHORT).show()
+        val soal = binding.soal.text.toString().trim()
+        val j1 = binding.jawaban1.text.toString().trim()
+        val j2 = binding.jawaban2.text.toString().trim()
+        val j3 = binding.jawaban3.text.toString().trim()
+        val j4 = binding.jawaban4.text.toString().trim()
+        val bobot = binding.bobot.text.toString().trim()
+        val jawaban = binding.jawabanBenar.selectedItem?.toString() ?: ""
+
+        if (soal.isEmpty() || j1.isEmpty() || j2.isEmpty() || j3.isEmpty() || j4.isEmpty() || bobot.isEmpty() || jawaban.isEmpty() || jawaban == "Pilih Jawaban Benar") {
+            Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show()
             return
         }
 
         val evaluasi = EvalPilgan(
             id_evalpilgan = id,
-            id_koleksi = idKoleksi,
-            soal = binding.soal.text.toString(),
-            jwb_1 = binding.jawaban1.text.toString(),
-            jwb_2 = binding.jawaban2.text.toString(),
-            jwb_3 = binding.jawaban3.text.toString(),
-            jwb_4 = binding.jawaban4.text.toString(),
-            jwb_benar = binding.jawabanBenar.selectedItem.toString(),
-            bobot = binding.bobot.text.toString()
+            soal = soal,
+            jwb_1 = j1,
+            jwb_2 = j2,
+            jwb_3 = j3,
+            jwb_4 = j4,
+            jwb_benar = jawaban,
+            bobot = bobot
         )
 
         db.child("evaluasi_pilgan").child(id).setValue(evaluasi)
-        Toast.makeText(this, "Soal berhasil diperbarui", Toast.LENGTH_SHORT).show()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Soal berhasil diperbarui", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Gagal memperbarui soal", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun spinnerJawaban(jawabanBenar: String?) {
@@ -170,6 +202,7 @@ class EditEvalTb : Activity() {
         val j2 = binding.jawaban2.text.toString().trim()
         val j3 = binding.jawaban3.text.toString().trim()
         val j4 = binding.jawaban4.text.toString().trim()
+
         if (j1.isNotEmpty()) opsi.add(j1)
         if (j2.isNotEmpty()) opsi.add(j2)
         if (j3.isNotEmpty()) opsi.add(j3)
@@ -179,24 +212,15 @@ class EditEvalTb : Activity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.jawabanBenar.adapter = adapter
 
-        val selectedIndex = opsi.indexOf(jawabanBenar ?: "")
-        binding.jawabanBenar.setSelection(if (selectedIndex > 0) selectedIndex else 0)
-
-        binding.jawabanBenar.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val tv = view as? TextView
-                tv?.setTextColor(if (position == 0) 0xFF888888.toInt() else 0xFF000000.toInt())
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        val index = opsi.indexOf(jawabanBenar)
+        binding.jawabanBenar.setSelection(if (index >= 0) index else 0)
     }
 
-    private fun spinnerwatcher(existingJawabanBenar: String?) {
+    private fun spinnerWatcher(jawabanBenar: String?) {
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                spinnerJawaban(existingJawabanBenar)
+                spinnerJawaban(jawabanBenar)
             }
 
             override fun afterTextChanged(s: Editable?) {}

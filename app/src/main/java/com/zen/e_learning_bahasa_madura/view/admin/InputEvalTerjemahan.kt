@@ -4,10 +4,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
+import android.text.*
 import android.text.InputType
-import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.google.firebase.database.*
@@ -32,6 +30,13 @@ class InputEvalTerjemahan : Activity() {
 
         db = FirebaseDatabase.getInstance().reference
 
+        initNavigation()
+        initInputType()
+        initListeners()
+        setupSpinnerKoleksi()
+    }
+
+    private fun initNavigation() {
         NavHelper.setup(
             activity = this,
             menuInputKosakata = binding.menuInputKosakata,
@@ -41,25 +46,28 @@ class InputEvalTerjemahan : Activity() {
             currentClass = InputEvalTerjemahan::class.java
         )
 
-        binding.soal.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        binding.jawaban1.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        binding.jawaban2.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        binding.jawaban3.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        binding.jawaban4.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        binding.inputtb.setOnClickListener { goTo(InputEvalTb::class.java) }
+        binding.inputpelafalan.setOnClickListener { goTo(InputEvalPelafalan::class.java) }
+    }
 
-        binding.inputtb.setOnClickListener {
-            startActivity(Intent(this, InputEvalTb::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    private fun goTo(clazz: Class<*>) {
+        startActivity(Intent(this, clazz))
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    private fun initInputType() {
+        val editTexts = listOf(
+            binding.soal, binding.jawaban1, binding.jawaban2,
+            binding.jawaban3, binding.jawaban4
+        )
+        editTexts.forEach {
+            it.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         }
+    }
 
-        binding.inputpelafalan.setOnClickListener {
-            startActivity(Intent(this, InputEvalPelafalan::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
-
+    private fun initListeners() {
         hurufkhusus()
-        JawabanListeners()
-        setupSpinnerKoleksi()
+        initJawabanTextWatchers()
         binding.btnTambahKoleksi.setOnClickListener { showDialogTambahKoleksi() }
         binding.btnSimpan.setOnClickListener { simpanSoal() }
     }
@@ -82,14 +90,14 @@ class InputEvalTerjemahan : Activity() {
                         return
                     }
 
-                    spinnerAdapter.add("Pilih Koleksi Soal") // dummy item
-                    for (data in snapshot.children) {
-                        val item = data.getValue(KoleksiSoal::class.java)
-                        item?.let {
-                            listKoleksi.add(it)
-                            spinnerAdapter.add(it.nama ?: "Tanpa Nama")
-                        }
+                    spinnerAdapter.add("Pilih Koleksi Soal")
+                    snapshot.children.mapNotNullTo(listKoleksi) {
+                        it.getValue(KoleksiSoal::class.java)
                     }
+                    listKoleksi.forEach {
+                        spinnerAdapter.add(it.nama ?: "Tanpa Nama")
+                    }
+
                     spinnerAdapter.notifyDataSetChanged()
                 }
 
@@ -98,9 +106,7 @@ class InputEvalTerjemahan : Activity() {
 
         binding.spinnerkoleksi.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedIdKoleksi = if (position > 0) {
-                    listKoleksi.getOrNull(position - 1)?.id_koleksi
-                } else null
+                selectedIdKoleksi = if (position > 0) listKoleksi.getOrNull(position - 1)?.id_koleksi else null
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -108,10 +114,10 @@ class InputEvalTerjemahan : Activity() {
     }
 
     private fun showDialogTambahKoleksi() {
-        val dialogView = LayoutInflater.from(this).inflate(android.R.layout.simple_list_item_1, null)
-        val input = EditText(this)
-        input.hint = "Nama Koleksi Soal"
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        val input = EditText(this).apply {
+            hint = "Nama Koleksi Soal"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Tambah Koleksi Soal")
@@ -120,7 +126,7 @@ class InputEvalTerjemahan : Activity() {
                 val nama = input.text.toString().trim()
                 if (nama.isNotEmpty()) {
                     val id = db.child("koleksi_soal").push().key ?: return@setPositiveButton
-                    val koleksi = KoleksiSoal(id_koleksi = id, nama = nama, kategori = "Terjemahan", jumlah_soal = 0)
+                    val koleksi = KoleksiSoal(id, nama, "Terjemahan", 0)
                     db.child("koleksi_soal").child(id).setValue(koleksi)
                 } else {
                     Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
@@ -139,7 +145,6 @@ class InputEvalTerjemahan : Activity() {
         val jawabanBenar = binding.jawabanBenar.selectedItem?.toString()?.trim() ?: ""
         val bobot = binding.bobot.text.toString().trim()
 
-        // Tangkap nilai ID koleksi saat ini ke dalam val agar bisa dismart-cast
         val currentIdKoleksi = selectedIdKoleksi
         if (currentIdKoleksi.isNullOrEmpty()) {
             Toast.makeText(this, "Pilih koleksi soal terlebih dahulu", Toast.LENGTH_SHORT).show()
@@ -153,63 +158,23 @@ class InputEvalTerjemahan : Activity() {
             return
         }
 
-        insertSoal(
-            soal = soal,
-            opsi1 = opsi1,
-            opsi2 = opsi2,
-            opsi3 = opsi3,
-            opsi4 = opsi4,
-            jawabanBenar = jawabanBenar,
-            bobot = bobot,
-            idKoleksi = currentIdKoleksi
-        )
-    }
-
-    private fun insertSoal(
-        soal: String,
-        opsi1: String,
-        opsi2: String,
-        opsi3: String,
-        opsi4: String,
-        jawabanBenar: String,
-        bobot: String,
-        idKoleksi: String
-    ) {
-        val db = FirebaseDatabase.getInstance().reference
         val pilganRef = db.child("evaluasi_pilgan")
         val evaluasiRef = db.child("evaluasi")
 
         val idEvalPilgan = pilganRef.push().key ?: return
         val idEvaluasi = evaluasiRef.push().key ?: return
 
-        val soalData = EvalPilgan(
-            id_evalpilgan = idEvalPilgan,
-            soal = soal,
-            jwb_1 = opsi1,
-            jwb_2 = opsi2,
-            jwb_3 = opsi3,
-            jwb_4 = opsi4,
-            jwb_benar = jawabanBenar,
-            bobot = bobot,
-            id_koleksi = idKoleksi
-        )
-
-        val evaluasiData = Evaluasi(
-            id_evaluasi = idEvaluasi,
-            id_pilgan = idEvalPilgan,
-            id_pelafalan = null
-        )
+        val soalData = EvalPilgan(idEvalPilgan, soal, opsi1, opsi2, opsi3, opsi4, jawabanBenar, bobot)
+        val evaluasiData = Evaluasi(idEvaluasi, currentIdKoleksi, idEvalPilgan, null)
 
         pilganRef.child(idEvalPilgan).setValue(soalData)
             .addOnSuccessListener {
                 evaluasiRef.child(idEvaluasi).setValue(evaluasiData)
                     .addOnSuccessListener {
-                        val koleksiRef = FirebaseDatabase.getInstance().getReference("koleksi_soal").child(selectedIdKoleksi ?: "")
+                        val koleksiRef = db.child("koleksi_soal").child(currentIdKoleksi)
                         koleksiRef.child("jumlah_soal").get().addOnSuccessListener { jumlahSnapshot ->
                             val jumlahSaatIni = jumlahSnapshot.getValue(Int::class.java) ?: 0
                             koleksiRef.child("jumlah_soal").setValue(jumlahSaatIni + 1)
-                        }.addOnFailureListener {
-                            Toast.makeText(this, "Gagal menambah jumlah soal di koleksi", Toast.LENGTH_SHORT).show()
                         }
                         Toast.makeText(this, "Soal berhasil disimpan", Toast.LENGTH_SHORT).show()
                         clearForm()
@@ -223,27 +188,31 @@ class InputEvalTerjemahan : Activity() {
             }
     }
 
+    private fun initJawabanTextWatchers() {
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                spinnerjawaban()
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        }
+
+        binding.jawaban1.addTextChangedListener(watcher)
+        binding.jawaban2.addTextChangedListener(watcher)
+        binding.jawaban3.addTextChangedListener(watcher)
+        binding.jawaban4.addTextChangedListener(watcher)
+    }
+
     private fun spinnerjawaban() {
         val opsi = mutableListOf("Pilih Jawaban Benar")
         if (binding.jawaban1.text.isNotEmpty()) opsi.add(binding.jawaban1.text.toString())
         if (binding.jawaban2.text.isNotEmpty()) opsi.add(binding.jawaban2.text.toString())
         if (binding.jawaban3.text.isNotEmpty()) opsi.add(binding.jawaban3.text.toString())
         if (binding.jawaban4.text.isNotEmpty()) opsi.add(binding.jawaban4.text.toString())
+
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, opsi)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.jawabanBenar.adapter = adapter
-    }
-
-    private fun JawabanListeners() {
-        val watcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { spinnerjawaban() }
-            override fun afterTextChanged(s: Editable?) {}
-        }
-        binding.jawaban1.addTextChangedListener(watcher)
-        binding.jawaban2.addTextChangedListener(watcher)
-        binding.jawaban3.addTextChangedListener(watcher)
-        binding.jawaban4.addTextChangedListener(watcher)
     }
 
     private fun hurufkhusus() {
@@ -277,5 +246,6 @@ class InputEvalTerjemahan : Activity() {
         binding.jawaban3.text.clear()
         binding.jawaban4.text.clear()
         binding.bobot.text.clear()
+        spinnerjawaban()
     }
 }

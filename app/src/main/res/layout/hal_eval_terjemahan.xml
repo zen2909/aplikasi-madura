@@ -22,7 +22,6 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="50dp"
                 android:layout_marginTop="90dp"
-                android:text="05"
                 android:textSize="32sp"
                 android:fontFamily="@font/inter"
                 android:gravity="center"
@@ -57,7 +56,6 @@
                         android:background="@drawable/rounded_input"
                         android:fontFamily="@font/inter"
                         android:gravity="center"
-                        android:hint="Soal"
                         android:inputType="textMultiLine"
                         android:maxLines="5"
                         android:scrollbars="vertical"
@@ -143,7 +141,6 @@
                                                     android:id="@+id/radiobutton1"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:button="@drawable/radio_button_answer"
                                                     android:scaleX="1.3"
                                                     android:scaleY="1.3"
                                                     android:textColor="@color/dalam_kotak" />
@@ -181,10 +178,9 @@
                                                 android:background="@drawable/rounded_input"
                                                 android:fontFamily="@font/inter"
                                                 android:gravity="center"
-                                                android:text="Jawaban 1"
                                                 android:textAlignment="center"
                                                 android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                                android:textSize="24sp" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
@@ -231,7 +227,6 @@
                                                     android:id="@+id/radiobutton2"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:button="@drawable/radio_button_answer"
                                                     android:scaleX="1.3"
                                                     android:scaleY="1.3"
                                                     android:textColor="@color/dalam_kotak" />
@@ -269,10 +264,9 @@
                                                 android:background="@drawable/rounded_input"
                                                 android:fontFamily="@font/inter"
                                                 android:gravity="center"
-                                                android:text="Jawaban 2"
                                                 android:textAlignment="center"
                                                 android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                                android:textSize="24sp" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
@@ -319,7 +313,6 @@
                                                     android:id="@+id/radiobutton3"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:button="@drawable/radio_button_answer"
                                                     android:scaleX="1.3"
                                                     android:scaleY="1.3"
                                                     android:textColor="@color/dalam_kotak" />
@@ -357,10 +350,9 @@
                                                 android:background="@drawable/rounded_input"
                                                 android:fontFamily="@font/inter"
                                                 android:gravity="center"
-                                                android:text="Jawaban 3"
                                                 android:textAlignment="center"
                                                 android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                                android:textSize="24sp" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
@@ -406,7 +398,6 @@
                                                     android:id="@+id/radiobutton4"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:button="@drawable/radio_button_answer"
                                                     android:scaleX="1.3"
                                                     android:scaleY="1.3"
                                                     android:textColor="@color/dalam_kotak" />
@@ -444,15 +435,13 @@
                                                 android:background="@drawable/rounded_input"
                                                 android:fontFamily="@font/inter"
                                                 android:gravity="center"
-                                                android:text="Jawaban 4"
                                                 android:textAlignment="center"
                                                 android:textColor="@color/dalam_kotak"
-                                                android:textSize="32sp" />
+                                                android:textSize="24sp" />
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
                             </LinearLayout>
-
                         </RadioGroup>
                     </LinearLayout>
                 </LinearLayout>

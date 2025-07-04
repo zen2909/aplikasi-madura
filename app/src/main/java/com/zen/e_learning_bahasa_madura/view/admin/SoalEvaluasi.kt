@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Switch
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -97,14 +98,16 @@ class SoalEvaluasi : Activity() {
                     val namaKoleksi = data.child("nama").getValue(String::class.java) ?: "-"
                     val kategori = data.child("kategori").getValue(String::class.java) ?: "-"
                     val jumlah = data.child("jumlah_soal").getValue(Int::class.java) ?: 0
+                    val aktif = data.child("aktif").getValue(Boolean::class.java) ?: false
 
                     tempList.add(
                         KoleksiItem(
-                            nomor = 0, // nanti diganti setelah sorting
+                            nomor = 0,
                             idKoleksi = idKoleksi,
                             namaKoleksi = namaKoleksi,
                             kategori = kategori,
-                            jumlahSoal = jumlah
+                            jumlahSoal = jumlah,
+                            aktif = aktif
                         )
                     )
                 }
@@ -128,13 +131,13 @@ class SoalEvaluasi : Activity() {
         })
     }
 
-
     data class KoleksiItem(
         val nomor: Int = 0,
         val idKoleksi: String = "",
         val namaKoleksi: String = "",
         val kategori: String = "",
-        val jumlahSoal: Int = 0
+        val jumlahSoal: Int = 0,
+        val aktif: Boolean = false
     )
 
     class KoleksiAdapter(
@@ -153,90 +156,104 @@ class SoalEvaluasi : Activity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = data[position]
+            val context = holder.itemView.context
+            val db = FirebaseDatabase.getInstance().reference
+
             holder.binding.tvNomor.text = item.nomor.toString()
             holder.binding.tvNamaKoleksi.text = item.namaKoleksi
             holder.binding.tvkategori.text = "${item.kategori} (${item.jumlahSoal} soal)"
 
-            holder.binding.btnEdit.setOnClickListener {
-                if (item.kategori.equals("Terjemahan", ignoreCase = true)) {
-                    val intent = Intent(activity, EditEvalTerjemahan::class.java)
-                    intent.putExtra("id_koleksi", item.idKoleksi)
-                    activity.startActivity(intent)
-                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                }
-                if (item.kategori.equals("Tingkat Bahasa", ignoreCase = true)) {
-                    val intent = Intent(activity, EditEvalTb::class.java)
-                    intent.putExtra("id_koleksi", item.idKoleksi)
-                    activity.startActivity(intent)
-                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                }
+            holder.binding.switchAktif.setOnCheckedChangeListener(null)
+            holder.binding.switchAktif.isChecked = item.aktif
 
-                if (item.kategori.equals("Pelafalan", ignoreCase = true)) {
-                    val intent = Intent(activity, EditEvalPelafalan::class.java)
-                    intent.putExtra("id_koleksi", item.idKoleksi)
-                    activity.startActivity(intent)
+            holder.binding.switchAktif.setOnCheckedChangeListener { _, isChecked ->
+                db.child("koleksi_soal").get().addOnSuccessListener { snapshot ->
+                    val koleksiDalamKategori = snapshot.children.filter {
+                        it.child("kategori").getValue(String::class.java).equals(item.kategori, ignoreCase = true)
+                    }
+
+                    if (isChecked) {
+                        // Aktifkan koleksi ini, nonaktifkan yang lain di kategori sama
+                        koleksiDalamKategori.forEach { snap ->
+                            val id = snap.key ?: return@forEach
+                            val aktifkan = id == item.idKoleksi
+                            db.child("koleksi_soal").child(id).child("aktif").setValue(aktifkan)
+                        }
+                        Toast.makeText(context, "Koleksi aktif diperbarui", Toast.LENGTH_SHORT).show()
+                        if (activity is SoalEvaluasi) activity.fetchKoleksi()
+
+                    } else {
+                        // Cek jika setidaknya ada satu koleksi lain yang aktif
+                        val masihAdaLainYangAktif = koleksiDalamKategori.any {
+                            val id = it.key
+                            val aktif = it.child("aktif").getValue(Boolean::class.java) == true
+                            id != item.idKoleksi && aktif
+                        }
+
+                        if (masihAdaLainYangAktif) {
+                            db.child("koleksi_soal").child(item.idKoleksi).child("aktif").setValue(false)
+                            if (activity is SoalEvaluasi) activity.fetchKoleksi()
+                        } else {
+                            // Tolak nonaktif jika ini satu-satunya yang aktif
+                            Toast.makeText(context, "Minimal satu koleksi harus aktif", Toast.LENGTH_SHORT).show()
+                            holder.binding.switchAktif.isChecked = true
+                        }
+                    }
+                }
+            }
+
+            holder.binding.btnEdit.setOnClickListener {
+                val intent = when {
+                    item.kategori.equals("Terjemahan", ignoreCase = true) ->
+                        Intent(activity, EditEvalTerjemahan::class.java)
+                    item.kategori.equals("Tingkat Bahasa", ignoreCase = true) ->
+                        Intent(activity, EditEvalTb::class.java)
+                    item.kategori.equals("Pelafalan", ignoreCase = true) ->
+                        Intent(activity, EditEvalPelafalan::class.java)
+                    else -> null
+                }
+                intent?.putExtra("id_koleksi", item.idKoleksi)
+                intent?.let {
+                    activity.startActivity(it)
                     activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 }
             }
 
             holder.binding.btnDelete.setOnClickListener {
-                val context = holder.itemView.context
-                val db = FirebaseDatabase.getInstance().reference
-
                 AlertDialog.Builder(context)
                     .setTitle("Hapus Koleksi Soal")
                     .setMessage("Yakin ingin menghapus koleksi '${item.namaKoleksi}' dan semua soalnya?")
                     .setPositiveButton("Hapus") { _, _ ->
                         val idKoleksi = item.idKoleksi
 
-                        // 1. Hapus evaluasi_pilgan yang punya id_koleksi
-                        db.child("evaluasi_pilgan").orderByChild("id_koleksi").equalTo(idKoleksi)
+                        db.child("evaluasi").orderByChild("id_koleksi").equalTo(idKoleksi)
                             .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
+                                override fun onDataChange(evalSnap: DataSnapshot) {
                                     val idPilganList = mutableListOf<String>()
-                                    for (data in snapshot.children) {
-                                        val idPilgan = data.key ?: continue
-                                        idPilganList.add(idPilgan)
-                                        db.child("evaluasi_pilgan").child(idPilgan).removeValue()
+                                    val idPelafalanList = mutableListOf<String>()
+
+                                    for (data in evalSnap.children) {
+                                        val idPilgan = data.child("id_pilgan").getValue(String::class.java)
+                                        val idPelafalan = data.child("id_pelafalan").getValue(String::class.java)
+
+                                        idPilgan?.let { idPilganList.add(it) }
+                                        idPelafalan?.let { idPelafalanList.add(it) }
+
+                                        db.child("evaluasi").child(data.key!!).removeValue()
                                     }
 
-                                    // 2. Hapus evaluasi_pelafalan yang punya id_koleksi
-                                    db.child("evaluasi_pelafalan").orderByChild("id_koleksi").equalTo(idKoleksi)
-                                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                                            override fun onDataChange(snapshot: DataSnapshot) {
-                                                val idPelafalanList = mutableListOf<String>()
-                                                for (data in snapshot.children) {
-                                                    val idPelafalan = data.key ?: continue
-                                                    idPelafalanList.add(idPelafalan)
-                                                    db.child("evaluasi_pelafalan").child(idPelafalan).removeValue()
-                                                }
+                                    idPilganList.forEach { id ->
+                                        db.child("evaluasi_pilgan").child(id).removeValue()
+                                    }
+                                    idPelafalanList.forEach { id ->
+                                        db.child("evaluasi_pelafalan").child(id).removeValue()
+                                    }
 
-                                                // 3. Hapus evaluasi yang id_pilgan atau id_pelafalan-nya termasuk dalam daftar
-                                                db.child("evaluasi").addListenerForSingleValueEvent(object : ValueEventListener {
-                                                    override fun onDataChange(evalSnap: DataSnapshot) {
-                                                        for (eval in evalSnap.children) {
-                                                            val idPilgan = eval.child("id_pilgan").getValue(String::class.java)
-                                                            val idPelafalan = eval.child("id_pelafalan").getValue(String::class.java)
-
-                                                            if (idPilganList.contains(idPilgan) || idPelafalanList.contains(idPelafalan)) {
-                                                                db.child("evaluasi").child(eval.key!!).removeValue()
-                                                            }
-                                                        }
-
-                                                        // 4. Hapus koleksi_soal
-                                                        db.child("koleksi_soal").child(idKoleksi).removeValue()
-                                                            .addOnSuccessListener {
-                                                                Toast.makeText(context, "Koleksi berhasil dihapus", Toast.LENGTH_SHORT).show()
-                                                                if (activity is SoalEvaluasi) activity.fetchKoleksi()
-                                                            }
-                                                    }
-
-                                                    override fun onCancelled(error: DatabaseError) {}
-                                                })
-                                            }
-
-                                            override fun onCancelled(error: DatabaseError) {}
-                                        })
+                                    db.child("koleksi_soal").child(idKoleksi).removeValue()
+                                        .addOnSuccessListener {
+                                            Toast.makeText(context, "Koleksi berhasil dihapus", Toast.LENGTH_SHORT).show()
+                                            if (activity is SoalEvaluasi) activity.fetchKoleksi()
+                                        }
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {}
