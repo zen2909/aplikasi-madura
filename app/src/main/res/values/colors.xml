@@ -12,4 +12,8 @@
     <color name="dalam_kotak">#282E2B</color>
     <color name="teks">#95F2FF</color>
     <color name="kotakan">#77B9C3</color>
+    <color name="score_good">#4CAF50</color> <!-- Hijau -->
+    <color name="score_medium">#FFC107</color> <!-- Kuning -->
+    <color name="score_bad">#F44336</color> <!-- Merah -->
+
 </resources>

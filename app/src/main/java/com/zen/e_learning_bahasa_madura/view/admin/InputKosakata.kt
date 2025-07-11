@@ -1,5 +1,6 @@
 package com.zen.e_learning_bahasa_madura.view.admin
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -21,26 +22,36 @@ import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
 import java.io.File
 import java.util.UUID
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.text.InputType
 import android.view.View
+import android.widget.TextView
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.postDelayed
 import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.util.NavHelper
-import com.google.android.gms.tasks.Tasks
+import android.os.Handler
+import android.os.Looper
+import android.view.MotionEvent
+import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
 
 class InputKosakata : Activity() {
 
     private lateinit var binding : InputKosakataBinding
-    private var audioDasarPath: String = ""
-    private var audioMenengahPath: String = ""
-    private var audioTinggiPath: String = ""
     private var recorder: MediaRecorder? = null
-    private var currentRecordingType: String = ""
+    private var mediaPlayer: MediaPlayer? = null
+    private var currentAudioPath: String = ""
 
     private var audioUrlDasar: String? = null
     private var audioUrlMenengah: String? = null
     private var audioUrlTinggi: String? = null
+
+    private var recordingDialog: AlertDialog? = null
+    private var timerHandler: Handler? = null
+    private var timerRunnable: Runnable? = null
+    private var seconds = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,15 +155,33 @@ class InputKosakata : Activity() {
         val btnAudioTinggi = binding.audiotinggi
 
         btnAudioDasar.setOnClickListener {
-            handleRecording("dasar")
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1001)
+            } else {
+                showRecordingDialog("dasar")
+            }
         }
 
         btnAudioMenengah.setOnClickListener {
-            handleRecording("menengah")
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1001)
+            } else {
+                showRecordingDialog("menengah")
+            }
         }
 
         btnAudioTinggi.setOnClickListener {
-            handleRecording("tinggi")
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1001)
+            } else {
+                showRecordingDialog("tinggi")
+            }
         }
 
         btnSimpan.setOnClickListener {
@@ -184,60 +213,38 @@ class InputKosakata : Activity() {
         }
     }
 
-    private fun handleRecording(type: String) {
-        if (recorder == null) {
-            startRecording(type)
-            Toast.makeText(this, "Rekam $type dimulai", Toast.LENGTH_SHORT).show()
-        } else {
-            stopRecording()
-        }
-    }
-
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private fun startRecording(type: String) {
-        val file = File(cacheDir, "audio_${type}_${UUID.randomUUID()}.3gp")
-        currentRecordingType = type
-
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setOutputFile(file.absolutePath)
-            prepare()
-            start()
-        }
+        val outputWavFile = File(cacheDir, "audio_${type}_${UUID.randomUUID()}.wav")
+        currentAudioPath = type
 
         when (type) {
-            "dasar" -> audioDasarPath = file.absolutePath
-            "menengah" -> audioMenengahPath = file.absolutePath
-            "tinggi" -> audioTinggiPath = file.absolutePath
+            "dasar" -> audioUrlDasar = outputWavFile.absolutePath
+            "menengah" -> audioUrlMenengah = outputWavFile.absolutePath
+            "tinggi" -> audioUrlTinggi = outputWavFile.absolutePath
         }
 
-        showRecordingDialog {
-            stopRecording()
-        }
+        AudioRecorderUtil.startRecording(outputWavFile)
     }
 
     private fun stopRecording() {
-        recorder?.apply {
-            stop()
-            release()
-        }
-        recorder = null
+        AudioRecorderUtil.stopRecording()
 
-        val path = when (currentRecordingType) {
-            "dasar" -> audioDasarPath
-            "menengah" -> audioMenengahPath
-            "tinggi" -> audioTinggiPath
+        val path = when (currentAudioPath) {
+            "dasar" -> audioUrlDasar
+            "menengah" -> audioUrlMenengah
+            "tinggi" -> audioUrlTinggi
             else -> ""
         }
 
-        val type = currentRecordingType
-        currentRecordingType = ""
+        val type = currentAudioPath
+        currentAudioPath = ""
 
-        if (path.isEmpty()) {
+        if (path.isNullOrEmpty()) {
             Toast.makeText(this, "Path audio tidak ditemukan", Toast.LENGTH_SHORT).show()
             return
         }
+
 
         val dialog = ProgressDialog(this).apply {
             setTitle("Mengunggah Audio")
@@ -248,7 +255,7 @@ class InputKosakata : Activity() {
 
         val fileUri = Uri.fromFile(File(path))
         val storageRef = FirebaseStorage.getInstance().reference
-        val audioRef = storageRef.child("audio/audio_${type}_${System.currentTimeMillis()}.3gp")
+        val audioRef = storageRef.child("audio/audio_${type}_${System.currentTimeMillis()}.wav")
 
         audioRef.putFile(fileUri)
             .addOnSuccessListener {
@@ -269,22 +276,60 @@ class InputKosakata : Activity() {
     }
 
 
-    private fun showRecordingDialog(onStop: () -> Unit) {
+
+    private fun showRecordingDialog(type: String) {
         val view = layoutInflater.inflate(R.layout.dialog_record, null)
-        val btnStop = view.findViewById<Button>(R.id.btnStopRecording)
+        val timerText = view.findViewById<TextView>(R.id.timer)
+        val btnHoldToRecord = view.findViewById<Button>(R.id.btnHoldToRecord)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Merekam audio...")
+            .setTitle("Rekam Pelafalan")
             .setView(view)
-            .setCancelable(false)
+            .setNegativeButton("Tutup") { d, _ -> d.dismiss() }
             .create()
 
-        btnStop.setOnClickListener {
-            onStop()
-            dialog.dismiss()
-        }
-
+        recordingDialog = dialog
         dialog.show()
+
+        var seconds = 0
+        val handler = Handler(Looper.getMainLooper())
+        var timerRunnable: Runnable? = null
+
+        // Handle tahan tombol rekam
+        btnHoldToRecord.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    try {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                            startRecording(type)
+
+                            seconds = 0
+                            timerRunnable = object : Runnable {
+                                override fun run() {
+                                    timerText.text = "Durasi: ${seconds++}s"
+                                    handler.postDelayed(this, 1000)
+                                }
+                            }
+                            handler.postDelayed(timerRunnable!!, 1000)
+                        } else {
+                            Toast.makeText(this, "Izin rekam suara belum diberikan", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: SecurityException) {
+                        e.printStackTrace()
+                        Toast.makeText(this, "Tidak dapat merekam suara: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    stopRecording()
+                    timerRunnable?.let { handler.removeCallbacks(it) }
+                    timerRunnable = null
+                }
+            }
+            true
+        }
     }
 
     private fun insertKosakata() {
