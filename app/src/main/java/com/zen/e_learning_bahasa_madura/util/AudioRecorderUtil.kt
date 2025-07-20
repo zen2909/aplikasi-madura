@@ -7,12 +7,16 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.zen.e_learning_bahasa_madura.util.MFCCProcessor.Companion.fft
+import com.zen.e_learning_bahasa_madura.util.MFCCProcessor.Complex
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log2
 
 class AudioRecorderUtil {
 
@@ -121,7 +125,7 @@ class AudioRecorderUtil {
         /**
          * Tulis file WAV dengan header yang proper
          */
-        private fun writeWavFile(outputFile: File, audioData: ByteArray) {
+        fun writeWavFile(outputFile: File, audioData: ByteArray) {
             try {
                 val fileSize = audioData.size + 36
                 val byteRate = SAMPLE_RATE * 1 * 16 / 8 // SampleRate * NumChannels * BitsPerSample/8
@@ -169,13 +173,6 @@ class AudioRecorderUtil {
          */
         private fun shortToByteArray(value: Short): ByteArray {
             return ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(value).array()
-        }
-
-        /**
-         * Cek apakah sedang recording
-         */
-        fun isRecording(): Boolean {
-            return isRecording
         }
 
         /**
@@ -279,43 +276,63 @@ class AudioRecorderUtil {
         /**
          * Apply noise reduction (simple high-pass filter)
          */
-        fun applyNoiseReduction(audioData: ByteArray, alpha: Double = 0.95): ByteArray {
-            try {
-                val samples = ShortArray(audioData.size / 2)
+        fun applyNoiseReduction(audioData: ByteArray): ByteArray {
+            return try {
+                val sampleCount = audioData.size / 2
+                val signal = DoubleArray(sampleCount)
 
-                // Convert bytes to shorts
-                for (i in samples.indices) {
-                    samples[i] = ((audioData[i * 2].toInt() and 0xFF) or
-                            (audioData[i * 2 + 1].toInt() shl 8)).toShort()
+                // Convert byte to double PCM
+                for (i in 0 until sampleCount) {
+                    val low = audioData[2 * i].toInt() and 0xFF
+                    val high = audioData[2 * i + 1].toInt()
+                    val sample = (high shl 8) or low
+                    signal[i] = sample.toShort() / 32768.0
                 }
 
-                // Apply high-pass filter
-                var prevInput = 0.0
-                var prevOutput = 0.0
+                // FFT size (next power of 2)
+                val fftSize = 1 shl (ceil(log2(sampleCount.toDouble())).toInt())
+                val paddedSignal = signal.copyOf(fftSize)
 
-                for (i in samples.indices) {
-                    val input = samples[i].toDouble()
-                    val output = alpha * (prevOutput + input - prevInput)
+                // FFT
+                val spectrum = fft(paddedSignal)
 
-                    samples[i] = output.toInt().toShort()
+                val freqResolution = SAMPLE_RATE / fftSize.toDouble()
+                val lowCut = 300
+                val highCut = 3400
 
-                    prevInput = input
-                    prevOutput = output
+                val lowBin = (lowCut / freqResolution).toInt()
+                val highBin = (highCut / freqResolution).toInt()
+
+                // Apply band-pass: zero out all outside [lowBin..highBin]
+                for (i in spectrum.indices) {
+                    if (i < lowBin || i > highBin) {
+                        spectrum[i] = Complex(0.0, 0.0)
+                    }
                 }
 
-                // Convert back to bytes
-                val filteredData = ByteArray(audioData.size)
-                for (i in samples.indices) {
-                    filteredData[i * 2] = (samples[i].toInt() and 0xFF).toByte()
-                    filteredData[i * 2 + 1] = (samples[i].toInt() shr 8).toByte()
+                // Inverse FFT
+                val cleanedSignal = ifft(spectrum)
+
+                // Back to PCM 16-bit
+                val output = ByteArray(sampleCount * 2)
+                for (i in 0 until sampleCount) {
+                    val sample = (cleanedSignal[i].real * 32768.0).toInt().coerceIn(-32768, 32767).toShort()
+                    output[2 * i] = (sample.toInt() and 0xFF).toByte()
+                    output[2 * i + 1] = ((sample.toInt() shr 8) and 0xFF).toByte()
                 }
 
-                return filteredData
+                output
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error applying noise reduction: ${e.message}")
-                return audioData
+                Log.e(TAG, "FFT band-pass error: ${e.message}")
+                audioData
             }
+        }
+
+        private fun ifft(input: Array<Complex>): Array<Complex> {
+            val conjugated = input.map { Complex(it.real, -it.imag) }.toTypedArray()
+            val fftResult = MFCCProcessor.fft(conjugated)
+            return fftResult.map { Complex(it.real / input.size, -it.imag / input.size) }.toTypedArray()
         }
     }
 }

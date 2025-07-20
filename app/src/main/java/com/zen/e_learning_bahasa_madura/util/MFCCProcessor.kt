@@ -166,7 +166,7 @@ class MFCCProcessor {
         /**
          * Simple FFT implementation
          */
-        private fun fft(signal: DoubleArray): Array<Complex> {
+        fun fft(signal: DoubleArray): Array<Complex> {
             val n = signal.size
             val result = Array(n) { Complex(signal[it], 0.0) }
 
@@ -215,6 +215,57 @@ class MFCCProcessor {
 
             return result
         }
+
+        fun fft(input: Array<Complex>): Array<Complex> {
+            val n = input.size
+            if (n <= 1) return input
+
+            // Bit-reversal permutation
+            val result = input.copyOf()
+            val j = IntArray(n)
+            j[0] = 0
+            for (i in 1 until n) {
+                var bit = n shr 1
+                var idx = j[i - 1]
+                while (idx and bit != 0) {
+                    idx = idx xor bit
+                    bit = bit shr 1
+                }
+                j[i] = idx xor bit
+            }
+
+            for (i in 0 until n) {
+                if (i < j[i]) {
+                    val temp = result[i]
+                    result[i] = result[j[i]]
+                    result[j[i]] = temp
+                }
+            }
+
+            // Cooley-Tukey FFT
+            var len = 2
+            while (len <= n) {
+                val angle = -2.0 * PI / len
+                val wLen = Complex(cos(angle), sin(angle))
+
+                var i = 0
+                while (i < n) {
+                    var w = Complex(1.0, 0.0)
+                    for (j in 0 until len / 2) {
+                        val u = result[i + j]
+                        val v = result[i + j + len / 2].multiply(w)
+                        result[i + j] = u.add(v)
+                        result[i + j + len / 2] = u.subtract(v)
+                        w = w.multiply(wLen)
+                    }
+                    i += len
+                }
+                len *= 2
+            }
+
+            return result
+        }
+
 
         /**
          * Get power spectrum from FFT result
@@ -329,5 +380,12 @@ class MFCCProcessor {
         fun magnitude(): Double {
             return sqrt(real * real + imag * imag)
         }
+
+        fun ifft(input: Array<Complex>): Array<Complex> {
+            val conjugated = input.map { Complex(it.real, -it.imag) }.toTypedArray()
+            val fftResult = MFCCProcessor.fft(conjugated)
+            return fftResult.map { Complex(it.real / input.size, -it.imag / input.size) }.toTypedArray()
+        }
+
     }
 }

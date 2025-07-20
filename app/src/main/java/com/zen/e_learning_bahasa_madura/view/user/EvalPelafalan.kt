@@ -9,7 +9,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.widget.Button
+import android.view.MotionEvent
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -18,36 +18,25 @@ import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.MotionEvent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.HalEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.util.AudioEvaluator
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
-import com.zen.e_learning_bahasa_madura.util.MFCCProcessor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.io.File
-
 
 class EvalPelafalan : Activity() {
 
     private lateinit var binding: HalEvalPelafalanBinding
     private lateinit var db: DatabaseReference
     private lateinit var scope: CoroutineScope
-    private lateinit var audioRecorder: AudioRecorderUtil
     private lateinit var outputFile: File
     private lateinit var kataDariDatabase: File
-
     private var recorder: MediaRecorder? = null
     private var isRecording = false
     private var currentQuestionIndex = 0
     private val soalList = mutableListOf<SoalData>()
-
     private lateinit var latestRecording: File
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
@@ -59,10 +48,7 @@ class EvalPelafalan : Activity() {
         db = FirebaseDatabase.getInstance().reference
         scope = CoroutineScope(Dispatchers.Main + Job())
         outputFile = File(cacheDir, "user_recording.wav")
-
-        // Misal, ambil audio dari database dan simpan ke file lokal
         kataDariDatabase = File(cacheDir, "target.wav")
-        // download dan simpan audio dari Firebase Storage ke file ini
 
         setupUI()
         fetchSoalAktif()
@@ -81,55 +67,36 @@ class EvalPelafalan : Activity() {
                 MotionEvent.ACTION_DOWN -> {
                     if (!isRecording) {
                         startRecording()
-                        Toast.makeText(this, "Mulai merekam", Toast.LENGTH_SHORT).show()
+                        showToast("Mulai merekam")
                     }
                     true
                 }
-
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    if (isRecording) {
-                        stopRecording()
-                    }
+                    if (isRecording) stopRecording()
                     true
                 }
-
                 else -> false
             }
         }
-
     }
 
     private fun fetchSoalAktif() {
         db.child("koleksi_soal").orderByChild("kategori").equalTo("Pelafalan")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    var idKoleksiAktif: String? = null
-                    for (data in snapshot.children) {
-                        val aktif = data.child("aktif").getValue(Boolean::class.java) ?: false
-                        if (aktif) {
-                            idKoleksiAktif = data.key
-                            break
-                        }
-                    }
+                    val idKoleksiAktif = snapshot.children.firstOrNull {
+                        it.child("aktif").getValue(Boolean::class.java) == true
+                    }?.key
 
-                    if (idKoleksiAktif != null) {
-                        ambilSoalDariKoleksi(idKoleksiAktif)
-                    } else {
-                        Toast.makeText(
-                            this@EvalPelafalan,
-                            "Tidak ada koleksi soal aktif",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        finish() // Tutup halaman jika tidak ada soal
+                    if (idKoleksiAktif != null) ambilSoalDariKoleksi(idKoleksiAktif)
+                    else {
+                        showToast("Tidak ada koleksi soal aktif")
+                        finish()
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(
-                        this@EvalPelafalan,
-                        "Gagal mengambil data: ${error.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast("Gagal mengambil data: ${error.message}")
                     finish()
                 }
             })
@@ -139,57 +106,40 @@ class EvalPelafalan : Activity() {
         db.child("evaluasi").orderByChild("id_koleksi").equalTo(idKoleksi)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val idPelafalanList = mutableListOf<String>()
-                    for (data in snapshot.children) {
-                        val id = data.child("id_pelafalan").getValue(String::class.java)
-                        id?.let { idPelafalanList.add(it) }
+                    val ids = snapshot.children.mapNotNull {
+                        it.child("id_pelafalan").getValue(String::class.java)
                     }
 
-                    if (idPelafalanList.isEmpty()) {
-                        Toast.makeText(
-                            this@EvalPelafalan,
-                            "Belum ada soal dalam koleksi ini",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    if (ids.isEmpty()) {
+                        showToast("Belum ada soal dalam koleksi ini")
                         return
                     }
 
                     val counter = intArrayOf(0)
-                    for (id in idPelafalanList) {
+                    for (id in ids) {
                         db.child("evaluasi_pelafalan").child(id)
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(snap: DataSnapshot) {
-                                    val soal = snap.getValue(SoalData::class.java)
-                                    soal?.let { soalList.add(it) }
-
+                                    snap.getValue(SoalData::class.java)?.let { soalList.add(it) }
                                     counter[0]++
-                                    if (counter[0] == idPelafalanList.size) {
+                                    if (counter[0] == ids.size) {
                                         soalList.shuffle()
                                         tampilkanSoal(soalList[0])
                                     }
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
-                                    Toast.makeText(
-                                        this@EvalPelafalan,
-                                        "Gagal memuat soal: ${error.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    showToast("Gagal memuat soal: ${error.message}")
                                 }
                             })
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(
-                        this@EvalPelafalan,
-                        "Gagal mengambil daftar soal: ${error.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast("Gagal mengambil daftar soal: ${error.message}")
                 }
             })
     }
-
 
     private fun tampilkanSoal(soal: SoalData) {
         binding.nomorSoal.text = (currentQuestionIndex + 1).toString().padStart(2, '0')
@@ -202,41 +152,36 @@ class EvalPelafalan : Activity() {
             latestRecording = File(cacheDir, "recording_${System.currentTimeMillis()}.wav")
             AudioRecorderUtil.startRecording(latestRecording)
             isRecording = true
-            Toast.makeText(this, "Rekaman dimulai", Toast.LENGTH_SHORT).show()
+            showToast("Rekaman dimulai")
         } catch (e: Exception) {
             isRecording = false
-            Toast.makeText(this, "Gagal mulai rekaman: ${e.message}", Toast.LENGTH_SHORT).show()
+            showToast("Gagal mulai rekaman: ${e.message}")
         }
     }
-
-
 
     private fun stopRecording() {
         try {
             AudioRecorderUtil.stopRecording()
+            if (AudioRecorderUtil.getAudioDuration(latestRecording) < 1.0) {
+                showToast("Rekaman terlalu pendek. Ulangi.")
+                return
+            }
             isRecording = false
 
             if (::latestRecording.isInitialized && latestRecording.exists()) {
-                Toast.makeText(this, "Rekaman selesai", Toast.LENGTH_SHORT).show()
-
-                // Tampilkan preview suara dulu
+                showToast("Rekaman selesai")
                 showAudioPreviewDialog(latestRecording, this) {
-                    // Setelah preview selesai (atau dilewati), lakukan evaluasi
                     val soalSekarang = soalList[currentQuestionIndex]
                     bandingkanAudio(latestRecording, soalSekarang.jawaban)
                 }
-
             } else {
-                Toast.makeText(this, "File rekaman tidak ditemukan", Toast.LENGTH_SHORT).show()
+                showToast("File rekaman tidak ditemukan")
             }
-
         } catch (e: Exception) {
             isRecording = false
-            Toast.makeText(this, "Gagal stop rekaman: ${e.message}", Toast.LENGTH_SHORT).show()
+            showToast("Gagal stop rekaman: ${e.message}")
         }
     }
-
-
 
     private fun bandingkanAudio(userFile: File, jawabanUrl: String) {
         val dialog = ProgressDialog(this).apply {
@@ -249,21 +194,20 @@ class EvalPelafalan : Activity() {
         scope.launch(Dispatchers.IO) {
             try {
                 val refFile = File.createTempFile("ref_audio", ".wav", cacheDir)
-                val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(jawabanUrl)
+                FirebaseStorage.getInstance().getReferenceFromUrl(jawabanUrl).getFile(refFile).await()
 
-                val downloadTask = storageRef.getFile(refFile)
-                downloadTask.await()
+                val processedFile = File(cacheDir, "processed_audio.wav")
+                val denoised = AudioRecorderUtil.applyNoiseReduction(
+                    AudioRecorderUtil.normalizeAudio(userFile.readBytes())
+                )
+                AudioRecorderUtil.writeWavFile(processedFile, denoised)
 
-                withContext(Dispatchers.Main) {
-                    dialog.setMessage("Menganalisis suara...")
-                }
+                val userFeatures = AudioEvaluator.preprocessFeatures(AudioEvaluator.extractMFCCFromFile(processedFile))
+                val refFeatures = AudioEvaluator.preprocessFeatures(AudioEvaluator.extractMFCCFromFile(refFile))
 
-                val userFeatures = AudioEvaluator.extractMFCCFromFile(userFile)
-                val refFeatures = AudioEvaluator.extractMFCCFromFile(refFile)
-
-                // ✅ Gunakan evaluasi komprehensif
                 val result = AudioEvaluator.comprehensiveEvaluation(userFeatures, refFeatures)
 
+                processedFile.delete()
                 userFile.delete()
                 refFile.delete()
 
@@ -271,7 +215,6 @@ class EvalPelafalan : Activity() {
                     dialog.dismiss()
                     showHasilRekaman(result.score, result.feedback, result.confidence)
                 }
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     dialog.dismiss()
@@ -279,6 +222,10 @@ class EvalPelafalan : Activity() {
                 }
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 
@@ -341,13 +288,11 @@ class EvalPelafalan : Activity() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressCircle)
         val percentageText = view.findViewById<TextView>(R.id.percentageText)
         val feedbackText = view.findViewById<TextView>(R.id.feedbackText)
-        val confidenceText = view.findViewById<TextView>(R.id.confidenceText) // Tambahkan ini di layout XML
         val btnNext = view.findViewById<ImageButton>(R.id.btnNext)
 
         percentageText.text = "$score%"
         progressBar.progress = score
         feedbackText.text = feedback
-        confidenceText.text = "Confidence: ${"%.1f".format(confidence)}%"
 
         val colorRes = when {
             score > 70 -> R.color.score_good
@@ -358,7 +303,6 @@ class EvalPelafalan : Activity() {
 
         percentageText.setTextColor(ContextCompat.getColor(this, colorRes))
         feedbackText.setTextColor(ContextCompat.getColor(this, colorRes))
-        confidenceText.setTextColor(ContextCompat.getColor(this, R.color.black)) // Confidence tetap netral
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
@@ -415,6 +359,12 @@ class EvalPelafalan : Activity() {
             recorder = null
             isRecording = false
         } catch (_: Exception) {
+        }
+    }
+
+    private fun saveByteArrayAsWav(data: ByteArray, targetFile: File) {
+        targetFile.outputStream().use {
+            it.write(data)
         }
     }
 

@@ -144,21 +144,6 @@ class AudioEvaluator {
         }
 
         /**
-         * Generate feedback berdasarkan similarity score
-         */
-        fun getFeedback(score: Int): String {
-            return when {
-                score >= 90 -> "Excellent! Pronunciation is very accurate."
-                score >= 80 -> "Very Good! Minor improvements needed."
-                score >= 70 -> "Good! Your pronunciation is quite clear."
-                score >= 60 -> "Fair. Try to pronounce more clearly."
-                score >= 50 -> "Needs improvement. Practice more."
-                score >= 30 -> "Poor pronunciation. Focus on correct articulation."
-                else -> "Very poor. Please listen carefully and try again."
-            }
-        }
-
-        /**
          * Generate feedback dalam bahasa Indonesia
          */
         fun getFeedbackIndonesian(score: Int): String {

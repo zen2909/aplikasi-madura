@@ -87,18 +87,8 @@
                         android:fontFamily="@font/inter"
                         android:layout_below="@id/percentageText"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="2dp"
+                        android:layout_marginBottom="10dp"
                         android:textAlignment="center" />
-
-                    <TextView
-                        android:id="@+id/confidenceText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:text="Confidence: 0.0%"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        android:layout_gravity="center_horizontal" />
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/card_send"

@@ -13,10 +13,15 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.InputType
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
@@ -28,6 +33,7 @@ import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.EditKosakataBinding
 import com.zen.e_learning_bahasa_madura.model.*
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
+import com.zen.e_learning_bahasa_madura.util.LajarSpan
 import com.zen.e_learning_bahasa_madura.util.NavHelper
 import java.io.File
 import java.util.UUID
@@ -73,38 +79,9 @@ class EditKosakata : Activity() {
 
         binding.ktindonesia.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
-        binding.ktdasar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val converted = convertToCarakan(s.toString())
-                binding.cardasar.text = converted
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.ktmenengah.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val converted = convertToCarakan(s.toString())
-                binding.carmenengah.text = converted
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.kttinggi.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val converted = convertToCarakan(s.toString())
-                binding.cartinggi.text = converted
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        binding.cardasar.setOnClickListener { showCarakanKeyboardDialog(binding.cardasar) }
+        binding.carmenengah.setOnClickListener { showCarakanKeyboardDialog(binding.carmenengah) }
+        binding.cartinggi.setOnClickListener { showCarakanKeyboardDialog(binding.cartinggi) }
 
         hurufkhusus()
 
@@ -334,8 +311,6 @@ class EditKosakata : Activity() {
     }
 
 
-
-
     private fun updateData() {
         val dasar = MaduraDasar(
             id_dasar = idDasar,
@@ -383,95 +358,288 @@ class EditKosakata : Activity() {
         mediaPlayer?.release()
     }
 
-    fun convertToCarakan(input: String): String {
-        val baseMap = listOf(
-            "ng" to "ꦁ", "nga" to "ꦔ",
-            "ny" to "ꦚ", "nya" to "ꦚ",
-            "th" to "ꦛ", "tha" to "ꦛ",
-            "dh" to "ꦝ", "dha" to "ꦝ",
-            "jh" to "ꦗ", "jha" to "ꦗ",
-            "bh" to "ꦧ", "bha" to "ꦧ",
+    private fun showCarakanKeyboardDialog(targetTextView: TextView) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_carakan_keyboard, null)
+        val previewText = dialogView.findViewById<TextView>(R.id.tvPreview)
 
-            "a" to "ꦲ", "â" to "ꦲ",
-            "b" to "ꦧ", "ba" to "ꦧ",
-            "c" to "ꦕ", "ca" to "ꦕ",
-            "d" to "ꦢ", "da" to "ꦢ",
-            "g" to "ꦒ", "ga" to "ꦒ",
-            "h" to "ꦲ", "ha" to "ꦲ",
-            "j" to "ꦗ", "ja" to "ꦗ",
-            "k" to "ꦏ", "ka" to "ꦏ",
-            "l" to "ꦭ", "la" to "ꦭ",
-            "m" to "ꦩ", "ma" to "ꦩ",
-            "n" to "ꦤ", "na" to "ꦤ",
-            "p" to "ꦥ", "pa" to "ꦥ",
-            "r" to "ꦫ", "ra" to "ꦫ",
-            "s" to "ꦱ", "sa" to "ꦱ",
-            "t" to "ꦠ", "ta" to "ꦠ",
-            "w" to "ꦮ", "wa" to "ꦮ",
-            "y" to "ꦪ", "ya" to "ꦪ"
-        ).sortedByDescending { it.first.length }
+        val layoutDasar = dialogView.findViewById<LinearLayout>(R.id.layoutDasar)
+        val layoutSandhangan = dialogView.findViewById<LinearLayout>(R.id.layoutSandhangan)
+        val layoutPasangan = dialogView.findViewById<LinearLayout>(R.id.layoutPasangan)
 
-        val sandhanganMap = mapOf(
-            "i" to "ꦶ", "u" to "ꦸ", "é" to "ꦺ", "e" to "ꦼ", "o" to "ꦺꦴ", "eu" to "ꦼꦴ"
-        )
+        val btnTabDasar = dialogView.findViewById<Button>(R.id.btnTabDasar)
+        val btnTabSandhangan = dialogView.findViewById<Button>(R.id.btnTabSandhangan)
+        val btnTabPasangan = dialogView.findViewById<Button>(R.id.btnTabPasangan)
 
-        val pasangan = mapOf(
-            "ꦏ" to "꧀ꦏ", "ꦒ" to "꧀ꦒ", "ꦔ" to "꧀ꦔ", "ꦕ" to "꧀ꦕ", "ꦗ" to "꧀ꦗ", "ꦚ" to "꧀ꦚ",
-            "ꦛ" to "꧀ꦛ", "ꦝ" to "꧀ꦝ", "ꦠ" to "꧀ꦠ", "ꦡ" to "꧀ꦡ", "ꦢ" to "꧀ꦢ", "ꦣ" to "꧀ꦣ",
-            "ꦤ" to "꧀ꦤ", "ꦥ" to "꧀ꦥ", "ꦧ" to "꧀ꦧ", "ꦨ" to "꧀ꦨ", "ꦩ" to "꧀ꦩ", "ꦪ" to "꧀ꦪ",
-            "ꦫ" to "꧀ꦫ", "ꦭ" to "꧀ꦭ", "ꦮ" to "꧀ꦮ", "ꦯ" to "꧀ꦯ", "ꦱ" to "꧀ꦱ", "ꦲ" to "꧀ꦲ"
-        )
+        val btnBackspace = dialogView.findViewById<Button>(R.id.btnBackspace)
+        val btnClear = dialogView.findViewById<Button>(R.id.btnClear)
+        val btnSpace = dialogView.findViewById<Button>(R.id.btnSpace)
 
-        val result = StringBuilder()
-        val words = input.lowercase().split(" ")
+        layoutDasar.removeAllViews()
+        layoutSandhangan.removeAllViews()
+        layoutPasangan.removeAllViews()
 
-        for (word in words) {
-            val converted = StringBuilder()
-            var i = 0
-            while (i < word.length) {
-                var matched = false
+        createButtonGroup(InputKosakata.Companion.AKSARA_DASAR, layoutDasar, previewText)
+        createButtonGroup(InputKosakata.Companion.SANDHANGAN, layoutSandhangan, previewText)
+        createButtonGroup(InputKosakata.Companion.PASANGAN, layoutPasangan, previewText)
 
-                // 1. Cek sandhangan dulu
-                sandhanganMap.entries.firstOrNull { word.startsWith(it.key, i) }?.let {
-                    converted.append(it.value)
-                    i += it.key.length
-                    matched = true
-                }
-
-                // 2. Cek konsonan majemuk dan dasar
-                if (!matched) {
-                    baseMap.firstOrNull { word.startsWith(it.first, i) }?.let {
-                        converted.append(it.second)
-                        i += it.first.length
-                        matched = true
-                    }
-                }
-
-                // 3. Cek pasangan konsonan mati di tengah
-                if (!matched && i > 0 && i < word.length - 1) {
-                    val currChar = word[i].toString()
-                    baseMap.firstOrNull { it.first == currChar }?.let {
-                        converted.append("꧀").append(it.second)
-                        i++
-                        matched = true
-                    }
-                }
-
-                if (!matched) {
-                    converted.append(word[i])
-                    i++
-                }
-            }
-
-            // Tambahkan pangkon jika huruf akhir konsonan tanpa pasangan
-            val lastChar = converted.lastOrNull()?.toString() ?: ""
-            if (lastChar in pasangan.keys) {
-                converted.append("꧀")
-            }
-
-            result.append(converted).append(" ")
+        btnBackspace.setOnClickListener {
+            val text = previewText.text.toString()
+            if (text.isNotEmpty()) previewText.text = text.dropLast(1)
         }
 
-        return result.toString().trim()
+        btnClear.setOnClickListener {
+            previewText.text = ""
+        }
+
+        btnSpace.setOnClickListener {
+            previewText.append(" ")
+        }
+
+        btnTabDasar.setOnClickListener {
+            layoutDasar.visibility = View.VISIBLE
+            layoutSandhangan.visibility = View.GONE
+            layoutPasangan.visibility = View.GONE
+        }
+
+        btnTabSandhangan.setOnClickListener {
+            layoutDasar.visibility = View.GONE
+            layoutSandhangan.visibility = View.VISIBLE
+            layoutPasangan.visibility = View.GONE
+        }
+
+        btnTabPasangan.setOnClickListener {
+            layoutDasar.visibility = View.GONE
+            layoutSandhangan.visibility = View.GONE
+            layoutPasangan.visibility = View.VISIBLE
+        }
+
+        val btnSimpan = dialogView.findViewById<Button>(R.id.btnSimpan)
+        val btnBatal = dialogView.findViewById<Button>(R.id.btnBatal)
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        btnSimpan.setOnClickListener {
+            targetTextView.text = previewText.text
+            alertDialog.dismiss()
+        }
+
+        btnBatal.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.show()
+
     }
+
+    private fun createButtonGroup(
+        characters: Array<String>,
+        container: LinearLayout,
+        previewText: TextView
+    ) {
+        val labelMap = mapOf(
+            // AKSARA_DASAR
+            "ꦲ" to "A", "ꦤ" to "Na", "ꦕ" to "Ca", "ꦫ" to "Ra", "ꦏ" to "Ka",
+            "ꦢ" to "Da", "ꦠ" to "Ta", "ꦱ" to "Sa", "ꦮ" to "Wa", "ꦭ" to "La",
+            "ꦥ" to "Pa", "ꦝ" to "Dha", "ꦗ" to "Ja", "ꦪ" to "Ya", "ꦚ" to "Nya",
+            "ꦩ" to "Ma", "ꦒ" to "Ga", "ꦧ" to "Ba", "ꦛ" to "Tha", "ꦔ" to "Nga",
+
+            // AKSARA_SWARA
+            "ꦄ" to "A", "ꦆ" to "I", "ꦈ" to "U", "ꦌ" to "E", "ꦎ" to "O",
+
+            // SANDHANGAN
+            "ꦶ" to "Cethak", "ꦸ" to "Soko", "ꦺ" to "Taleng", "ꦼ" to "Petpet", "ꦴ" to "longo",
+            "ꦺꦴ" to "Lenge Longo", "ꦁ" to "Cekcek", "ꦃ" to "Bisat", "꧀" to "Pangkon", "/" to "Lajar", "ꦽ" to "Pengkal",
+
+            // PASANGAN
+            "꧀ꦏ" to "Ka", "꧀ꦤ" to "Na", "꧀ꦕ" to "Ca", "꧀ꦫ" to "Ra",
+            "꧀ꦢ" to "Da", "꧀ꦠ" to "Ta", "꧀ꦱ" to "Sa", "꧀ꦮ" to "Wa",
+            "꧀ꦭ" to "La", "꧀ꦥ" to "Pa", "꧀ꦝ" to "Dha", "꧀ꦗ" to "Ja",
+            "꧀ꦪ" to "Ya", "꧀ꦚ" to "Nya", "꧀ꦩ" to "Ma", "꧀ꦒ" to "Ga",
+            "꧀ꦧ" to "Ba", "꧀ꦛ" to "Tha", "꧀ꦔ" to "Nga", "꧀ꦲ" to "Ha"
+        )
+
+        val rowSize = 5
+        var currentRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+
+        characters.forEachIndexed { index, char ->
+            val verticalLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                    setMargins(4, 4, 4, 4)
+                }
+            }
+
+            val label = TextView(this).apply {
+                text = labelMap[char] ?: ""
+                textSize = 12f
+                textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+            }
+
+            val btn = Button(this).apply {
+                text = char
+                textSize = 18f
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+
+                setOnClickListener {
+                    val currentText = previewText.text.toString()
+                    val lastChar = currentText.lastOrNull()?.toString()
+
+                    if (char == "/") {
+                        val builder = SpannableStringBuilder(previewText.text)
+                        val start = builder.length
+                        builder.append("/") // dummy
+                        builder.setSpan(LajarSpan(), start, start + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        previewText.text = builder
+                    } else {
+                        previewText.append(char)
+                    }
+                }
+            }
+
+            verticalLayout.addView(label)
+            verticalLayout.addView(btn)
+            currentRow.addView(verticalLayout)
+
+            if ((index + 1) % rowSize == 0 || index == characters.lastIndex) {
+                container.addView(currentRow)
+                currentRow = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                }
+            }
+        }
+    }
+
+    companion object {
+        // Aksara dasar (Carakan)
+        val AKSARA_DASAR = arrayOf(
+            "ꦲ", "ꦤ", "ꦕ", "ꦫ", "ꦏ",
+            "ꦢ", "ꦠ", "ꦱ", "ꦮ", "ꦭ",
+            "ꦥ", "ꦝ", "ꦗ", "ꦪ", "ꦚ",
+            "ꦩ", "ꦒ", "ꦧ", "ꦛ", "ꦔ"
+        )
+
+        // Sandhangan (modifikasi vokal)
+        val SANDHANGAN = arrayOf(
+            "ꦺ",   // lenge
+            "ꦼ",   // petpet
+            "ꦶ",   // cethak
+            "ꦸ",   // soko
+            "ꦺꦴ", // lenge longo
+            "ꦴ",   // longo
+            "ꦁ",   // cekcek
+            "ꦃ",   // wignyan
+            "꧀",   // pangkon
+            "/",   // layar
+            "ꦽ"    // pengkal
+        )
+
+        // Pasangan (dhempengan/gantungan)
+        val PASANGAN = arrayOf(
+            "꧀ꦲ", "꧀ꦤ", "꧀ꦕ", "꧀ꦫ", "꧀ꦏ",
+            "꧀ꦢ", "꧀ꦠ", "꧀ꦱ", "꧀ꦮ", "꧀ꦭ",
+            "꧀ꦥ", "꧀ꦝ", "꧀ꦗ", "꧀ꦪ", "꧀ꦚ",
+            "꧀ꦩ", "꧀ꦒ", "꧀ꦧ", "꧀ꦛ", "꧀ꦔ"
+        )
+
+    }
+
+//    fun convertToCarakan(input: String): String {
+//        val baseMap = listOf(
+//            "ng" to "ꦁ", "nga" to "ꦔ",
+//            "ny" to "ꦚ", "nya" to "ꦚ",
+//            "th" to "ꦛ", "tha" to "ꦛ",
+//            "dh" to "ꦝ", "dha" to "ꦝ",
+//            "jh" to "ꦗ", "jha" to "ꦗ",
+//            "bh" to "ꦧ", "bha" to "ꦧ",
+//
+//            "a" to "ꦲ", "â" to "ꦲ",
+//            "b" to "ꦧ", "ba" to "ꦧ",
+//            "c" to "ꦕ", "ca" to "ꦕ",
+//            "d" to "ꦢ", "da" to "ꦢ",
+//            "g" to "ꦒ", "ga" to "ꦒ",
+//            "h" to "ꦲ", "ha" to "ꦲ",
+//            "j" to "ꦗ", "ja" to "ꦗ",
+//            "k" to "ꦏ", "ka" to "ꦏ",
+//            "l" to "ꦭ", "la" to "ꦭ",
+//            "m" to "ꦩ", "ma" to "ꦩ",
+//            "n" to "ꦤ", "na" to "ꦤ",
+//            "p" to "ꦥ", "pa" to "ꦥ",
+//            "r" to "ꦫ", "ra" to "ꦫ",
+//            "s" to "ꦱ", "sa" to "ꦱ",
+//            "t" to "ꦠ", "ta" to "ꦠ",
+//            "w" to "ꦮ", "wa" to "ꦮ",
+//            "y" to "ꦪ", "ya" to "ꦪ"
+//        ).sortedByDescending { it.first.length }
+//
+//        val sandhanganMap = mapOf(
+//            "i" to "ꦶ", "u" to "ꦸ", "é" to "ꦺ", "e" to "ꦼ", "o" to "ꦺꦴ", "eu" to "ꦼꦴ"
+//        )
+//
+//        val pasangan = mapOf(
+//            "ꦏ" to "꧀ꦏ", "ꦒ" to "꧀ꦒ", "ꦔ" to "꧀ꦔ", "ꦕ" to "꧀ꦕ", "ꦗ" to "꧀ꦗ", "ꦚ" to "꧀ꦚ",
+//            "ꦛ" to "꧀ꦛ", "ꦝ" to "꧀ꦝ", "ꦠ" to "꧀ꦠ", "ꦡ" to "꧀ꦡ", "ꦢ" to "꧀ꦢ", "ꦣ" to "꧀ꦣ",
+//            "ꦤ" to "꧀ꦤ", "ꦥ" to "꧀ꦥ", "ꦧ" to "꧀ꦧ", "ꦨ" to "꧀ꦨ", "ꦩ" to "꧀ꦩ", "ꦪ" to "꧀ꦪ",
+//            "ꦫ" to "꧀ꦫ", "ꦭ" to "꧀ꦭ", "ꦮ" to "꧀ꦮ", "ꦯ" to "꧀ꦯ", "ꦱ" to "꧀ꦱ", "ꦲ" to "꧀ꦲ"
+//        )
+//
+//        val result = StringBuilder()
+//        val words = input.lowercase().split(" ")
+//
+//        for (word in words) {
+//            val converted = StringBuilder()
+//            var i = 0
+//            while (i < word.length) {
+//                var matched = false
+//
+//                // 1. Cek sandhangan dulu
+//                sandhanganMap.entries.firstOrNull { word.startsWith(it.key, i) }?.let {
+//                    converted.append(it.value)
+//                    i += it.key.length
+//                    matched = true
+//                }
+//
+//                // 2. Cek konsonan majemuk dan dasar
+//                if (!matched) {
+//                    baseMap.firstOrNull { word.startsWith(it.first, i) }?.let {
+//                        converted.append(it.second)
+//                        i += it.first.length
+//                        matched = true
+//                    }
+//                }
+//
+//                // 3. Cek pasangan konsonan mati di tengah
+//                if (!matched && i > 0 && i < word.length - 1) {
+//                    val currChar = word[i].toString()
+//                    baseMap.firstOrNull { it.first == currChar }?.let {
+//                        converted.append("꧀").append(it.second)
+//                        i++
+//                        matched = true
+//                    }
+//                }
+//
+//                if (!matched) {
+//                    converted.append(word[i])
+//                    i++
+//                }
+//            }
+//
+//            // Tambahkan pangkon jika huruf akhir konsonan tanpa pasangan
+//            val lastChar = converted.lastOrNull()?.toString() ?: ""
+//            if (lastChar in pasangan.keys) {
+//                converted.append("꧀")
+//            }
+//
+//            result.append(converted).append(" ")
+//        }
+//
+//        return result.toString().trim()
+//    }
 }

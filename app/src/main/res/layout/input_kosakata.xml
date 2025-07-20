@@ -536,7 +536,9 @@
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
                                         android:textColor="@color/dalam_kotak"
-                                        android:textSize="20sp" />
+                                        android:textSize="20sp"
+                                        android:gravity="center_vertical"
+                                        android:includeFontPadding="false" />
 
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
@@ -578,7 +580,9 @@
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
                                         android:textColor="@color/dalam_kotak"
-                                        android:textSize="20sp" />
+                                        android:textSize="20sp"
+                                        android:gravity="center_vertical"
+                                        android:includeFontPadding="false" />
 
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
@@ -621,7 +625,9 @@
                                         android:paddingLeft="6dp"
                                         android:scrollbars="vertical"
                                         android:textColor="@color/dalam_kotak"
-                                        android:textSize="20sp" />
+                                        android:textSize="20sp"
+                                        android:gravity="center_vertical"
+                                        android:includeFontPadding="false" />
 
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
