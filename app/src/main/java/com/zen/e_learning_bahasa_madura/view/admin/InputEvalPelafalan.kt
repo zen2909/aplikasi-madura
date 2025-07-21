@@ -136,26 +136,33 @@ class InputEvalPelafalan : Activity() {
     }
 
     private fun showDialogTambahKoleksi() {
-        val input = EditText(this).apply {
-            hint = "Nama Koleksi Soal"
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        val view = layoutInflater.inflate(R.layout.dialog_koleksi, null)
+        val btnBatal = view.findViewById<TextView>(R.id.btnBatal)
+        val btnSimpan = view.findViewById<TextView>(R.id.btnSimpan)
+        val inputan = view.findViewById<EditText>(R.id.inputKoleksi)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        btnBatal.setOnClickListener {
+            dialog.dismiss()
         }
 
-        AlertDialog.Builder(this)
-            .setTitle("Tambah Koleksi Soal")
-            .setView(input)
-            .setPositiveButton("Simpan") { _, _ ->
-                val nama = input.text.toString().trim()
-                if (nama.isNotEmpty()) {
-                    val id = db.child("koleksi_soal").push().key ?: return@setPositiveButton
-                    val koleksi = KoleksiSoal(id_koleksi = id, nama = nama, kategori = "Pelafalan", jumlah_soal = 0)
-                    db.child("koleksi_soal").child(id).setValue(koleksi)
-                } else {
-                    Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                }
+        btnSimpan.setOnClickListener {
+            val koleksi = inputan.text.toString().trim()
+            if (koleksi.isNotEmpty()) {
+                val id = db.child("koleksi_soal").push().key ?: return@setOnClickListener
+                val koleksi = KoleksiSoal(id, koleksi, "Pelafalan", 0)
+                db.child("koleksi_soal").child(id).setValue(koleksi)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Nama koleksi tidak boleh kosong", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        }
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun setupAutoComplete() {
@@ -245,10 +252,10 @@ class InputEvalPelafalan : Activity() {
             if (audioUrl != null) {
                 val view = layoutInflater.inflate(R.layout.dialog_audio, null)
                 val dialog = AlertDialog.Builder(this)
-                    .setTitle("Memutar Audio")
                     .setView(view)
                     .setCancelable(false)
                     .create()
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
 
                 mediaPlayer?.release()

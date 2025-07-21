@@ -9,7 +9,9 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -186,12 +188,15 @@ class EvalPelafalan : Activity() {
     }
 
     private fun bandingkanAudio(userFile: File, jawabanUrl: String) {
-        val dialog = ProgressDialog(this).apply {
-            setTitle("Evaluasi")
-            setMessage("Mengunduh audio referensi...")
-            setCancelable(false)
-            show()
-        }
+        val view = layoutInflater.inflate(R.layout.dialog_progress_audio, null)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
 
         scope.launch(Dispatchers.IO) {
             try {
@@ -233,60 +238,61 @@ class EvalPelafalan : Activity() {
 
     private fun showAudioPreviewDialog(audioFile: File, context: Context, onFinish: () -> Unit) {
         val mediaPlayer = MediaPlayer()
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_preview_audio, null)
+
+        val btnPutar = view.findViewById<TextView>(R.id.btnPutar)
+        val btnLewati = view.findViewById<TextView>(R.id.btnLewati)
 
         val dialog = AlertDialog.Builder(context)
-            .setTitle("Preview Rekaman")
-            .setMessage("Putar rekaman sebelum dievaluasi?")
-            .setPositiveButton("Putar", null)
-            .setNegativeButton("Lewati") { _, _ ->
-                try {
-                    mediaPlayer.stop()
-                } catch (_: Exception) {}
-                BacksoundManager.resume()
-                mediaPlayer.release()
-                onFinish()
-            }
+            .setView(view)
+            .setCancelable(false)
             .create()
 
-        dialog.setOnShowListener {
-            val btnPutar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            btnPutar.setOnClickListener {
-                try {
-                    mediaPlayer.setDataSource(audioFile.absolutePath)
-                    mediaPlayer.setOnPreparedListener {
-                        BacksoundManager.pauseImmediately()
-                        it.start()
-                    }
-                    mediaPlayer.setOnCompletionListener {
-                        try {
-                            it.stop()
-                        } catch (_: Exception) {}
-                        it.release()
-                        BacksoundManager.resume()
-                        onFinish()
-                        dialog.dismiss()
-                    }
-                    mediaPlayer.prepareAsync()
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Gagal memutar: ${e.message}", Toast.LENGTH_SHORT).show()
-                    BacksoundManager.resume()
-                    dialog.dismiss()
-                    onFinish()
+        btnPutar.setOnClickListener {
+            try {
+                BacksoundManager.pauseImmediately()
+                mediaPlayer.setDataSource(audioFile.absolutePath)
+                mediaPlayer.setOnPreparedListener {
+                    it.start()
                 }
+                mediaPlayer.setOnCompletionListener {
+                    try {
+                        if (it.isPlaying) it.stop()
+                    } catch (_: Exception) {}
+                    it.release()
+                    BacksoundManager.resume()
+                    onFinish()
+                    dialog.dismiss()
+                }
+                mediaPlayer.prepareAsync()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Gagal memutar: ${e.message}", Toast.LENGTH_SHORT).show()
+                BacksoundManager.resume()
+                dialog.dismiss()
+                onFinish()
             }
         }
 
-        dialog.setOnDismissListener {
-            // Jangan akses isPlaying karena bisa IllegalState
+        btnLewati.setOnClickListener {
             try {
-                mediaPlayer.stop()
+                if (mediaPlayer.isPlaying) mediaPlayer.stop()
+            } catch (_: Exception) {}
+            mediaPlayer.release()
+            BacksoundManager.resume()
+            onFinish()
+            dialog.dismiss()
+        }
+
+        dialog.setOnDismissListener {
+            try {
+                if (mediaPlayer.isPlaying) mediaPlayer.stop()
             } catch (_: Exception) {}
             try {
                 mediaPlayer.release()
             } catch (_: Exception) {}
             BacksoundManager.resume()
         }
-
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 

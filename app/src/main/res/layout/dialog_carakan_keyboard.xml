@@ -43,6 +43,13 @@
             android:textColor="@color/dalam_kotak"
             android:fontFamily="@font/roboto_bold"
             android:textSize="20sp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/kotakan"
+            />
         <!-- Preview -->
         <TextView
             android:id="@+id/tvPreview"
@@ -68,6 +75,9 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="Aksara\nGajang"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:textSize="8sp"
                 android:layout_marginEnd="4dp" />
 
@@ -76,7 +86,10 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Pangangghuya Aksara"
+                android:text="Pangangghuya\nAksara"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:textSize="8sp"
                 android:layout_marginEnd="4dp" />
 
@@ -86,6 +99,9 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="Dhampengan Ghantongan"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:textSize="8sp" />
         </LinearLayout>
 
@@ -128,6 +144,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:text="⌫"
                 android:layout_marginEnd="8dp" />
 
@@ -136,6 +155,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:text="Spasi"
                 android:layout_marginEnd="8dp" />
 
@@ -143,6 +165,9 @@
                 android:id="@+id/btnClear"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:layout_weight="1"
                 android:text="Clear" />
         </LinearLayout>
@@ -157,15 +182,23 @@
                 android:id="@+id/btnBatal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:layout_weight="1"
-                android:text="Batal" />
+                android:text="Batal"
+                android:layout_marginEnd="5dp"/>
 
             <Button
                 android:id="@+id/btnSimpan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/dalam_kotak"
+                android:fontFamily="@font/inter_bold"
+                android:background="@color/kotakan"
                 android:layout_weight="1"
-                android:text="Simpan" />
+                android:text="Simpan"
+                android:layout_marginStart="5dp"/>
         </LinearLayout>
 
     </LinearLayout>

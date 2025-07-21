@@ -61,22 +61,11 @@ class HomePage : Activity() {
             lastClickTime = currentTime
             clickCount++
 
-            if (clickCount >= requiredClicks){
+            if (clickCount == requiredClicks){
              clickCount = 0
-             showadminlogin()
-            }
-        }
-    }
-
-    private fun showadminlogin() {
-        AlertDialog.Builder(this)
-            .setTitle("Login Admin")
-            .setMessage("Masukkan Email Dan Password Admin!!!")
-            .setPositiveButton("Login") { _, _ ->
                 startActivity(Intent(this, Login::class.java))
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
     }
 
 }

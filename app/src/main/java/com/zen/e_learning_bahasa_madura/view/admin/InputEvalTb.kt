@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import com.google.firebase.database.*
+import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.InputEvalTbBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPilgan
 import com.zen.e_learning_bahasa_madura.model.Evaluasi
@@ -106,37 +107,33 @@ class InputEvalTb : Activity() {
     }
 
     private fun showDialogTambahKoleksi() {
-        val input = EditText(this)
-        input.hint = "Nama Koleksi Soal"
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        val view = layoutInflater.inflate(com.zen.e_learning_bahasa_madura.R.layout.dialog_koleksi, null)
+        val btnBatal = view.findViewById<TextView>(com.zen.e_learning_bahasa_madura.R.id.btnBatal)
+        val btnSimpan = view.findViewById<TextView>(com.zen.e_learning_bahasa_madura.R.id.btnSimpan)
+        val inputan = view.findViewById<EditText>(R.id.inputKoleksi)
 
-        AlertDialog.Builder(this)
-            .setTitle("Tambah Koleksi Soal")
-            .setView(input)
-            .setPositiveButton("Simpan") { _, _ ->
-                val nama = input.text.toString().trim()
-                if (nama.isNotEmpty()) {
-                    val id = db.child("koleksi_soal").push().key ?: return@setPositiveButton
-                    val koleksi = KoleksiSoal(
-                        id_koleksi = id,
-                        nama = nama,
-                        kategori = "Tingkat Bahasa",
-                        jumlah_soal = 0,
-                        aktif = false // Tambahan field aktif
-                    )
-                    db.child("koleksi_soal").child(id).setValue(koleksi)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Koleksi berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Gagal menambahkan koleksi", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                }
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        btnBatal.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSimpan.setOnClickListener {
+            val koleksi = inputan.text.toString().trim()
+            if (koleksi.isNotEmpty()) {
+                val id = db.child("koleksi_soal").push().key ?: return@setOnClickListener
+                val koleksi = KoleksiSoal(id, koleksi, "Tingkat Bahasa", 0)
+                db.child("koleksi_soal").child(id).setValue(koleksi)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Nama koleksi tidak boleh kosong", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        }
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun simpanSoal() {
@@ -204,19 +201,6 @@ class InputEvalTb : Activity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal menyimpan soal", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun updateJumlahSoal(idKoleksi: String) {
-        db.child("koleksi_soal").child(idKoleksi).child("jumlah_soal")
-            .runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    val jumlah = currentData.getValue(Int::class.java) ?: 0
-                    currentData.value = jumlah + 1
-                    return Transaction.success(currentData)
-                }
-
-                override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {}
-            })
     }
 
     private fun spinnerjawaban() {

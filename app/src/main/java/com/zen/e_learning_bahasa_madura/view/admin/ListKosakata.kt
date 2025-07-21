@@ -288,11 +288,11 @@ class ListKosakata : Activity() {
         val view = layoutInflater.inflate(R.layout.dialog_audio, null)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Memuat Audio")
             .setView(view)
             .setCancelable(false)
             .create()
 
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
         // Hentikan instance sebelumnya

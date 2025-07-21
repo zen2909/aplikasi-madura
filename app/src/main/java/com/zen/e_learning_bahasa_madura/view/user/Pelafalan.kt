@@ -175,11 +175,11 @@ class Pelafalan : Activity() {
                 val view = layoutInflater.inflate(R.layout.dialog_audio, null)
 
                 val dialog = AlertDialog.Builder(this)
-                    .setTitle("Memutar Audio")
                     .setView(view)
                     .setCancelable(false)
                     .create()
 
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
 
                 mediaPlayer?.release()

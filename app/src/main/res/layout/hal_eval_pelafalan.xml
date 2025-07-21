@@ -98,7 +98,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Tekan Tombol Rekam Untuk Merekam Suara"
+                    android:text="Tahan Tombol Rekam Untuk Merekam Suara"
                     android:gravity="center"
                     android:fontFamily="@font/bangers"
                     android:textColor="@color/teks"

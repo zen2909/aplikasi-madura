@@ -16,6 +16,7 @@ import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.EditEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPelafalan
 import com.zen.e_learning_bahasa_madura.util.BacksoundManager
+import com.zen.e_learning_bahasa_madura.R
 
 class EditEvalPelafalan : Activity() {
 
@@ -202,12 +203,13 @@ class EditEvalPelafalan : Activity() {
         val text = binding.jawaban.text.toString().trim()
         fetchAudioUrl(text) { audioUrl ->
             if (audioUrl != null) {
+                val view = layoutInflater.inflate(R.layout.dialog_audio, null)
                 val dialog = AlertDialog.Builder(this)
-                    .setTitle("Memutar Audio")
-                    .setMessage("Sedang memutar audio untuk \"$text\".\nHarap tunggu hingga selesai...")
+                    .setView(view)
                     .setCancelable(false)
                     .create()
 
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
 
                 mediaPlayer?.release()
