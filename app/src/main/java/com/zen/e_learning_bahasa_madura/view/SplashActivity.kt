@@ -11,7 +11,7 @@ class SplashActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, com.zen.e_learning_bahasa_madura.view.admin.InputKosakata::class.java)
+            val intent = Intent(this, com.zen.e_learning_bahasa_madura.view.user.HomePage::class.java)
             startActivity(intent)
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()

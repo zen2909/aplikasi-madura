@@ -20,6 +20,7 @@ import com.zen.e_learning_bahasa_madura.databinding.InputEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPelafalan
 import com.zen.e_learning_bahasa_madura.model.Evaluasi
 import com.zen.e_learning_bahasa_madura.model.KoleksiSoal
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import com.zen.e_learning_bahasa_madura.util.NavHelper
 
 class InputEvalPelafalan : Activity() {
@@ -253,12 +254,17 @@ class InputEvalPelafalan : Activity() {
                 mediaPlayer?.release()
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(audioUrl)
-                    setOnPreparedListener { start() }
+                    setOnPreparedListener {
+                        BacksoundManager.pauseImmediately()
+                        start()
+                    }
                     setOnCompletionListener {
+                        BacksoundManager.resume()
                         dialog.dismiss()
                         release()
                     }
                     setOnErrorListener { _, _, _ ->
+                        BacksoundManager.resume()
                         dialog.dismiss()
                         Toast.makeText(this@InputEvalPelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
                         true

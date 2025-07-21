@@ -20,6 +20,7 @@ import com.zen.e_learning_bahasa_madura.model.BahasaMadura
 import com.zen.e_learning_bahasa_madura.model.MaduraDasar
 import com.zen.e_learning_bahasa_madura.model.MaduraMenengah
 import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import com.zen.e_learning_bahasa_madura.util.NavHelper
 import com.zen.e_learning_bahasa_madura.view.admin.EditKosakata
 
@@ -294,19 +295,33 @@ class ListKosakata : Activity() {
 
         dialog.show()
 
+        // Hentikan instance sebelumnya
         mediaPlayer?.release()
+
         mediaPlayer = MediaPlayer().apply {
             setDataSource(url)
-            setOnPreparedListener { start() }
+
+            setOnPreparedListener {
+                // 🔇 Pause backsound
+                BacksoundManager.pauseImmediately()
+                start()
+            }
+
             setOnCompletionListener {
+                // ✅ Resume backsound
+                BacksoundManager.resume()
                 dialog.dismiss()
                 release()
             }
+
             setOnErrorListener { _, _, _ ->
+                // ❌ Resume jika error
+                BacksoundManager.resume()
                 dialog.dismiss()
                 Toast.makeText(this@ListKosakata, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
                 true
             }
+
             prepareAsync()
         }
     }

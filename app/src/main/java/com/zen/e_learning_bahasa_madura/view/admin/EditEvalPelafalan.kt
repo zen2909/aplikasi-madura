@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.EditEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.model.EvalPelafalan
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 
 class EditEvalPelafalan : Activity() {
 
@@ -212,12 +213,16 @@ class EditEvalPelafalan : Activity() {
                 mediaPlayer?.release()
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(audioUrl)
-                    setOnPreparedListener { start() }
+                    setOnPreparedListener {
+                        BacksoundManager.pauseImmediately()
+                        start() }
                     setOnCompletionListener {
+                        BacksoundManager.resume()
                         dialog.dismiss()
                         release()
                     }
                     setOnErrorListener { _, _, _ ->
+                        BacksoundManager.resume()
                         Toast.makeText(this@EditEvalPelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
                         true

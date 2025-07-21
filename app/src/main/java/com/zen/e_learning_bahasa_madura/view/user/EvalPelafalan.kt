@@ -22,6 +22,7 @@ import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.HalEvalPelafalanBinding
 import com.zen.e_learning_bahasa_madura.util.AudioEvaluator
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -66,6 +67,7 @@ class EvalPelafalan : Activity() {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (!isRecording) {
+                        BacksoundManager.pauseImmediately()
                         startRecording()
                         showToast("Mulai merekam")
                     }
@@ -240,6 +242,7 @@ class EvalPelafalan : Activity() {
                 try {
                     mediaPlayer.stop()
                 } catch (_: Exception) {}
+                BacksoundManager.resume()
                 mediaPlayer.release()
                 onFinish()
             }
@@ -251,6 +254,7 @@ class EvalPelafalan : Activity() {
                 try {
                     mediaPlayer.setDataSource(audioFile.absolutePath)
                     mediaPlayer.setOnPreparedListener {
+                        BacksoundManager.pauseImmediately()
                         it.start()
                     }
                     mediaPlayer.setOnCompletionListener {
@@ -258,12 +262,14 @@ class EvalPelafalan : Activity() {
                             it.stop()
                         } catch (_: Exception) {}
                         it.release()
+                        BacksoundManager.resume()
                         onFinish()
                         dialog.dismiss()
                     }
                     mediaPlayer.prepareAsync()
                 } catch (e: Exception) {
                     Toast.makeText(context, "Gagal memutar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    BacksoundManager.resume()
                     dialog.dismiss()
                     onFinish()
                 }
@@ -278,6 +284,7 @@ class EvalPelafalan : Activity() {
             try {
                 mediaPlayer.release()
             } catch (_: Exception) {}
+            BacksoundManager.resume()
         }
 
         dialog.show()

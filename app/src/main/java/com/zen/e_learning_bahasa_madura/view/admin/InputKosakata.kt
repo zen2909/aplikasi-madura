@@ -42,6 +42,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.LinearLayout
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import com.zen.e_learning_bahasa_madura.util.LajarSpan
 
 class InputKosakata : Activity() {
@@ -282,7 +283,7 @@ class InputKosakata : Activity() {
                             )
                             == PackageManager.PERMISSION_GRANTED
                         ) {
-
+                            BacksoundManager.pauseImmediately()
                             startRecording(type)
 
                             seconds = 0
@@ -294,6 +295,7 @@ class InputKosakata : Activity() {
                             }
                             handler.postDelayed(timerRunnable!!, 1000)
                         } else {
+                            BacksoundManager.resume()
                             Toast.makeText(
                                 this,
                                 "Izin rekam suara belum diberikan",
@@ -302,6 +304,7 @@ class InputKosakata : Activity() {
                         }
                     } catch (e: SecurityException) {
                         e.printStackTrace()
+                        BacksoundManager.resume()
                         Toast.makeText(
                             this,
                             "Tidak dapat merekam suara: ${e.message}",

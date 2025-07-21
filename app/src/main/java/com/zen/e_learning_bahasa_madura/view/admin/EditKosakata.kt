@@ -33,6 +33,7 @@ import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.EditKosakataBinding
 import com.zen.e_learning_bahasa_madura.model.*
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import com.zen.e_learning_bahasa_madura.util.LajarSpan
 import com.zen.e_learning_bahasa_madura.util.NavHelper
 import java.io.File
@@ -280,7 +281,7 @@ class EditKosakata : Activity() {
                     try {
                         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                             == PackageManager.PERMISSION_GRANTED) {
-
+                            BacksoundManager.pauseImmediately()
                             startRecording(type)
 
                             seconds = 0
@@ -292,10 +293,12 @@ class EditKosakata : Activity() {
                             }
                             handler.postDelayed(timerRunnable!!, 1000)
                         } else {
+                            BacksoundManager.resume()
                             Toast.makeText(this, "Izin rekam suara belum diberikan", Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: SecurityException) {
                         e.printStackTrace()
+                        BacksoundManager.resume()
                         Toast.makeText(this, "Tidak dapat merekam suara: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }

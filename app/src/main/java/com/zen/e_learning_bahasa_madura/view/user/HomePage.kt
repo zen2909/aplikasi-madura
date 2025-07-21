@@ -9,6 +9,7 @@ import androidx.compose.material3.AlertDialog
 import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.auth.Login
 import com.zen.e_learning_bahasa_madura.databinding.HomePageBinding
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 
 class HomePage : Activity() {
 
@@ -23,6 +24,8 @@ class HomePage : Activity() {
         binding = HomePageBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root) // Sesuaikan dengan nama file XML Anda
+
+        BacksoundManager.start(this, R.raw.tanduk_majeng)
 
         binding.btnTerjemahan.setOnClickListener {
             val intent = Intent(this, Terjemahan::class.java)

@@ -60,6 +60,8 @@ class AudioRecorderUtil {
                 audioRecord?.startRecording()
                 isRecording = true
 
+                BacksoundManager.pause()
+
                 Log.d(TAG, "Recording started to: ${outputFile.absolutePath}")
 
                 recordingThread = Thread {
@@ -92,6 +94,8 @@ class AudioRecorderUtil {
                 recordingThread = null
 
                 Log.d(TAG, "Recording stopped")
+
+                BacksoundManager.resume()
 
             } catch (e: Exception) {
                 Log.e(TAG, "Error stopping recording: ${e.message}")

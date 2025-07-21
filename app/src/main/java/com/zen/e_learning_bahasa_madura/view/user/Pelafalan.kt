@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import com.zen.e_learning_bahasa_madura.R
 import com.zen.e_learning_bahasa_madura.databinding.HalPelafalanBinding
+import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 
 class Pelafalan : Activity() {
 
@@ -184,12 +185,16 @@ class Pelafalan : Activity() {
                 mediaPlayer?.release()
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(audioUrl)
-                    setOnPreparedListener { start() }
+                    setOnPreparedListener {
+                        BacksoundManager.pauseImmediately()
+                        start() }
                     setOnCompletionListener {
+                        BacksoundManager.resume()
                         dialog.dismiss()
                         release()
                     }
                     setOnErrorListener { _, _, _ ->
+                        BacksoundManager.resume()
                         dialog.dismiss()
                         Toast.makeText(this@Pelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
                         true
