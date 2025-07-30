@@ -80,8 +80,8 @@ class TingkatBahasa : Activity() {
             Triple("Madura_tinggi", "id_tinggi", "kosakata")
         )
 
-        for ((path, idField, kosakataField) in tingkatList) {
-            dbRef.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
+        for ((kosakata, idField, kosakataField) in tingkatList) {
+            dbRef.child(kosakata).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (item in snapshot.children) {
                         val kata = item.child(kosakataField).value?.toString()?.trim()
@@ -123,7 +123,7 @@ class TingkatBahasa : Activity() {
     }
 
     private fun ambilKosakataDanCarakan(
-        path: String,
+        kosakata: String,
         id: String,
         kosaView: TextView,
         carakanView: TextView
@@ -134,7 +134,7 @@ class TingkatBahasa : Activity() {
             return
         }
 
-        dbRef.child(path).child(id)
+        dbRef.child(kosakata).child(id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val kata = snapshot.child("kosakata").value?.toString() ?: "-"

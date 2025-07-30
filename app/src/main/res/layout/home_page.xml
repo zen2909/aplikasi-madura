@@ -107,7 +107,7 @@
                     <ImageView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/ic_tingkatbahasa"
+                        android:src="@drawable/ic_tb"
                         android:tint="@color/dalam_kotak"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -201,7 +201,7 @@
                     <ImageView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/ic_evaluasi"
+                        android:src="@drawable/ic_evalhome"
                         android:tint="@color/dalam_kotak"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

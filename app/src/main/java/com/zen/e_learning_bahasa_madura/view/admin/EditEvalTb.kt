@@ -148,7 +148,7 @@ class EditEvalTb : Activity() {
         binding.jawaban2.setText(data.jwb_2)
         binding.jawaban3.setText(data.jwb_3)
         binding.jawaban4.setText(data.jwb_4)
-        binding.bobot.setText(data.bobot)
+        binding.bobot.setText(data.bobot.toString())
 
         spinnerJawaban(data.jwb_benar)
         spinnerWatcher(data.jwb_benar)
@@ -176,6 +176,8 @@ class EditEvalTb : Activity() {
             return
         }
 
+        val bobotsoal = bobot.toInt()
+
         val evaluasi = EvalPilgan(
             id_evalpilgan = id,
             soal = soal,
@@ -184,7 +186,7 @@ class EditEvalTb : Activity() {
             jwb_3 = j3,
             jwb_4 = j4,
             jwb_benar = jawaban,
-            bobot = bobot
+            bobot = bobotsoal
         )
 
         db.child("evaluasi_pilgan").child(id).setValue(evaluasi)

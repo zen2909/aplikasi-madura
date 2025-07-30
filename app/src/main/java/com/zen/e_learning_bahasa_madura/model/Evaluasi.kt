@@ -4,5 +4,5 @@ data class Evaluasi(
     val id_evaluasi: String = "",
     val id_koleksi: String = "",
     val id_pilgan: String? = null,
-    val id_pelafalan: String? = null
+    val id_evalpelafalan: String? = null
 )

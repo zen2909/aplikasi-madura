@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,7 @@ import com.google.firebase.database.*
 import com.zen.e_learning_bahasa_madura.databinding.ItemEvalBinding
 import com.zen.e_learning_bahasa_madura.databinding.ListEvaluasiBinding
 import com.zen.e_learning_bahasa_madura.util.NavHelper
+import com.zen.e_learning_bahasa_madura.R
 
 class SoalEvaluasi : Activity() {
 
@@ -220,47 +223,60 @@ class SoalEvaluasi : Activity() {
             }
 
             holder.binding.btnDelete.setOnClickListener {
-                AlertDialog.Builder(context)
-                    .setTitle("Hapus Koleksi Soal")
-                    .setMessage("Yakin ingin menghapus koleksi '${item.namaKoleksi}' dan semua soalnya?")
-                    .setPositiveButton("Hapus") { _, _ ->
-                        val idKoleksi = item.idKoleksi
+                val context = holder.itemView.context
+                val view = LayoutInflater.from(context).inflate(R.layout.dialog_hapuseval, null)
 
-                        db.child("evaluasi").orderByChild("id_koleksi").equalTo(idKoleksi)
-                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(evalSnap: DataSnapshot) {
-                                    val idPilganList = mutableListOf<String>()
-                                    val idPelafalanList = mutableListOf<String>()
+                val dialog = AlertDialog.Builder(context)
+                    .setView(view)
+                    .create()
 
-                                    for (data in evalSnap.children) {
-                                        val idPilgan = data.child("id_pilgan").getValue(String::class.java)
-                                        val idPelafalan = data.child("id_pelafalan").getValue(String::class.java)
+                val btnHapus = view.findViewById<TextView>(R.id.btnHapus)
+                val btnBatal = view.findViewById<TextView>(R.id.btnBatal)
 
-                                        idPilgan?.let { idPilganList.add(it) }
-                                        idPelafalan?.let { idPelafalanList.add(it) }
+                btnHapus.setOnClickListener {
+                    val idKoleksi = item.idKoleksi
 
-                                        db.child("evaluasi").child(data.key!!).removeValue()
-                                    }
+                    db.child("evaluasi").orderByChild("id_koleksi").equalTo(idKoleksi)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(evalSnap: DataSnapshot) {
+                                val idPilganList = mutableListOf<String>()
+                                val idPelafalanList = mutableListOf<String>()
 
-                                    idPilganList.forEach { id ->
-                                        db.child("evaluasi_pilgan").child(id).removeValue()
-                                    }
-                                    idPelafalanList.forEach { id ->
-                                        db.child("evaluasi_pelafalan").child(id).removeValue()
-                                    }
+                                for (data in evalSnap.children) {
+                                    val idPilgan = data.child("id_pilgan").getValue(String::class.java)
+                                    val idPelafalan = data.child("id_evalpelafalan").getValue(String::class.java)
 
-                                    db.child("koleksi_soal").child(idKoleksi).removeValue()
-                                        .addOnSuccessListener {
-                                            Toast.makeText(context, "Koleksi berhasil dihapus", Toast.LENGTH_SHORT).show()
-                                            if (activity is SoalEvaluasi) activity.fetchKoleksi()
-                                        }
+                                    idPilgan?.let { idPilganList.add(it) }
+                                    idPelafalan?.let { idPelafalanList.add(it) }
+
+                                    db.child("evaluasi").child(data.key!!).removeValue()
                                 }
 
-                                override fun onCancelled(error: DatabaseError) {}
-                            })
-                    }
-                    .setNegativeButton("Batal", null)
-                    .show()
+                                idPilganList.forEach { id ->
+                                    db.child("evaluasi_pilgan").child(id).removeValue()
+                                }
+                                idPelafalanList.forEach { id ->
+                                    db.child("evaluasi_pelafalan").child(id).removeValue()
+                                }
+
+                                db.child("koleksi_soal").child(idKoleksi).removeValue()
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "Koleksi berhasil dihapus", Toast.LENGTH_SHORT).show()
+                                        if (activity is SoalEvaluasi) activity.fetchKoleksi()
+                                        dialog.dismiss()
+                                    }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                }
+
+                btnBatal.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.show()
             }
         }
     }

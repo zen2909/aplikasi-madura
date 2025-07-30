@@ -145,6 +145,7 @@ class InputEvalTb : Activity() {
         val jawabanBenar = binding.jawabanBenar.selectedItem?.toString()?.trim() ?: ""
         val bobot = binding.bobot.text.toString().trim()
 
+
         val idKoleksi = selectedIdKoleksi
         if (idKoleksi.isNullOrEmpty()) {
             Toast.makeText(this, "Pilih koleksi soal terlebih dahulu", Toast.LENGTH_SHORT).show()
@@ -163,6 +164,7 @@ class InputEvalTb : Activity() {
 
         val idEvalPilgan = pilganRef.push().key ?: return
         val idEvaluasi = evaluasiRef.push().key ?: return
+        val bobotsoal = bobot.toInt()
 
         val soalData = EvalPilgan(
             id_evalpilgan = idEvalPilgan,
@@ -172,13 +174,13 @@ class InputEvalTb : Activity() {
             jwb_3 = opsi3,
             jwb_4 = opsi4,
             jwb_benar = jawabanBenar,
-            bobot = bobot
+            bobot = bobotsoal
         )
 
         val evaluasiData = Evaluasi(
             id_evaluasi = idEvaluasi,
             id_pilgan = idEvalPilgan,
-            id_pelafalan = null,
+            id_evalpelafalan = null,
             id_koleksi = idKoleksi
         )
 

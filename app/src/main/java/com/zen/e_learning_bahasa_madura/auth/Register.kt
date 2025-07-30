@@ -70,7 +70,7 @@ class Register : Activity() {
 
                 val hashedPassword = hashPassword(password)
                 val admin = mapOf(
-                    "id" to uid,
+                    "id_admin" to uid,
                     "email" to email,
                     "password" to hashedPassword
                 )

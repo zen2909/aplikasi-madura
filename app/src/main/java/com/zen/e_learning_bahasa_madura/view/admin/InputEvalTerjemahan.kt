@@ -69,7 +69,7 @@ class InputEvalTerjemahan : Activity() {
     private fun initListeners() {
         hurufkhusus()
         initJawabanTextWatchers()
-        binding.btnTambahKoleksi.setOnClickListener { showDialogTambahKoleksi() }
+        binding.btnTambahKoleksi.setOnClickListener { TambahKoleksi() }
         binding.btnSimpan.setOnClickListener { simpanSoal() }
     }
 
@@ -114,7 +114,7 @@ class InputEvalTerjemahan : Activity() {
         }
     }
 
-    private fun showDialogTambahKoleksi() {
+    private fun TambahKoleksi() {
         val view = layoutInflater.inflate(R.layout.dialog_koleksi, null)
         val btnBatal = view.findViewById<TextView>(R.id.btnBatal)
         val btnSimpan = view.findViewById<TextView>(R.id.btnSimpan)
@@ -172,8 +172,9 @@ class InputEvalTerjemahan : Activity() {
 
         val idEvalPilgan = pilganRef.push().key ?: return
         val idEvaluasi = evaluasiRef.push().key ?: return
+        val bobotsoal = bobot.toInt()
 
-        val soalData = EvalPilgan(idEvalPilgan, soal, opsi1, opsi2, opsi3, opsi4, jawabanBenar, bobot)
+        val soalData = EvalPilgan(idEvalPilgan, soal, opsi1, opsi2, opsi3, opsi4, jawabanBenar, bobotsoal)
         val evaluasiData = Evaluasi(idEvaluasi, currentIdKoleksi, idEvalPilgan, null)
 
         pilganRef.child(idEvalPilgan).setValue(soalData)

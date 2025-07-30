@@ -8,5 +8,5 @@ data class EvalPilgan (
     val jwb_3: String = "",
     val jwb_4: String = "",
     val jwb_benar: String = "",
-    val bobot: String = ""
+    val bobot: Int = 0
 )

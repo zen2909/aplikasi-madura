@@ -65,7 +65,7 @@
                                     android:layout_marginTop="30dp"
                                     android:fontFamily="@font/inter_bold"
                                     android:gravity="center"
-                                    android:text="FORM INPUT\nBAHASA MADURA"
+                                    android:text="FORM EDIT\nBAHASA MADURA"
                                     android:textAlignment="center"
                                     android:textColor="@color/dalam_kotak"
                                     android:textSize="32sp" />

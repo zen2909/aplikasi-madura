@@ -50,17 +50,36 @@
             android:layout_marginBottom="5dp"
             android:background="@color/kotakan"
             />
-        <!-- Preview -->
-        <TextView
-            android:id="@+id/tvPreview"
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:padding="12dp"
-            android:text=""
-            android:textSize="18sp"
-            android:gravity="center_vertical"
-            android:hint="Carakan akan muncul di sini..."
-            android:layout_marginBottom="16dp" />
+            android:layout_height="61dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/kotakan"
+                android:padding="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/rounded_input">
+
+                <TextView
+                    android:id="@+id/tvPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center_vertical"
+                    android:hint="Carakan akan muncul disini..."
+                    android:text=""
+                    android:textSize="18sp" />
+            </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Tab -->
         <LinearLayout
@@ -139,26 +158,15 @@
             android:orientation="horizontal"
             android:layout_marginTop="16dp">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnBackspace"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:textColor="@color/dalam_kotak"
                 android:fontFamily="@font/inter_bold"
                 android:background="@color/kotakan"
-                android:text="⌫"
-                android:layout_marginEnd="8dp" />
-
-            <Button
-                android:id="@+id/btnSpace"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textColor="@color/dalam_kotak"
-                android:fontFamily="@font/inter_bold"
-                android:background="@color/kotakan"
-                android:text="Spasi"
+                android:src="@drawable/ic_backspace"
                 android:layout_marginEnd="8dp" />
 
             <Button

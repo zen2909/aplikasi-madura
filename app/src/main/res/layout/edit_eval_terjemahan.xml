@@ -102,7 +102,7 @@
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/inter_bold"
                             android:gravity="center"
-                            android:text="FORM INPUT\nSOAL EVALUASI"
+                            android:text="FORM EDIT\nSOAL EVALUASI"
                             android:textAlignment="center"
                             android:textColor="@color/dalam_kotak"
                             android:textSize="32sp" />

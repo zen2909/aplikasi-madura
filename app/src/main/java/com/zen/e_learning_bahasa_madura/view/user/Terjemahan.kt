@@ -94,13 +94,13 @@ class Terjemahan : Activity() {
         else translateIndoToMadura(formattedInput)
     }
 
-    private fun translateMaduraToIndo(maduraWord: String) {
+    private fun translateMaduraToIndo(kosakatamadura: String) {
         fun queryLevel(path: String, idField: String, callback: (String?) -> Unit) {
             dbRef.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (item in snapshot.children) {
                         val kata = item.child("kosakata").value?.toString()?.trim() ?: continue
-                        if (kata.equals(maduraWord.trim(), ignoreCase = true)) {
+                        if (kata.equals(kosakatamadura.trim(), ignoreCase = true)) {
                             val id = item.key ?: continue
                             dbRef.child("Bahasa_madura").orderByChild(idField).equalTo(id)
                                 .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -140,8 +140,8 @@ class Terjemahan : Activity() {
 
 
 
-    private fun translateIndoToMadura(indoWord: String) {
-        val targetWord = indoWord.trim()
+    private fun translateIndoToMadura(kosakataindo: String) {
+        val targetWord = kosakataindo.trim()
 
         dbRef.child("Bahasa_madura").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

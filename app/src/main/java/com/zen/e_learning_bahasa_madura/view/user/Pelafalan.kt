@@ -170,7 +170,7 @@ class Pelafalan : Activity() {
             return
         }
 
-        fetchAudioUrl(jawaban) { audioUrl ->
+        fetchAudio(jawaban) { audioUrl ->
             if (audioUrl != null) {
                 val view = layoutInflater.inflate(R.layout.dialog_audio, null)
 
@@ -180,6 +180,13 @@ class Pelafalan : Activity() {
                     .create()
 
                 dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.setOnDismissListener {
+                    mediaPlayer?.stop()
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                    BacksoundManager.resume()
+                }
+
                 dialog.show()
 
                 mediaPlayer?.release()
@@ -187,16 +194,14 @@ class Pelafalan : Activity() {
                     setDataSource(audioUrl)
                     setOnPreparedListener {
                         BacksoundManager.pauseImmediately()
-                        start() }
+                        start()
+                    }
                     setOnCompletionListener {
-                        BacksoundManager.resume()
                         dialog.dismiss()
-                        release()
                     }
                     setOnErrorListener { _, _, _ ->
-                        BacksoundManager.resume()
-                        dialog.dismiss()
                         Toast.makeText(this@Pelafalan, "Gagal memutar audio", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
                         true
                     }
                     prepareAsync()
@@ -207,7 +212,8 @@ class Pelafalan : Activity() {
         }
     }
 
-    private fun fetchAudioUrl(jawaban: String, callback: (String?) -> Unit) {
+
+    private fun fetchAudio(jawaban: String, callback: (String?) -> Unit) {
         val db = FirebaseDatabase.getInstance().reference
         val keyword = jawaban.trim().lowercase()
 
@@ -239,6 +245,5 @@ class Pelafalan : Activity() {
                 callback(null)
             }
     }
-
 
 }

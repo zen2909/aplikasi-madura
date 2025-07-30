@@ -96,7 +96,7 @@ class EditEvalPelafalan : Activity() {
             .equalTo(idKoleksi)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val ids = snapshot.children.mapNotNull { it.child("id_pelafalan").getValue(String::class.java) }
+                    val ids = snapshot.children.mapNotNull { it.child("id_evalpelafalan").getValue(String::class.java) }
                     if (ids.isEmpty()) {
                         Toast.makeText(this@EditEvalPelafalan, "Tidak ada soal pelafalan dalam koleksi ini", Toast.LENGTH_SHORT).show()
                         return

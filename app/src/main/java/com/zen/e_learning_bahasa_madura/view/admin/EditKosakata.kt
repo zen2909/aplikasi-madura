@@ -21,6 +21,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -209,6 +210,7 @@ class EditKosakata : Activity() {
     private fun stopRecording() {
         AudioRecorderUtil.stopRecording()
 
+        val type = currentAudioPath
         val path = when (currentAudioPath) {
             "dasar" -> audioUrlDasar
             "menengah" -> audioUrlMenengah
@@ -216,21 +218,19 @@ class EditKosakata : Activity() {
             else -> ""
         }
 
-        val type = currentAudioPath
-        currentAudioPath = ""
-
         if (path.isNullOrEmpty()) {
             Toast.makeText(this, "Path audio tidak ditemukan", Toast.LENGTH_SHORT).show()
             return
         }
 
+        val view = layoutInflater.inflate(R.layout.dialog_unggah, null)
 
-        val dialog = ProgressDialog(this).apply {
-            setTitle("Mengunggah Audio")
-            setMessage("Sedang mengunggah audio $type...")
-            setCancelable(false)
-            show()
-        }
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
 
         val fileUri = Uri.fromFile(File(path))
         val storageRef = FirebaseStorage.getInstance().reference
@@ -262,12 +262,11 @@ class EditKosakata : Activity() {
         val btnHoldToRecord = view.findViewById<Button>(R.id.btnHoldToRecord)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Rekam Pelafalan")
             .setView(view)
-            .setNegativeButton("Tutup") { d, _ -> d.dismiss() }
             .create()
 
         recordingDialog = dialog
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
         var seconds = 0
@@ -307,6 +306,7 @@ class EditKosakata : Activity() {
                     stopRecording()
                     timerRunnable?.let { handler.removeCallbacks(it) }
                     timerRunnable = null
+                    dialog.dismiss()
                 }
             }
             true
@@ -373,9 +373,8 @@ class EditKosakata : Activity() {
         val btnTabSandhangan = dialogView.findViewById<Button>(R.id.btnTabSandhangan)
         val btnTabPasangan = dialogView.findViewById<Button>(R.id.btnTabPasangan)
 
-        val btnBackspace = dialogView.findViewById<Button>(R.id.btnBackspace)
+        val btnBackspace = dialogView.findViewById<ImageButton>(R.id.btnBackspace)
         val btnClear = dialogView.findViewById<Button>(R.id.btnClear)
-        val btnSpace = dialogView.findViewById<Button>(R.id.btnSpace)
 
         layoutDasar.removeAllViews()
         layoutSandhangan.removeAllViews()
@@ -392,10 +391,6 @@ class EditKosakata : Activity() {
 
         btnClear.setOnClickListener {
             previewText.text = ""
-        }
-
-        btnSpace.setOnClickListener {
-            previewText.append(" ")
         }
 
         btnTabDasar.setOnClickListener {
@@ -448,9 +443,6 @@ class EditKosakata : Activity() {
             "ꦢ" to "Da", "ꦠ" to "Ta", "ꦱ" to "Sa", "ꦮ" to "Wa", "ꦭ" to "La",
             "ꦥ" to "Pa", "ꦝ" to "Dha", "ꦗ" to "Ja", "ꦪ" to "Ya", "ꦚ" to "Nya",
             "ꦩ" to "Ma", "ꦒ" to "Ga", "ꦧ" to "Ba", "ꦛ" to "Tha", "ꦔ" to "Nga",
-
-            // AKSARA_SWARA
-            "ꦄ" to "A", "ꦆ" to "I", "ꦈ" to "U", "ꦌ" to "E", "ꦎ" to "O",
 
             // SANDHANGAN
             "ꦶ" to "Cethak", "ꦸ" to "Soko", "ꦺ" to "Taleng", "ꦼ" to "Petpet", "ꦴ" to "longo",

@@ -175,18 +175,20 @@ class EvalTerjemahan : Activity() {
             val jawabanUseri = jawabanUser.getOrNull(i)?.trim()
 
             totalBobot += bobotSoal
-            Log.d("BobotDebug", "Soal ${i + 1}: Bobot = $bobotSoal, JawabanUser = $jawabanUseri, JawabanBenar = $jawabanBenar")
 
-            if (jawabanUseri != null && jawabanUseri.equals(jawabanBenar, ignoreCase = true)) {
-                bobotDiperoleh += bobotSoal
+            if (!jawabanUseri.isNullOrEmpty()) {
+                if (jawabanUseri.equals(jawabanBenar, ignoreCase = true)) {
+                    bobotDiperoleh += bobotSoal
+                    benar++
+                } else {
+                    salah++
+                }
+            } else {
+                salah++
             }
         }
 
-        Log.d("BobotDebug", "Total Bobot: $totalBobot")
-        Log.d("BobotDebug", "Bobot Diperoleh: $bobotDiperoleh")
-
         val nilai = bobotDiperoleh
-
         val waktuSelesai = System.currentTimeMillis()
         val durasi = waktuSelesai - waktuMulai
         tampilkanDialogHasil(benar, salah, nilai, durasi)
@@ -219,10 +221,9 @@ class EvalTerjemahan : Activity() {
         animator.interpolator = DecelerateInterpolator()
         animator.start()
 
-        val waktuDetik = durasiMillis / 1000
-        val menit = waktuDetik / 60
-        val detik = waktuDetik % 60
-        tvWaktu.text = "$menit Menit $detik Detik"
+        val menit = durasiMillis / 1000 / 60
+        val detik = (durasiMillis / 1000) % 60
+        tvWaktu.text = String.format("%02d Menit %02d Detik", menit, detik)
 
         btnSelesai.setOnClickListener {
             dialog.dismiss()

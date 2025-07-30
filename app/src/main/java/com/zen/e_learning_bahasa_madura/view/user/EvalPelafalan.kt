@@ -111,7 +111,7 @@ class EvalPelafalan : Activity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val ids = snapshot.children.mapNotNull {
-                        it.child("id_pelafalan").getValue(String::class.java)
+                        it.child("id_evalpelafalan").getValue(String::class.java)
                     }
 
                     if (ids.isEmpty()) {

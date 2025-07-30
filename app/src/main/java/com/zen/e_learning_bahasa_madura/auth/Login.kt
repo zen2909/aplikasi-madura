@@ -66,11 +66,11 @@ class Login : Activity(){
                 return@setOnClickListener
             }
 
-            LoginFirebase(email, password)
+            LoginAdmin(email, password)
         }
     }
 
-    private fun LoginFirebase (email:String, password:String){
+    private fun LoginAdmin (email:String, password:String){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this){
                 if (it.isSuccessful){

@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +24,6 @@ import com.zen.e_learning_bahasa_madura.model.MaduraMenengah
 import com.zen.e_learning_bahasa_madura.model.MaduraTinggi
 import com.zen.e_learning_bahasa_madura.util.BacksoundManager
 import com.zen.e_learning_bahasa_madura.util.NavHelper
-import com.zen.e_learning_bahasa_madura.view.admin.EditKosakata
 
 class ListKosakata : Activity() {
 
@@ -255,24 +256,36 @@ class ListKosakata : Activity() {
             }
             holder.binding.btnDelete.setOnClickListener {
                 val context = holder.itemView.context
-                AlertDialog.Builder(context)
-                    .setTitle("Konfirmasi Hapus")
-                    .setMessage("Apakah Anda yakin ingin menghapus kosakata ini?")
-                    .setPositiveButton("Hapus") { _, _ ->
-                        val db = FirebaseDatabase.getInstance().reference
-                        db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
-                        db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
-                        db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
-                        db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
-                                if (activity is ListKosakata) {
-                                    activity.fetchKosakata()
-                                }
+                val view = LayoutInflater.from(context).inflate(R.layout.dialog_hapuskosakata, null)
+
+                val dialog = AlertDialog.Builder(context)
+                    .setView(view)
+                    .create()
+
+                val btnHapus = view.findViewById<TextView>(R.id.btnHapus)
+                val btnBatal = view.findViewById<TextView>(R.id.btnBatal)
+
+                btnHapus.setOnClickListener {
+                    val db = FirebaseDatabase.getInstance().reference
+                    db.child("Madura_dasar").child(item.dasar.id_dasar).removeValue()
+                    db.child("Madura_menengah").child(item.menengah.id_menengah).removeValue()
+                    db.child("Madura_tinggi").child(item.tinggi.id_tinggi).removeValue()
+                    db.child("Kosakata_Indonesia").child(item.indo.kosakata_indonesia).removeValue()
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+                            if (activity is ListKosakata) {
+                                activity.fetchKosakata()
                             }
-                    }
-                    .setNegativeButton("Batal", null)
-                    .show()
+                            dialog.dismiss()
+                        }
+                }
+
+                btnBatal.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.show()
             }
 
         }

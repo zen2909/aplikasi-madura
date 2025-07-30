@@ -505,7 +505,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/inter"
-                            android:text="Carakan Dasar"
+                            android:text="Carakan enjâ'-iyâ"
                             android:textColor="@color/dalam_kotak"
                             android:textSize="20sp" />
 
@@ -549,7 +549,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:fontFamily="@font/inter"
-                            android:text="Carakan Menengah"
+                            android:text="Carakan engghi-enten"
                             android:textColor="@color/dalam_kotak"
                             android:textSize="20sp" />
 
@@ -594,7 +594,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/inter"
-                            android:text="Carakan Tinggi"
+                            android:text="Carakan èngghi-bhunten"
                             android:textColor="@color/dalam_kotak"
                             android:textSize="20sp" />
 
@@ -690,9 +690,9 @@
 
             <ImageView
                 android:id="@+id/inputkosakata"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_madura"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_insertkosakata"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -710,9 +710,9 @@
 
             <ImageView
                 android:id="@+id/inputeval"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_eval"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_inserteval"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -732,7 +732,7 @@
                 android:id="@+id/listkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_list_madura"
+                android:src="@drawable/ic_listkosakata"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -752,7 +752,7 @@
                 android:id="@+id/listsoaleval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_list_eval"
+                android:src="@drawable/ic_listevaluasi"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>

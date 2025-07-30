@@ -62,7 +62,6 @@ class HomePage : Activity() {
             clickCount++
 
             if (clickCount == requiredClicks){
-             clickCount = 0
                 startActivity(Intent(this, Login::class.java))
             }
         }

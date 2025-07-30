@@ -816,9 +816,9 @@
 
             <ImageView
                 android:id="@+id/inputkosakata"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_madura"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_insertkosakata"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -836,9 +836,9 @@
 
             <ImageView
                 android:id="@+id/inputeval"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_input_eval"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_inserteval"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -858,7 +858,7 @@
                 android:id="@+id/listkosakata"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_list_madura"
+                android:src="@drawable/ic_listkosakata"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
@@ -878,9 +878,10 @@
                 android:id="@+id/listsoaleval"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_list_eval"
+                android:src="@drawable/ic_listevaluasi"
                 android:tint="@color/dalam_kotak" />
 
         </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

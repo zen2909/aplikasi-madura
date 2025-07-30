@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_input"
-    android:layout_width="250dp"
+    android:layout_width="350dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginBottom="50dp"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Tambah Koleksi"
+                    android:text="Konfirmasi Hapus"
                     android:textSize="20sp"
                     android:textColor="@color/dalam_kotak"
                     android:fontFamily="@font/roboto_bold"
@@ -38,31 +38,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="61dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="8dp">
+                <TextView
+                    android:text="Apakah anda yakin ingin menghapus kosakata ini ?"
+                    android:textSize="17sp"
+                    android:textColor="@color/dalam_kotak"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/kotakan"
-                        android:padding="2dp">
-
-                        <EditText
-                            android:id="@+id/inputKoleksi"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/rounded_input"
-                            android:inputType="textMultiLine"
-                            android:maxLines="5"
-                            android:paddingLeft="6dp"
-                            android:scrollbars="vertical"
-                            android:textColor="@color/dalam_kotak"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,12 +66,12 @@
                         android:clickable="true"/>
 
                     <TextView
-                        android:id="@+id/btnSimpan"
+                        android:id="@+id/btnHapus"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:gravity="center"
                         android:fontFamily="@font/roboto_bold"
-                        android:text="SIMPAN"
+                        android:text="HAPUS"
                         android:textColor="@color/kotakan"
                         android:textSize="16sp"
                         android:clickable="true"/>

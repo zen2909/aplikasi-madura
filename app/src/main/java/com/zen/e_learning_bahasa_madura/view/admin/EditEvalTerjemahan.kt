@@ -67,44 +67,70 @@ class EditEvalTerjemahan : Activity() {
     }
 
     private fun loadData() {
-        db.child("evaluasi").orderByChild("id_koleksi").equalTo(idKoleksi)
+        val evalRef = db.child("evaluasi")
+        val pilganRef = db.child("evaluasi_pilgan")
+
+        evalRef.orderByChild("id_koleksi").equalTo(idKoleksi)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val evalList = snapshot.children.mapNotNull { it.getValue(Evaluasi::class.java) }
-                        .filter { it.id_pilgan != null }
+                    val idPilganList = snapshot.children.mapNotNull {
+                        it.child("id_pilgan").getValue(String::class.java)
+                    }
 
-                    if (evalList.isEmpty()) {
+                    if (idPilganList.isEmpty()) {
                         Toast.makeText(this@EditEvalTerjemahan, "Tidak ada soal dalam koleksi ini", Toast.LENGTH_SHORT).show()
                         finish()
                         return
                     }
 
-                    val tasks = evalList.map { eval ->
-                        val idPilgan = eval.id_pilgan!!
-                        db.child("evaluasi_pilgan").child(idPilgan)
-                            .get()
-                            .continueWith { task ->
-                                val soal = task.result?.getValue(EvalPilgan::class.java)
-                                if (soal != null) idPilgan to soal else null
-                            }
-                    }
+                    pilganRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(pilganSnapshot: DataSnapshot) {
+                            val soalList = mutableListOf<Pair<String, EvalPilgan>>()
+                            for (id in idPilganList) {
+                                val node = pilganSnapshot.child(id)
+                                val soal = node.child("soal").getValue(String::class.java) ?: continue
+                                val jwb1 = node.child("jwb_1").getValue(String::class.java) ?: ""
+                                val jwb2 = node.child("jwb_2").getValue(String::class.java) ?: ""
+                                val jwb3 = node.child("jwb_3").getValue(String::class.java) ?: ""
+                                val jwb4 = node.child("jwb_4").getValue(String::class.java) ?: ""
+                                val jwbBenar = node.child("jwb_benar").getValue(String::class.java) ?: ""
+                                val bobot = node.child("bobot").getValue(Int::class.java) ?: 0
+                                val idEvalPilgan = node.child("id_evalpilgan").getValue(String::class.java) ?: ""
 
-                    Tasks.whenAllSuccess<Pair<String, EvalPilgan>>(tasks)
-                        .addOnSuccessListener { result ->
-                            daftarSoal.clear()
-                            daftarSoal.addAll(result.filterNotNull())
-                            tampilkanSoal(0)
+                                val soalObj = EvalPilgan(
+                                    id_evalpilgan = idEvalPilgan,
+                                    soal = soal,
+                                    jwb_1 = jwb1,
+                                    jwb_2 = jwb2,
+                                    jwb_3 = jwb3,
+                                    jwb_4 = jwb4,
+                                    jwb_benar = jwbBenar,
+                                    bobot = bobot
+                                )
+                                soalList.add(Pair(idEvalPilgan, soalObj)) // ✅ sekarang cocok
+                            }
+                            daftarSoal = soalList
+                            if (daftarSoal.isNotEmpty()) {
+                                currentIndex = 0
+                                tampilkanSoal(currentIndex)
+                            } else {
+                                Toast.makeText(this@EditEvalTerjemahan, "Data soal tidak ditemukan", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
                         }
-                        .addOnFailureListener {
+
+                        override fun onCancelled(error: DatabaseError) {
                             Toast.makeText(this@EditEvalTerjemahan, "Gagal memuat soal", Toast.LENGTH_SHORT).show()
                         }
+                    })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@EditEvalTerjemahan, "Gagal memuat data", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditEvalTerjemahan, "Gagal memuat data evaluasi", Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
 
     private fun tampilkanSoal(index: Int) {
         if (index !in daftarSoal.indices) return
@@ -119,7 +145,7 @@ class EditEvalTerjemahan : Activity() {
         binding.jawaban2.setText(soal.jwb_2)
         binding.jawaban3.setText(soal.jwb_3)
         binding.jawaban4.setText(soal.jwb_4)
-        binding.bobot.setText(soal.bobot)
+        binding.bobot.setText(soal.bobot.toString())
 
         updateSpinnerJawaban(soal.jwb_benar)
         applyJawabanTextWatcher()
@@ -181,7 +207,7 @@ class EditEvalTerjemahan : Activity() {
             jwb_3 = binding.jawaban3.text.toString(),
             jwb_4 = binding.jawaban4.text.toString(),
             jwb_benar = binding.jawabanBenar.selectedItem.toString(),
-            bobot = binding.bobot.text.toString()
+            bobot = binding.bobot.text.toString().toInt()
         )
 
         db.child("evaluasi_pilgan").child(currentIdPilgan).setValue(updated)

@@ -40,6 +40,7 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.SuperscriptSpan
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import com.zen.e_learning_bahasa_madura.util.AudioRecorderUtil
 import com.zen.e_learning_bahasa_madura.util.BacksoundManager
@@ -203,6 +204,7 @@ class InputKosakata : Activity() {
     private fun stopRecording() {
         AudioRecorderUtil.stopRecording()
 
+        val type = currentAudioPath
         val path = when (currentAudioPath) {
             "dasar" -> audioUrlDasar
             "menengah" -> audioUrlMenengah
@@ -210,21 +212,20 @@ class InputKosakata : Activity() {
             else -> ""
         }
 
-        val type = currentAudioPath
-        currentAudioPath = ""
-
         if (path.isNullOrEmpty()) {
             Toast.makeText(this, "Path audio tidak ditemukan", Toast.LENGTH_SHORT).show()
             return
         }
 
+        val view = layoutInflater.inflate(R.layout.dialog_unggah, null)
 
-        val dialog = ProgressDialog(this).apply {
-            setTitle("Mengunggah Audio")
-            setMessage("Sedang mengunggah audio $type...")
-            setCancelable(false)
-            show()
-        }
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
 
         val fileUri = Uri.fromFile(File(path))
         val storageRef = FirebaseStorage.getInstance().reference
@@ -260,12 +261,11 @@ class InputKosakata : Activity() {
         val btnHoldToRecord = view.findViewById<Button>(R.id.btnHoldToRecord)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Rekam Pelafalan")
             .setView(view)
-            .setNegativeButton("Tutup") { d, _ -> d.dismiss() }
             .create()
 
         recordingDialog = dialog
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
         var seconds = 0
@@ -277,24 +277,24 @@ class InputKosakata : Activity() {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     try {
-                        if (ContextCompat.checkSelfPermission(
-                                this,
-                                Manifest.permission.RECORD_AUDIO
-                            )
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                             == PackageManager.PERMISSION_GRANTED
                         ) {
                             BacksoundManager.pauseImmediately()
                             startRecording(type)
 
                             seconds = 0
+                            timerText.text = "Durasi: 0s" // tampil awal
+
                             timerRunnable = object : Runnable {
                                 override fun run() {
-                                    timerText.text = "Durasi: ${seconds++}s"
+                                    timerText.text = "Durasi: ${++seconds}s"
                                     handler.postDelayed(this, 1000)
                                 }
                             }
                             handler.postDelayed(timerRunnable!!, 1000)
-                        } else {
+                        }
+                        else {
                             BacksoundManager.resume()
                             Toast.makeText(
                                 this,
@@ -317,6 +317,7 @@ class InputKosakata : Activity() {
                     stopRecording()
                     timerRunnable?.let { handler.removeCallbacks(it) }
                     timerRunnable = null
+                    dialog.dismiss()
                 }
             }
             true
@@ -395,9 +396,8 @@ class InputKosakata : Activity() {
         val btnTabSandhangan = dialogView.findViewById<Button>(R.id.btnTabSandhangan)
         val btnTabPasangan = dialogView.findViewById<Button>(R.id.btnTabPasangan)
 
-        val btnBackspace = dialogView.findViewById<Button>(R.id.btnBackspace)
+        val btnBackspace = dialogView.findViewById<ImageButton>(R.id.btnBackspace)
         val btnClear = dialogView.findViewById<Button>(R.id.btnClear)
-        val btnSpace = dialogView.findViewById<Button>(R.id.btnSpace)
 
         layoutDasar.removeAllViews()
         layoutSandhangan.removeAllViews()
@@ -414,10 +414,6 @@ class InputKosakata : Activity() {
 
         btnClear.setOnClickListener {
             previewText.text = ""
-        }
-
-        btnSpace.setOnClickListener {
-            previewText.append(" ")
         }
 
         btnTabDasar.setOnClickListener {
@@ -471,9 +467,6 @@ class InputKosakata : Activity() {
             "ꦥ" to "Pa", "ꦝ" to "Dha", "ꦗ" to "Ja", "ꦪ" to "Ya", "ꦚ" to "Nya",
             "ꦩ" to "Ma", "ꦒ" to "Ga", "ꦧ" to "Ba", "ꦛ" to "Tha", "ꦔ" to "Nga",
 
-            // AKSARA_SWARA
-            "ꦄ" to "A", "ꦆ" to "I", "ꦈ" to "U", "ꦌ" to "E", "ꦎ" to "O",
-
             // SANDHANGAN
             "ꦶ" to "Cethak", "ꦸ" to "Soko", "ꦺ" to "Taleng", "ꦼ" to "Petpet", "ꦴ" to "Longo",
             "ꦺꦴ" to "Lenge Longo", "ꦁ" to "Cekcek", "ꦃ" to "Bisat", "꧀" to "Pangkon", "/" to "Lajar", "ꦽ" to "Pengkal",
@@ -483,7 +476,7 @@ class InputKosakata : Activity() {
             "꧀ꦢ" to "Da", "꧀ꦠ" to "Ta", "꧀ꦱ" to "Sa", "꧀ꦮ" to "Wa",
             "꧀ꦭ" to "La", "꧀ꦥ" to "Pa", "꧀ꦝ" to "Dha", "꧀ꦗ" to "Ja",
             "꧀ꦪ" to "Ya", "꧀ꦚ" to "Nya", "꧀ꦩ" to "Ma", "꧀ꦒ" to "Ga",
-            "꧀ꦧ" to "Ba", "꧀ꦛ" to "Tha", "꧀ꦔ" to "Nga", "꧀ꦲ" to "Ha"
+            "꧀ꦧ" to "Ba", "꧀ꦛ" to "Tha", "꧀ꦔ" to "Nga", "꧀ꦲ" to "A"
         )
 
         val rowSize = 5
